@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Now — Free UK Driving Test Swaps</title>
+<meta name="description" content="Swap your DVSA practical driving test date with another learner. Free, anonymous, no fees. Skip the months-long DVSA wait.">
+<meta name="theme-color" content="#0E2A1F">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --ink: #0E2A1F;
+    --ink-soft: #1d3a2e;
+    --paper: #F5F0E6;
+    --paper-warm: #EBE3D2;
+    --accent: #D7553B;
+    --accent-soft: #E87E66;
+    --rule: #0E2A1F;
+    --muted: #5b6b62;
+    --max: 1240px;
+    --radius: 18px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Subtle paper grain */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: .35;
+    z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.05 0 0 0 0 0.16 0 0 0 0 0.12 0 0 0 .12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  a { color: inherit; text-decoration: none; }
+  img { max-width: 100%; display: block; }
+
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 28px; position: relative; z-index: 1; }
+
+  /* ------- Top bar ------- */
+  header.nav {
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(14,42,31,.12);
+    position: sticky;
+    top: 0;
+    background: rgba(245,240,230,.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 50;
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .brand {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand-mark {
+    width: 32px; height: 32px;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter Tight', sans-serif;
+  }
+  .brand small {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 11px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    line-height: 1;
+    margin-top: 2px;
+  }
+  nav.links { display: flex; gap: 28px; align-items: center; font-size: 14px; }
+  nav.links a { opacity: .75; transition: opacity .2s; }
+  nav.links a:hover { opacity: 1; }
+  .btn {
+    display: inline-block;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-weight: 500;
+    font-size: 14px;
+    transition: all .2s ease;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .btn-primary:hover { background: var(--accent); transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--ink);
+  }
+  .btn-ghost:hover { background: var(--ink); color: var(--paper); }
+
+  @media (max-width: 720px) {
+    nav.links a:not(.btn) { display: none; }
+  }
+
+  /* ------- Hero ------- */
+  .hero { padding: 80px 0 100px; position: relative; }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--ink);
+    padding: 8px 16px;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    margin-bottom: 32px;
+  }
+  .eyebrow .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .4; }
+  }
+
+  h1.headline {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(48px, 8vw, 112px);
+    line-height: .95;
+    letter-spacing: -0.035em;
+    max-width: 14ch;
+    margin-bottom: 32px;
+  }
+  h1.headline em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+  h1.headline .strike {
+    position: relative;
+    white-space: nowrap;
+  }
+  h1.headline .strike::after {
+    content: '';
+    position: absolute;
+    left: -2%; right: -2%;
+    top: 52%;
+    height: 6px;
+    background: var(--accent);
+    transform: rotate(-2deg);
+    border-radius: 3px;
+  }
+
+  .lede {
+    font-size: 20px;
+    line-height: 1.5;
+    max-width: 52ch;
+    color: var(--ink-soft);
+    margin-bottom: 40px;
+  }
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .cta-note { font-size: 13px; color: var(--muted); }
+
+  /* Hero visual: stylised swap card */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  @media (max-width: 960px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+  }
+  .swap-illo {
+    position: relative;
+    aspect-ratio: 1 / 1.05;
+    max-width: 460px;
+    margin-left: auto;
+  }
+  .swap-card {
+    position: absolute;
+    background: var(--paper-warm);
+    border: 1.5px solid var(--ink);
+    border-radius: var(--radius);
+    padding: 22px;
+    width: 76%;
+    box-shadow: 6px 6px 0 var(--ink);
+    transition: transform .4s ease;
+  }
+  .swap-card.a { top: 0; left: 0; transform: rotate(-3deg); }
+  .swap-card.b { bottom: 0; right: 0; transform: rotate(2deg); background: var(--ink); color: var(--paper); border-color: var(--ink); box-shadow: 6px 6px 0 var(--accent); }
+  .swap-illo:hover .swap-card.a { transform: rotate(-5deg) translate(-6px, -6px); }
+  .swap-illo:hover .swap-card.b { transform: rotate(4deg) translate(6px, 6px); }
+  .swap-card h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+  .swap-card .row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 6px 0;
+    border-bottom: 1px dashed currentColor;
+    opacity: .85;
+  }
+  .swap-card .row:last-child { border: none; }
+  .swap-card .row strong { font-weight: 600; opacity: 1; }
+  .swap-card .stamp {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 10px;
+    letter-spacing: .2em;
+    padding: 4px 10px;
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .swap-arrow {
+    position: absolute;
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px;
+    height: 64px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: var(--paper);
+    font-size: 28px;
+    border: 1.5px solid var(--ink);
+    z-index: 2;
+    animation: spin 8s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: translate(-50%, -50%) rotate(0); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+  .swap-arrow span {
+    animation: counter-spin 8s linear infinite;
+    display: block;
+  }
+  @keyframes counter-spin {
+    from { transform: rotate(0); }
+    to { transform: rotate(-360deg); }
+  }
+
+  /* ------- Marquee strip ------- */
+  .strip {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 22px 0;
+    overflow: hidden;
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+  }
+  .strip-track {
+    display: flex;
+    gap: 60px;
+    white-space: nowrap;
+    animation: marquee 40s linear infinite;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 22px;
+    font-weight: 400;
+  }
+  .strip-track span { display: inline-flex; align-items: center; gap: 60px; }
+  .strip-track .bullet { color: var(--accent); }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ------- Sections ------- */
+  section.block { padding: 110px 0; position: relative; }
+
+  .section-head {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 60px;
+    margin-bottom: 70px;
+    align-items: end;
+  }
+  @media (max-width: 720px) {
+    .section-head { grid-template-columns: 1fr; gap: 16px; }
+  }
+  .section-num {
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    padding-top: 14px;
+    border-top: 1.5px solid var(--ink);
+    color: var(--muted);
+  }
+  .section-num strong { color: var(--ink); margin-right: 12px; font-weight: 600; }
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 1;
+    letter-spacing: -0.025em;
+    max-width: 18ch;
+  }
+  .section-title em { font-style: italic; color: var(--accent); font-weight: 400; }
+
+  /* How it works */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  @media (max-width: 860px) { .steps { grid-template-columns: 1fr; } }
+  .step {
+    background: var(--paper-warm);
+    border: 1.5px solid var(--ink);
+    border-radius: var(--radius);
+    padding: 32px;
+    transition: transform .3s ease, box-shadow .3s ease;
+  }
+  .step:hover { transform: translateY(-4px); box-shadow: 4px 4px 0 var(--ink); }
+  .step-num {
+    font-family: 'Fraunces', serif;
+    font-size: 56px;
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+  .step h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.15;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .step p { color: var(--ink-soft); font-size: 15px; }
+
+  /* Promise */
+  .promise {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 24px;
+    padding: 80px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  @media (max-width: 720px) { .promise { padding: 48px 28px; } }
+  .promise-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  @media (max-width: 860px) { .promise-grid { grid-template-columns: 1fr; gap: 40px; } }
+  .promise h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(40px, 5vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+  }
+  .promise h2 em { font-style: italic; color: var(--accent-soft); font-weight: 400; }
+  .promise p { font-size: 17px; opacity: .85; max-width: 42ch; }
+  .promise-list { list-style: none; display: grid; gap: 20px; }
+  .promise-list li {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(245,240,230,.15);
+  }
+  .promise-list li:last-child { border: none; padding-bottom: 0; }
+  .promise-list .check {
+    flex-shrink: 0;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    margin-top: 2px;
+  }
+  .promise-list strong { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600; display: block; margin-bottom: 4px; }
+  .promise-list span { font-size: 14px; opacity: .75; }
+
+  /* FAQ */
+  .faq-list { max-width: 820px; margin: 0 auto; }
+  details {
+    border-top: 1px solid var(--ink);
+    padding: 28px 0;
+    cursor: pointer;
+  }
+  details:last-of-type { border-bottom: 1px solid var(--ink); }
+  summary {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(20px, 2.5vw, 26px);
+    font-weight: 500;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: '+';
+    font-size: 28px;
+    flex-shrink: 0;
+    transition: transform .3s ease;
+    font-family: 'Inter Tight', sans-serif;
+    font-weight: 300;
+  }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p {
+    margin-top: 16px;
+    color: var(--ink-soft);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 70ch;
+  }
+
+  /* Form */
+  .form-wrap {
+    background: var(--paper-warm);
+    border: 1.5px solid var(--ink);
+    border-radius: 24px;
+    padding: 60px;
+    max-width: 760px;
+    margin: 0 auto;
+    box-shadow: 8px 8px 0 var(--ink);
+  }
+  @media (max-width: 720px) { .form-wrap { padding: 36px 24px; } }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+  .field { display: flex; flex-direction: column; gap: 8px; }
+  .field.full { grid-column: 1 / -1; }
+  label {
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  input, select, textarea {
+    font-family: inherit;
+    font-size: 15px;
+    padding: 14px 16px;
+    border: 1.5px solid var(--ink);
+    background: var(--paper);
+    border-radius: 10px;
+    color: var(--ink);
+    transition: border-color .2s;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(215,85,59,.15);
+  }
+  textarea { resize: vertical; min-height: 90px; }
+  .form-submit { margin-top: 28px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+  .form-submit small { color: var(--muted); font-size: 13px; }
+
+  /* Footer */
+  footer {
+    padding: 80px 0 40px;
+    border-top: 1.5px solid var(--ink);
+    margin-top: 80px;
+  }
+  .foot-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 60px;
+  }
+  @media (max-width: 720px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+  .foot-brand p {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    line-height: 1.25;
+    max-width: 28ch;
+    margin-top: 16px;
+    font-weight: 400;
+    font-style: italic;
+  }
+  .foot-col h4 {
+    font-size: 11px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .foot-col a { display: block; margin-bottom: 10px; font-size: 14px; opacity: .8; }
+  .foot-col a:hover { opacity: 1; color: var(--accent); }
+  .foot-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 28px;
+    border-top: 1px solid rgba(14,42,31,.15);
+    font-size: 12px;
+    color: var(--muted);
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  /* Reveal on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity .8s ease, transform .8s ease;
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* Disclaimer banner */
+  .disclaimer {
+    background: var(--paper-warm);
+    border-radius: 16px;
+    padding: 24px 28px;
+    border-left: 4px solid var(--accent);
+    font-size: 14px;
+    color: var(--ink-soft);
+    max-width: 820px;
+    margin: 0 auto 40px;
+    line-height: 1.5;
+  }
+  .disclaimer strong { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top">
+      <span class="brand-mark">↻</span>
+      <span>
+        Test Now
+        <small>Cancellations &amp; Swaps</small>
+      </span>
+    </a>
+    <nav class="links">
+      <a href="#how">How it works</a>
+      <a href="#why">Why us</a>
+      <a href="#faq">FAQ</a>
+      <a class="btn btn-primary" href="#swap">List a swap</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="reveal">
+      <div class="eyebrow"><span class="dot"></span> Free for UK learner drivers</div>
+      <h1 class="headline">
+        Don't <span class="strike">wait</span> <em>months</em> for your driving test.
+      </h1>
+      <p class="lede">
+        Swap your DVSA practical test date with another learner who wants yours. Free, anonymous, and human — no bots, no fees, no cancellation roulette.
+      </p>
+      <div class="cta-row">
+        <a href="#swap" class="btn btn-primary">List my test &nbsp;→</a>
+        <a href="#how" class="btn btn-ghost">How does it work?</a>
+      </div>
+      <p class="cta-note" style="margin-top:18px;">No account required. Takes about 90 seconds.</p>
+    </div>
+
+    <div class="swap-illo reveal" aria-hidden="true">
+      <div class="swap-card a">
+        <h3>Sarah · Manchester</h3>
+        <div class="row"><span>Test centre</span><strong>West Didsbury</strong></div>
+        <div class="row"><span>Date</span><strong>14 Aug 2026</strong></div>
+        <div class="row"><span>Wants</span><strong>Anything sooner</strong></div>
+        <span class="stamp">Listed today</span>
+      </div>
+      <div class="swap-arrow"><span>⇄</span></div>
+      <div class="swap-card b">
+        <h3>James · Manchester</h3>
+        <div class="row"><span>Test centre</span><strong>Cheetham Hill</strong></div>
+        <div class="row"><span>Date</span><strong>05 Jun 2026</strong></div>
+        <div class="row"><span>Wants</span><strong>August or later</strong></div>
+        <span class="stamp">Match found</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="strip">
+  <div class="strip-track">
+    <span>Free swap matching <span class="bullet">●</span> No middlemen <span class="bullet">●</span> Anonymous &amp; private <span class="bullet">●</span> All UK test centres <span class="bullet">●</span> Real learners only <span class="bullet">●</span></span>
+    <span>Free swap matching <span class="bullet">●</span> No middlemen <span class="bullet">●</span> Anonymous &amp; private <span class="bullet">●</span> All UK test centres <span class="bullet">●</span> Real learners only <span class="bullet">●</span></span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="block" id="how">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-num"><strong>01</strong> The process</div>
+      <h2 class="section-title">Three steps. <em>That's it.</em></h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">i.</div>
+        <h3>List your test</h3>
+        <p>Tell us your test centre, your current date, and what you're looking for. Takes under two minutes — no sign-up.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">ii.</div>
+        <h3>We find a match</h3>
+        <p>When another learner posts a test that fits what you want, and yours fits what they want, we connect you both.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">iii.</div>
+        <h3>Swap on DVSA</h3>
+        <p>You both log into the official DVSA system and exchange dates using a 3-way call. We walk you through it.</p>
+      </div>
+    </div>
+
+    <div class="disclaimer reveal" style="margin-top: 60px;">
+      <strong>One thing to know:</strong> we're an independent platform that helps UK learners find each other. We're not affiliated with the DVSA. The actual swap happens through DVSA's official booking system — exactly as DVSA permits.
+    </div>
+  </div>
+</section>
+
+<!-- PROMISE -->
+<section class="block" id="why" style="padding-top: 0;">
+  <div class="wrap">
+    <div class="promise reveal">
+      <div class="promise-grid">
+        <div>
+          <h2>Built for learners. <em>Not for profit.</em></h2>
+          <p style="margin-top: 24px;">Every other "test finder" out there charges you, hides behind bots, or floods you with ads. We don't. Here's our deal:</p>
+        </div>
+        <ul class="promise-list">
+          <li>
+            <div class="check">✓</div>
+            <div><strong>Free, forever</strong><span>No fees. No premium tier. No upsell. The platform stays free for learners.</span></div>
+          </li>
+          <li>
+            <div class="check">✓</div>
+            <div><strong>Anonymous by default</strong><span>You only share details with your match — and only when both sides agree to swap.</span></div>
+          </li>
+          <li>
+            <div class="check">✓</div>
+            <div><strong>Real learners, no bots</strong><span>We're a peer-to-peer board, not a cancellation scraper. Every listing is a real person.</span></div>
+          </li>
+          <li>
+            <div class="check">✓</div>
+            <div><strong>Honest about what we do</strong><span>We help you find each other. The swap happens through DVSA, where it's meant to.</span></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORM -->
+<section class="block" id="swap" style="padding-top: 0;">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-num"><strong>02</strong> List your test</div>
+      <h2 class="section-title">Post your <em>swap</em> in 90 seconds.</h2>
+    </div>
+
+    <form class="form-wrap reveal" id="swap-form" onsubmit="handleSubmit(event)">
+      <div class="form-grid">
+        <div class="field">
+          <label for="name">First name</label>
+          <input id="name" name="name" type="text" required placeholder="e.g. Aisha">
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required placeholder="you@example.com">
+        </div>
+        <div class="field">
+          <label for="centre">Your test centre</label>
+          <input id="centre" name="centre" type="text" required placeholder="e.g. Wolverhampton">
+        </div>
+        <div class="field">
+          <label for="date">Your current test date</label>
+          <input id="date" name="date" type="date" required>
+        </div>
+        <div class="field">
+          <label for="wanted-when">When you'd like instead</label>
+          <select id="wanted-when" name="wanted-when" required>
+            <option value="">Choose…</option>
+            <option>As soon as possible</option>
+            <option>Within 2 weeks</option>
+            <option>Within a month</option>
+            <option>A specific date</option>
+            <option>I'm flexible</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="wanted-centre">Preferred test centre(s)</label>
+          <input id="wanted-centre" name="wanted-centre" type="text" placeholder="Same one, or list a few">
+        </div>
+        <div class="field full">
+          <label for="notes">Anything else? (optional)</label>
+          <textarea id="notes" name="notes" placeholder="Theory test expiry date, weekday/weekend preference, etc."></textarea>
+        </div>
+      </div>
+      <div class="form-submit">
+        <button type="submit" class="btn btn-primary">Submit my listing &nbsp;→</button>
+        <small>By submitting, you agree we can contact you about a potential swap. We'll never share your details without your say-so.</small>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="block" id="faq" style="padding-top: 0;">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-num"><strong>03</strong> Common questions</div>
+      <h2 class="section-title">The <em>boring</em> bits, answered.</h2>
+    </div>
+    <div class="faq-list reveal">
+      <details>
+        <summary>Is swapping a driving test actually allowed?</summary>
+        <p>Yes. The DVSA allows learners to change their test date through their official booking system, including via a 3-way call where two learners exchange dates with a DVSA agent on the line. We just help you find each other. We don't touch your DVSA account.</p>
+      </details>
+      <details>
+        <summary>Why is this free? What's the catch?</summary>
+        <p>There's no catch. We built this because the DVSA backlog is brutal and existing "test finder" services charge a fortune. We pay the costs ourselves and there are no ads, no premium tiers, and no hidden fees. If we ever need to change that, we'll tell you well in advance.</p>
+      </details>
+      <details>
+        <summary>How long does it take to find a match?</summary>
+        <p>Honest answer: it depends. Popular centres in big cities (London, Manchester, Birmingham) often match within days. Smaller or rural centres can take a few weeks. The more flexible you are about dates, the faster it goes.</p>
+      </details>
+      <details>
+        <summary>Will my details be public?</summary>
+        <p>No. Your name, email, and date are visible only to you and to a potential match — and only after both of you confirm you're interested. We never publish a list of names or post anything to social media.</p>
+      </details>
+      <details>
+        <summary>What if my match cancels at the last minute?</summary>
+        <p>Then no swap happens — your existing test stays exactly where it is. You haven't lost anything. You're free to list again and look for another match.</p>
+      </details>
+      <details>
+        <summary>Do I need to be a UK resident?</summary>
+        <p>You need a DVSA driving test booked in the UK (England, Scotland, or Wales). It doesn't matter where you live or what licence you hold, as long as you've got a real test booking to swap.</p>
+      </details>
+      <details>
+        <summary>Are you affiliated with the DVSA or gov.uk?</summary>
+        <p>No. We're an independent service. The DVSA is the official UK driving test authority — we're a free community board that helps learners coordinate. Anything you do on the DVSA site stays between you and them.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="#top">
+          <span class="brand-mark">↻</span>
+          <span>Test Now <small>Cancellations &amp; Swaps</small></span>
+        </a>
+        <p>A free, independent platform helping UK learner drivers swap their practical test dates.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Platform</h4>
+        <a href="#how">How it works</a>
+        <a href="#why">Why us</a>
+        <a href="#swap">List a swap</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="foot-col">
+        <h4>Legal</h4>
+        <a href="#">Terms of use</a>
+        <a href="#">Privacy policy</a>
+        <a href="#">Cookie policy</a>
+      </div>
+      <div class="foot-col">
+        <h4>Contact</h4>
+        <a href="mailto:hello@testnowcancellationsandswaps.co.uk">Email us</a>
+        <a href="#">Report a problem</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© <span id="yr"></span> testnowcancellationsandswaps.co.uk · Independent &amp; not affiliated with DVSA or gov.uk.</span>
+      <span>Made with ↻ for UK learners.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Year
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Form: TODO — wire to backend later (Formspree, Apps Script, etc.)
+  function handleSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = 'Submitted ✓';
+    btn.style.background = 'var(--accent)';
+    setTimeout(() => {
+      alert("Thanks! Your listing has been recorded.\n\n(Heads up to admin: form submission is currently captured client-side only. Wire this to a backend — Formspree, Google Apps Script, or your own endpoint — to actually receive listings.)");
+      form.reset();
+      btn.disabled = false;
+      btn.innerHTML = 'Submit my listing &nbsp;→';
+      btn.style.background = '';
+    }, 600);
+  }
+</script>
+</body>
+</html>
