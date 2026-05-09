@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Test Now — Free UK Driving Test Swaps</title>
 <meta name="description" content="Swap your DVSA practical driving test date with another learner. Free, anonymous, no fees. Skip the months-long DVSA wait.">
-<meta name="theme-color" content="#0E2A1F">
+<meta name="theme-color" content="#0A6B36">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,13 +13,13 @@
 
 <style>
   :root {
-    --ink: #0E2A1F;
-    --ink-soft: #1d3a2e;
+    --ink: #0A6B36;
+    --ink-soft: #0E8C45;
     --paper: #F5F0E6;
     --paper-warm: #EBE3D2;
-    --accent: #D7553B;
-    --accent-soft: #E87E66;
-    --rule: #0E2A1F;
+    --accent: #D6206E;
+    --accent-soft: #E8478F;
+    --rule: #0A6B36;
     --muted: #5b6b62;
     --max: 1240px;
     --radius: 18px;
@@ -94,6 +94,23 @@
     line-height: 1;
     margin-top: 2px;
   }
+
+  .logo-img {
+    height: 36px;
+    width: auto;
+    display: block;
+  }
+  .brand-tag small {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 11px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    line-height: 1.2;
+  }
+  footer .logo-img { height: 32px; }
+
   nav.links { display: flex; gap: 28px; align-items: center; font-size: 14px; }
   nav.links a { opacity: .75; transition: opacity .2s; }
   nav.links a:hover { opacity: 1; }
@@ -563,9 +580,8 @@
 <header class="nav">
   <div class="wrap nav-inner">
     <a class="brand" href="#top">
-      <span class="brand-mark">↻</span>
-      <span>
-        Test Now
+      <img src="logo.jpg" alt="Test Now" class="logo-img">
+      <span class="brand-tag">
         <small>Cancellations &amp; Swaps</small>
       </span>
     </a>
@@ -787,8 +803,8 @@
     <div class="foot-grid">
       <div class="foot-brand">
         <a class="brand" href="#top">
-          <span class="brand-mark">↻</span>
-          <span>Test Now <small>Cancellations &amp; Swaps</small></span>
+          <img src="logo.jpg" alt="Test Now" class="logo-img">
+          <span class="brand-tag"><small>Cancellations &amp; Swaps</small></span>
         </a>
         <p>A free, independent platform helping UK learner drivers swap their practical test dates.</p>
       </div>
