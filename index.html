@@ -517,6 +517,21 @@
   .form-submit { margin-top: 28px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
   .form-submit small { color: var(--muted); font-size: 13px; }
 
+  .moves-note { font-size: 13px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+  .moves-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .move-chip {
+    font-size: 14px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1.5px dashed rgba(10,107,54,.4);
+    background: rgba(10,107,54,.05);
+    color: var(--muted);
+    cursor: not-allowed;
+    user-select: none;
+  }
+  .move-chip .miles { font-size: 12px; opacity: .7; display: block; }
+  .move-chip.empty { border-style: solid; opacity: .6; }
+
   /* Footer */
   footer {
     padding: 80px 0 40px;
@@ -731,24 +746,37 @@
           <label for="email">Email</label>
           <input id="email" name="email" type="email" required placeholder="you@example.com">
         </div>
+
+        <div class="field">
+          <label for="region">Your region</label>
+          <select id="region" name="region" required>
+            <option value="">Loading regions…</option>
+          </select>
+        </div>
         <div class="field">
           <label for="centre">Your test centre</label>
-          <input id="centre" name="centre" type="text" required placeholder="e.g. Wolverhampton">
+          <select id="centre" name="centre" required disabled>
+            <option value="">Pick a region first</option>
+          </select>
         </div>
+
+        <div class="field full" id="moves-box" style="display:none;">
+          <label>Centres you'll be able to swap to (from 9 June)</label>
+          <div class="moves-note">
+            From 9 June 2026, DVSA limits swaps to your 3 nearest centres (or back to your original). These are shown so you know your options — they're set by DVSA, not us.
+          </div>
+          <div class="moves-chips" id="moves-chips"></div>
+        </div>
+
         <div class="field">
           <label for="date">Your current test date</label>
           <input id="date" name="date" type="date" required>
         </div>
         <div class="field">
           <label for="time">Your current test time</label>
-          <select id="time" name="time" required>
-            <option value="">Choose…</option>
-            <option>Morning (before 12pm)</option>
-            <option>Afternoon (12pm–4pm)</option>
-            <option>Late afternoon (after 4pm)</option>
-            <option>Not sure / any</option>
-          </select>
+          <input id="time" name="time" type="time" required>
         </div>
+
         <div class="field">
           <label for="wanted-when">When you'd like instead</label>
           <select id="wanted-when" name="wanted-when" required>
@@ -761,9 +789,18 @@
           </select>
         </div>
         <div class="field">
-          <label for="wanted-centre">Preferred test centre(s)</label>
-          <input id="wanted-centre" name="wanted-centre" type="text" placeholder="Same one, or list a few">
+          <label for="wanted-region">Preferred region</label>
+          <select id="wanted-region" name="wanted-region">
+            <option value="">Same as my region</option>
+          </select>
         </div>
+        <div class="field full">
+          <label for="wanted-centre">Preferred test centre</label>
+          <select id="wanted-centre" name="wanted-centre" disabled>
+            <option value="">Pick a preferred region first (or leave blank)</option>
+          </select>
+        </div>
+
         <div class="field full">
           <label for="notes">Anything else? (optional)</label>
           <textarea id="notes" name="notes" placeholder="Theory test expiry date, weekday/weekend preference, etc."></textarea>
@@ -883,10 +920,12 @@
     const data = {
       name: form.name.value,
       email: form.email.value,
+      region: form.region.value,
       centre: form.centre.value,
       date: form.date.value,
       time: form.time.value,
       wantedWhen: form['wanted-when'].value,
+      wantedRegion: form['wanted-region'].value,
       wantedCentre: form['wanted-centre'].value,
       notes: form.notes.value
     };
@@ -914,6 +953,84 @@
       alert("Something went wrong sending your listing. Please try again, or email us directly.");
     });
   }
+
+  // ---- Live centre data: region → centre cascade + move-to display ----
+  let CENTRES = [];          // [{centre, region, moves:[]}]
+  let byRegion = {};         // region → [centre objects]
+
+  function buildRegionIndex() {
+    byRegion = {};
+    CENTRES.forEach(c => {
+      (byRegion[c.region] = byRegion[c.region] || []).push(c);
+    });
+  }
+
+  function fillRegionSelect(sel, placeholder) {
+    const regions = Object.keys(byRegion).sort();
+    sel.innerHTML = '<option value="">' + placeholder + '</option>' +
+      regions.map(r => '<option>' + r + '</option>').join('');
+  }
+
+  function fillCentreSelect(sel, region, placeholder) {
+    if (!region || !byRegion[region]) {
+      sel.innerHTML = '<option value="">' + placeholder + '</option>';
+      sel.disabled = true;
+      return;
+    }
+    const centres = byRegion[region].map(c => c.centre).sort();
+    sel.innerHTML = '<option value="">Choose…</option>' +
+      centres.map(c => '<option>' + c + '</option>').join('');
+    sel.disabled = false;
+  }
+
+  function showMoves(centreName) {
+    const box = document.getElementById('moves-box');
+    const chips = document.getElementById('moves-chips');
+    const found = CENTRES.find(c => c.centre === centreName);
+    if (!found || !found.moves || !found.moves.length) {
+      box.style.display = 'none';
+      chips.innerHTML = '';
+      return;
+    }
+    chips.innerHTML = found.moves.map(m => {
+      // m looks like "Brentwood (London) - about 11 miles away"
+      const parts = m.split(' - ');
+      const name = parts[0] || m;
+      const miles = parts[1] ? '<span class="miles">' + parts[1] + '</span>' : '';
+      return '<div class="move-chip">' + name + miles + '</div>';
+    }).join('');
+    box.style.display = '';
+  }
+
+  function loadCentres() {
+    const regionSel = document.getElementById('region');
+    fetch(SHEET_ENDPOINT + '?action=centres')
+      .then(r => r.json())
+      .then(d => {
+        if (d.result !== 'success' || !Array.isArray(d.centres)) throw new Error('bad data');
+        CENTRES = d.centres;
+        buildRegionIndex();
+        fillRegionSelect(regionSel, 'Choose your region…');
+        fillRegionSelect(document.getElementById('wanted-region'), 'Same as my region');
+      })
+      .catch(() => {
+        regionSel.innerHTML = '<option value="">Could not load — type centre in notes</option>';
+      });
+  }
+
+  // Wire cascades
+  document.getElementById('region').addEventListener('change', function () {
+    fillCentreSelect(document.getElementById('centre'), this.value, 'Pick a region first');
+    document.getElementById('moves-box').style.display = 'none';
+  });
+  document.getElementById('centre').addEventListener('change', function () {
+    showMoves(this.value);
+  });
+  document.getElementById('wanted-region').addEventListener('change', function () {
+    fillCentreSelect(document.getElementById('wanted-centre'), this.value, 'Pick a preferred region first (or leave blank)');
+  });
+
+  loadCentres();
 </script>
 </body>
 </html>
