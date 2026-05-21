@@ -746,6 +746,10 @@
           <label for="email">Email</label>
           <input id="email" name="email" type="email" required placeholder="you@example.com">
         </div>
+        <div class="field">
+          <label for="phone">Phone number</label>
+          <input id="phone" name="phone" type="tel" required placeholder="07xxx xxxxxx" pattern="[0-9 +()-]{7,}">
+        </div>
 
         <div class="field">
           <label for="region">Your region</label>
@@ -791,13 +795,13 @@
         <div class="field">
           <label for="wanted-region">Preferred region</label>
           <select id="wanted-region" name="wanted-region">
-            <option value="">Same as my region</option>
+            <option value="Same" selected>Same as my region</option>
           </select>
         </div>
         <div class="field full">
           <label for="wanted-centre">Preferred test centre</label>
-          <select id="wanted-centre" name="wanted-centre" disabled>
-            <option value="">Pick a preferred region first (or leave blank)</option>
+          <select id="wanted-centre" name="wanted-centre" required disabled>
+            <option value="">Pick your region first</option>
           </select>
         </div>
 
@@ -920,6 +924,7 @@
     const data = {
       name: form.name.value,
       email: form.email.value,
+      phone: form.phone.value,
       region: form.region.value,
       centre: form.centre.value,
       date: form.date.value,
@@ -1011,24 +1016,36 @@
         CENTRES = d.centres;
         buildRegionIndex();
         fillRegionSelect(regionSel, 'Choose your region…');
-        fillRegionSelect(document.getElementById('wanted-region'), 'Same as my region');
+        // Preferred region keeps a "Same" option at the top, then all regions
+        const wr = document.getElementById('wanted-region');
+        const regions = Object.keys(byRegion).sort();
+        wr.innerHTML = '<option value="Same" selected>Same as my region</option>' +
+          regions.map(r => '<option>' + r + '</option>').join('');
       })
       .catch(() => {
         regionSel.innerHTML = '<option value="">Could not load — type centre in notes</option>';
       });
   }
 
+  // Refills the preferred-centre dropdown based on whatever the effective region is
+  function refreshWantedCentre() {
+    const wantedRegionVal = document.getElementById('wanted-region').value;
+    const ownRegion = document.getElementById('region').value;
+    const effectiveRegion = (wantedRegionVal === 'Same' || !wantedRegionVal) ? ownRegion : wantedRegionVal;
+    fillCentreSelect(document.getElementById('wanted-centre'), effectiveRegion,
+      effectiveRegion ? 'Choose…' : 'Pick your region first');
+  }
+
   // Wire cascades
   document.getElementById('region').addEventListener('change', function () {
     fillCentreSelect(document.getElementById('centre'), this.value, 'Pick a region first');
     document.getElementById('moves-box').style.display = 'none';
+    refreshWantedCentre(); // if preferred region is "Same", follow this region
   });
   document.getElementById('centre').addEventListener('change', function () {
     showMoves(this.value);
   });
-  document.getElementById('wanted-region').addEventListener('change', function () {
-    fillCentreSelect(document.getElementById('wanted-centre'), this.value, 'Pick a preferred region first (or leave blank)');
-  });
+  document.getElementById('wanted-region').addEventListener('change', refreshWantedCentre);
 
   loadCentres();
 </script>
