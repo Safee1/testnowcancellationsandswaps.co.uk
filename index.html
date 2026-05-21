@@ -740,6 +740,16 @@
           <input id="date" name="date" type="date" required>
         </div>
         <div class="field">
+          <label for="time">Your current test time</label>
+          <select id="time" name="time" required>
+            <option value="">Choose…</option>
+            <option>Morning (before 12pm)</option>
+            <option>Afternoon (12pm–4pm)</option>
+            <option>Late afternoon (after 4pm)</option>
+            <option>Not sure / any</option>
+          </select>
+        </div>
+        <div class="field">
           <label for="wanted-when">When you'd like instead</label>
           <select id="wanted-when" name="wanted-when" required>
             <option value="">Choose…</option>
@@ -859,21 +869,50 @@
   }, { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-  // Form: TODO — wire to backend later (Formspree, Apps Script, etc.)
+  // Form: sends submission to Google Sheet via Apps Script Web App.
+  // PASTE YOUR DEPLOYED WEB APP URL BETWEEN THE QUOTES BELOW:
+  const SHEET_ENDPOINT = "PASTE_YOUR_APPS_SCRIPT_URL_HERE";
+
   function handleSubmit(e) {
     e.preventDefault();
     const form = e.target;
     const btn = form.querySelector('button[type="submit"]');
     btn.disabled = true;
-    btn.textContent = 'Submitted ✓';
-    btn.style.background = 'var(--accent)';
-    setTimeout(() => {
-      alert("Thanks! Your listing has been recorded.\n\n(Heads up to admin: form submission is currently captured client-side only. Wire this to a backend — Formspree, Google Apps Script, or your own endpoint — to actually receive listings.)");
-      form.reset();
+    btn.textContent = 'Sending…';
+
+    const data = {
+      name: form.name.value,
+      email: form.email.value,
+      centre: form.centre.value,
+      date: form.date.value,
+      time: form.time.value,
+      wantedWhen: form['wanted-when'].value,
+      wantedCentre: form['wanted-centre'].value,
+      notes: form.notes.value
+    };
+
+    fetch(SHEET_ENDPOINT, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(data)
+    })
+    .then(() => {
+      btn.textContent = 'Submitted ✓';
+      btn.style.background = 'var(--accent)';
+      setTimeout(() => {
+        alert("Thanks! Your swap has been listed. We'll be in touch when we find a match.");
+        form.reset();
+        btn.disabled = false;
+        btn.innerHTML = 'Submit my listing &nbsp;→';
+        btn.style.background = '';
+      }, 500);
+    })
+    .catch(() => {
       btn.disabled = false;
       btn.innerHTML = 'Submit my listing &nbsp;→';
-      btn.style.background = '';
-    }, 600);
+      alert("Something went wrong sending your listing. Please try again, or email us directly.");
+    });
   }
 </script>
 </body>
