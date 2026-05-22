@@ -438,6 +438,98 @@
   .promise-list strong { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600; display: block; margin-bottom: 4px; }
   .promise-list span { font-size: 14px; opacity: .75; }
 
+  /* Live board */
+  .board-tools {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .board-tools select {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 10px 16px;
+    border: 1.5px solid var(--ink);
+    border-radius: 999px;
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .board-count { font-size: 14px; color: var(--muted); font-weight: 500; }
+  .board-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  .board-loading, .board-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--muted);
+    padding: 40px 0;
+    font-size: 15px;
+  }
+  .bcard {
+    border: 1.5px solid var(--ink);
+    border-radius: 16px;
+    padding: 22px;
+    background: var(--paper-warm);
+    transition: transform .25s ease, box-shadow .25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .bcard:hover { transform: translateY(-3px); box-shadow: 4px 4px 0 var(--ink); }
+  .bcard .bregion {
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .bcard .bcentre {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+  .bcard .bdate {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    padding: 8px 0;
+    border-top: 1px dashed rgba(14,42,31,.25);
+  }
+  .bcard .bdate span:last-child { font-weight: 600; }
+  .bcard .btag {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--paper);
+  }
+  .bcard .bsample {
+    position: absolute;
+    top: 12px; right: 12px;
+    font-size: 9px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--muted);
+    border-radius: 4px;
+    padding: 2px 6px;
+    opacity: .7;
+  }
+  .board-foot { text-align: center; margin-top: 36px; font-size: 16px; color: var(--ink-soft); }
+  .board-foot a { color: var(--accent); font-weight: 600; text-decoration: underline; }
+
   /* FAQ */
   .faq-list { max-width: 820px; margin: 0 auto; }
   details {
@@ -664,6 +756,26 @@
     <span>Free swap matching <span class="bullet">●</span> No middlemen <span class="bullet">●</span> Anonymous &amp; private <span class="bullet">●</span> All UK test centres <span class="bullet">●</span> Real learners only <span class="bullet">●</span></span>
   </div>
 </div>
+
+<!-- LIVE BOARD -->
+<section class="block" id="board" style="padding-bottom: 0;">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-num"><strong>00</strong> Live board</div>
+      <h2 class="section-title">Tests <em>available</em> to swap right now.</h2>
+    </div>
+    <div class="board-tools reveal">
+      <select id="board-filter">
+        <option value="">All regions</option>
+      </select>
+      <span class="board-count" id="board-count"></span>
+    </div>
+    <div class="board-grid" id="board-grid">
+      <div class="board-loading">Loading the latest listings…</div>
+    </div>
+    <p class="board-foot reveal">See one that suits you? <a href="#swap">List your own test</a> and we'll match you up — free.</p>
+  </div>
+</section>
 
 <!-- HOW IT WORKS -->
 <section class="block" id="how">
@@ -1087,6 +1199,58 @@
     showMoves(this.value);
   });
   document.getElementById('wanted-region').addEventListener('change', refreshWantedCentre);
+
+  // ---- Live board: fetch dummy/real listings (non-identifying fields only) ----
+  let BOARD = [];
+  function fmtDate(d) {
+    if (!d) return '';
+    // Accept YYYY-MM-DD or anything Date can parse
+    const dt = new Date(d);
+    if (isNaN(dt)) return String(d);
+    return dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  }
+  function renderBoard(filterRegion) {
+    const grid = document.getElementById('board-grid');
+    const count = document.getElementById('board-count');
+    let rows = BOARD.slice();
+    if (filterRegion) rows = rows.filter(r => r.region === filterRegion);
+    if (!rows.length) {
+      grid.innerHTML = '<div class="board-empty">No tests listed for this region yet — be the first to list one.</div>';
+      count.textContent = '';
+      return;
+    }
+    count.textContent = rows.length + (rows.length === 1 ? ' test available' : ' tests available');
+    grid.innerHTML = rows.map(r =>
+      '<div class="bcard">' +
+        '<span class="bsample">Sample</span>' +
+        '<div class="bregion">' + (r.region || '') + '</div>' +
+        '<div class="bcentre">' + (r.centre || '') + '</div>' +
+        '<div class="bdate"><span>Date</span><span>' + fmtDate(r.date) + '</span></div>' +
+        (r.time ? '<div class="bdate"><span>Time</span><span>' + r.time + '</span></div>' : '') +
+        '<span class="btag">Swap ASAP</span>' +
+      '</div>'
+    ).join('');
+  }
+  function loadBoard() {
+    const grid = document.getElementById('board-grid');
+    fetch(SHEET_ENDPOINT + '?action=board')
+      .then(r => r.json())
+      .then(d => {
+        if (d.result !== 'success' || !Array.isArray(d.listings)) throw new Error('bad');
+        BOARD = d.listings;
+        // Populate region filter
+        const sel = document.getElementById('board-filter');
+        const regions = [...new Set(BOARD.map(r => r.region).filter(Boolean))].sort();
+        sel.innerHTML = '<option value="">All regions</option>' +
+          regions.map(r => '<option>' + r + '</option>').join('');
+        sel.addEventListener('change', () => renderBoard(sel.value));
+        renderBoard('');
+      })
+      .catch(() => {
+        grid.innerHTML = '<div class="board-empty">Couldn\'t load listings right now. Please refresh.</div>';
+      });
+  }
+  loadBoard();
 
   loadCentres();
 
