@@ -748,7 +748,7 @@
         </div>
         <div class="field">
           <label for="phone">Phone number</label>
-          <input id="phone" name="phone" type="tel" required placeholder="07xxx xxxxxx" pattern="[0-9 +()-]{7,}">
+          <input id="phone" name="phone" type="tel" required placeholder="07xxx xxxxxx" inputmode="tel">
         </div>
 
         <div class="field">
@@ -925,7 +925,6 @@
     if (dateVal) {
       const now = new Date();
       const chosen = new Date(dateVal + 'T' + (timeVal || '23:59'));
-      // Strip seconds for a fair comparison
       now.setSeconds(0, 0);
       if (chosen < now) {
         alert("That test date and time is in the past. Please enter your upcoming test date (today or later).");
@@ -933,12 +932,33 @@
       }
     }
 
-    // --- Warn that resubmitting updates an existing listing ---
-    const proceed = confirm(
-      "Heads up: if you've listed a swap before with this phone number, submitting will UPDATE your existing details with what you've entered now.\n\nContinue?"
-    );
-    if (!proceed) return;
+    // --- Check if this phone already exists, then proceed ---
+    btn.disabled = true;
+    btn.textContent = 'Checking…';
 
+    const phoneVal = form.phone.value;
+    fetch(SHEET_ENDPOINT + '?action=checkphone&p=' + encodeURIComponent(phoneVal))
+      .then(r => r.json())
+      .then(res => {
+        if (res && res.exists) {
+          const proceed = confirm(
+            "We already have a listing for this phone number. Submitting will UPDATE your existing details with what you've entered now.\n\nContinue?"
+          );
+          if (!proceed) {
+            btn.disabled = false;
+            btn.innerHTML = 'Submit my listing &nbsp;→';
+            return;
+          }
+        }
+        sendListing(form, btn);
+      })
+      .catch(() => {
+        // If the check fails for any reason, just proceed with the submission
+        sendListing(form, btn);
+      });
+  }
+
+  function sendListing(form, btn) {
     btn.disabled = true;
     btn.textContent = 'Sending…';
 
