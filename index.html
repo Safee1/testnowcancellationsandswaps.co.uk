@@ -778,7 +778,7 @@
         </div>
         <div class="field">
           <label for="time">Your current test time</label>
-          <input id="time" name="time" type="time" required>
+          <input id="time" name="time" type="time" step="60" required>
         </div>
 
         <div class="field">
@@ -918,6 +918,27 @@
     e.preventDefault();
     const form = e.target;
     const btn = form.querySelector('button[type="submit"]');
+
+    // --- Validate the test date/time isn't in the past ---
+    const dateVal = form.date.value;     // "YYYY-MM-DD"
+    const timeVal = form.time.value;     // "HH:MM"
+    if (dateVal) {
+      const now = new Date();
+      const chosen = new Date(dateVal + 'T' + (timeVal || '23:59'));
+      // Strip seconds for a fair comparison
+      now.setSeconds(0, 0);
+      if (chosen < now) {
+        alert("That test date and time is in the past. Please enter your upcoming test date (today or later).");
+        return;
+      }
+    }
+
+    // --- Warn that resubmitting updates an existing listing ---
+    const proceed = confirm(
+      "Heads up: if you've listed a swap before with this phone number, submitting will UPDATE your existing details with what you've entered now.\n\nWe'll then message you on WhatsApp to confirm it's really your test before we look for a match.\n\nContinue?"
+    );
+    if (!proceed) return;
+
     btn.disabled = true;
     btn.textContent = 'Sending…';
 
@@ -945,7 +966,7 @@
       btn.textContent = 'Submitted ✓';
       btn.style.background = 'var(--accent)';
       setTimeout(() => {
-        alert("Thanks! Your swap has been listed. We'll be in touch when we find a match.");
+        alert("Thanks! Your swap has been listed. We'll message you on WhatsApp to confirm it's your test, then look for a match.");
         form.reset();
         btn.disabled = false;
         btn.innerHTML = 'Submit my listing &nbsp;→';
@@ -1048,6 +1069,17 @@
   document.getElementById('wanted-region').addEventListener('change', refreshWantedCentre);
 
   loadCentres();
+
+  // Lock the date picker to today or later
+  (function setMinDate() {
+    const d = document.getElementById('date');
+    if (!d) return;
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    d.min = yyyy + '-' + mm + '-' + dd;
+  })();
 </script>
 </body>
 </html>
