@@ -935,7 +935,7 @@
 
     // --- Warn that resubmitting updates an existing listing ---
     const proceed = confirm(
-      "Heads up: if you've listed a swap before with this phone number, submitting will UPDATE your existing details with what you've entered now.\n\nWe'll then message you on WhatsApp to confirm it's really your test before we look for a match.\n\nContinue?"
+      "Heads up: if you've listed a swap before with this phone number, submitting will UPDATE your existing details with what you've entered now.\n\nContinue?"
     );
     if (!proceed) return;
 
@@ -966,7 +966,7 @@
       btn.textContent = 'Submitted ✓';
       btn.style.background = 'var(--accent)';
       setTimeout(() => {
-        alert("Thanks! Your swap has been listed. We'll message you on WhatsApp to confirm it's your test, then look for a match.");
+        alert("Thanks! Your swap has been listed. We'll be in touch when we find a match.");
         form.reset();
         btn.disabled = false;
         btn.innerHTML = 'Submit my listing &nbsp;→';
