@@ -438,6 +438,27 @@
   .promise-list strong { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600; display: block; margin-bottom: 4px; }
   .promise-list span { font-size: 14px; opacity: .75; }
 
+  /* Consent banner */
+  .consent {
+    position: fixed;
+    bottom: 20px; left: 20px; right: 20px;
+    max-width: 720px;
+    margin: 0 auto;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 16px;
+    padding: 20px 24px;
+    z-index: 200;
+    box-shadow: 0 10px 40px rgba(0,0,0,.25);
+  }
+  .consent-inner { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: space-between; }
+  .consent p { font-size: 13.5px; line-height: 1.5; flex: 1; min-width: 240px; margin: 0; }
+  .consent a { color: var(--accent-soft); text-decoration: underline; }
+  .consent-btns { display: flex; gap: 10px; }
+  .consent .btn { padding: 10px 18px; font-size: 13px; }
+  .consent .btn-ghost { color: var(--paper); border-color: var(--paper); }
+  .consent .btn-ghost:hover { background: var(--paper); color: var(--ink); }
+
   /* Live board */
   .board-tools {
     display: flex;
@@ -1007,6 +1028,19 @@
   </div>
 </footer>
 
+<!-- COOKIE / LOCATION CONSENT BANNER -->
+<div class="consent" id="consent" role="dialog" aria-label="Cookie and location notice" style="display:none;">
+  <div class="consent-inner">
+    <p>
+      We use a cookie to remember your choices and detect your rough region (from your IP address) so we can show tests near you first. We don't track you or sell your data. See our <a href="#privacy">privacy notice</a>.
+    </p>
+    <div class="consent-btns">
+      <button class="btn btn-ghost" id="consent-decline">No thanks</button>
+      <button class="btn btn-primary" id="consent-accept">Allow</button>
+    </div>
+  </div>
+</div>
+
 <script>
   // Year
   document.getElementById('yr').textContent = new Date().getFullYear();
@@ -1231,6 +1265,17 @@
       '</div>'
     ).join('');
   }
+  let DETECTED_REGION = ''; // set after consent + IP lookup
+
+  function sortBoardByRegion() {
+    if (!DETECTED_REGION) return;
+    BOARD.sort((a, b) => {
+      const aN = a.region === DETECTED_REGION ? 0 : 1;
+      const bN = b.region === DETECTED_REGION ? 0 : 1;
+      return aN - bN;
+    });
+  }
+
   function loadBoard() {
     const grid = document.getElementById('board-grid');
     fetch(SHEET_ENDPOINT + '?action=board')
@@ -1238,12 +1283,12 @@
       .then(d => {
         if (d.result !== 'success' || !Array.isArray(d.listings)) throw new Error('bad');
         BOARD = d.listings;
-        // Populate region filter
         const sel = document.getElementById('board-filter');
         const regions = [...new Set(BOARD.map(r => r.region).filter(Boolean))].sort();
         sel.innerHTML = '<option value="">All regions</option>' +
           regions.map(r => '<option>' + r + '</option>').join('');
         sel.addEventListener('change', () => renderBoard(sel.value));
+        sortBoardByRegion();
         renderBoard('');
       })
       .catch(() => {
@@ -1253,6 +1298,80 @@
   loadBoard();
 
   loadCentres();
+
+  // ---- Consent + IP-based region detection ----
+  function getCookie(name) {
+    const m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+    return m ? m.pop() : '';
+  }
+  function setCookie(name, val, days) {
+    const d = new Date();
+    d.setTime(d.getTime() + days * 864e5);
+    document.cookie = name + '=' + val + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
+  }
+
+  // Map a detected city/region string to one of our DVSA regions by checking
+  // it against the centre list we already loaded (CENTRES from loadCentres).
+  function regionFromLocation(city, ukRegion) {
+    if (!CENTRES || !CENTRES.length) return '';
+    const c = String(city || '').toLowerCase();
+    // Try to find a centre whose name contains the detected city
+    for (const item of CENTRES) {
+      const cn = item.centre.toLowerCase();
+      if (c && (cn.includes(c) || c.includes(cn.split('(')[0].trim()))) {
+        return item.region;
+      }
+    }
+    return '';
+  }
+
+  function detectRegion() {
+    fetch('https://ipwho.is/')
+      .then(r => r.json())
+      .then(loc => {
+        if (!loc || loc.country_code !== 'GB') return; // only UK visitors
+        const guessed = regionFromLocation(loc.city, loc.region);
+        if (guessed) {
+          DETECTED_REGION = guessed;
+          setCookie('tn_region', encodeURIComponent(guessed), 90);
+          sortBoardByRegion();
+          renderBoard(document.getElementById('board-filter').value || '');
+        }
+      })
+      .catch(() => {});
+  }
+
+  (function consentInit() {
+    const banner = document.getElementById('consent');
+    const choice = getCookie('tn_consent');
+    if (choice === 'yes') {
+      // Already consented — use remembered region if present, else detect
+      const saved = getCookie('tn_region');
+      if (saved) {
+        DETECTED_REGION = decodeURIComponent(saved);
+        // board may already be loaded; re-sort when ready
+        const t = setInterval(() => {
+          if (BOARD.length) { sortBoardByRegion(); renderBoard(document.getElementById('board-filter').value || ''); clearInterval(t); }
+        }, 200);
+        setTimeout(() => clearInterval(t), 4000);
+      } else {
+        detectRegion();
+      }
+      return;
+    }
+    if (choice === 'no') return; // declined — no detection, no banner
+    // No choice yet → show banner
+    banner.style.display = 'block';
+    document.getElementById('consent-accept').addEventListener('click', () => {
+      setCookie('tn_consent', 'yes', 180);
+      banner.style.display = 'none';
+      detectRegion();
+    });
+    document.getElementById('consent-decline').addEventListener('click', () => {
+      setCookie('tn_consent', 'no', 180);
+      banner.style.display = 'none';
+    });
+  })();
 
   // Lock the date picker to today or later
   (function setMinDate() {
