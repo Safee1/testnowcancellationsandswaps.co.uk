@@ -69,6 +69,7 @@
   .g-warnbox a { color:var(--warn-ink); font-weight:600; }
   .guide.ok { border-left-color:var(--accent); }
   .guide.cheer { background:#eafaf0; border-left-color:#22c55e; }
+  .guide.soft { background:#fbf3df; border-left-color:#c98a1a; }
   .swapinto { align-self:flex-start; max-width:90%; background:var(--paper-warm); border:1.5px solid var(--ink-soft); border-radius:14px; padding:12px 15px; font-size:14.5px; line-height:1.5; }
 
   /* pinned action bar */
@@ -163,7 +164,7 @@
   let otherRef = '', otherSlot = null, otherDone = false, otherOnline = false, callingAnnounced = false;
   let centresData = [], centresLoaded = false, movesMap = {};
   let prepShown = false, callStepsShown = false, swapIntoShown = false;
-  let motivatorShown = false, endShown = false;
+  let motivatorShown = false, endShown = false, aCallCardShown = false, bCallCardShown = false;
 
   if (!SID || !TK) {
     metaText.textContent = 'Invalid chat link.';
@@ -249,7 +250,7 @@
       else { otherDone = true; if (!myDone && !motivatorShown) { motivatorShown = true; gcard('<div class="g-text">🎉 <b>' + escapeHtml(OTHER_HANDLE) + ' has finished their checks and is ready to call!</b> You\'re almost there — finish your few steps and you can swap together. 💪</div>', false, 'cheer'); } }
       renderProgress(); maybeEndState(); renderActionBar(); return;
     }
-    if (t.indexOf(SIG_CALLING) === 0) { callingAnnounced = true; renderActionBar(); return; }
+    if (t.indexOf(SIG_CALLING) === 0) { callingAnnounced = true; if (!mine && !bCallCardShown) { bCallCardShown = true; gcard('<div class="g-text">📞 <b>The other learner is calling DVSA now — stay right by your phone!</b> DVSA will ring you on your booking number within a few minutes. If you miss it, the swap can\'t go through. Pick up and confirm you agree.</div>', false, 'cheer'); } renderActionBar(); return; }
     renderMessage(m);
   }
 
@@ -444,12 +445,12 @@
 
   function computeWarnings() {
     const w = [];
-    if (myDate) { const wd = workingDaysUntil(myDate); if (wd < 10) w.push('Your test is only about ' + wd + ' working days away. DVSA needs a swap requested at least 10 working days before your test, so it may refuse.'); }
-    if (otherSlot && otherSlot.date) { const wd2 = workingDaysUntil(otherSlot.date); if (wd2 < 10) w.push('The other learner\'s test is only about ' + wd2 + ' working days away, which may be too soon for DVSA to allow a swap.'); }
-    if (myType && otherSlot && otherSlot.type && myType !== otherSlot.type) w.push('Your test types don\'t match — one is a weekday (£62) test and the other an evening/weekend (£75) test. DVSA only swaps like-for-like.');
-    if (myCentre && otherSlot && otherSlot.centre && centresLoaded && !centresCompatible(myCentre, otherSlot.centre)) w.push('Your test centres may not be swap-eligible. From 9 June 2026 you can only swap within your 3 nearest centres (or your original booked centre).');
-    if (myChangesLeft === false) w.push('You said you may not have a test change left — DVSA won\'t allow a swap if you\'ve used both your changes.');
-    if (myInstructorOk === false) w.push('Your instructor hasn\'t confirmed yet — check they agree and can take you to the new slot before you swap.');
+    if (myDate && workingDaysUntil(myDate) < 10) w.push('One of your tests is under 10 working days away — DVSA may say it\'s too soon.');
+    else if (otherSlot && otherSlot.date && workingDaysUntil(otherSlot.date) < 10) w.push('One of your tests is under 10 working days away — DVSA may say it\'s too soon.');
+    if (myType && otherSlot && otherSlot.type && myType !== otherSlot.type) w.push('Your test types differ (weekday £62 vs evening/weekend £75) — swaps must be like-for-like.');
+    if (myCentre && otherSlot && otherSlot.centre && centresLoaded && !centresCompatible(myCentre, otherSlot.centre)) w.push('Your centres may be outside the 3-nearest range allowed from 9 June 2026.');
+    if (myChangesLeft === false) w.push('You might have used both your test changes.');
+    if (myInstructorOk === false) w.push('Double-check your instructor\'s happy with the new slot.');
     return w;
   }
   function refreshWarnings() {
@@ -457,8 +458,8 @@
     if (!(myDone && otherDone)) { if (el) el.remove(); return; } // only after both finish
     const w = computeWarnings();
     if (!w.length) { if (el) el.remove(); return; }
-    const html = '<div class="g-text g-warnbox"><b>⚠️ Heads up before you call — this swap may not be allowed</b><ul>' + w.map(x => '<li>' + escapeHtml(x) + '</li>').join('') + '</ul>You can still talk it through and try, but DVSA may refuse the swap on the call. Full rules: <a href="' + DVSA_URL + '" target="_blank" rel="noopener">DVSA swap guidance</a>.</div>';
-    if (el) { el.innerHTML = html; } else { el = document.createElement('div'); el.id = 'warnCard'; el.className = 'guide'; el.innerHTML = html; stream.appendChild(el); }
+    const html = '<div class="g-text"><b>Almost there! 👇 Just a couple of things worth a quick check before you call:</b><ul style="margin:8px 0 8px 18px;line-height:1.6;">' + w.map(x => '<li>' + escapeHtml(x) + '</li>').join('') + '</ul>It\'s still worth a try — DVSA can only say no. <a href="' + DVSA_URL + '" target="_blank" rel="noopener">See the full rules</a>.</div>';
+    if (el) { el.className = 'guide soft'; el.innerHTML = html; } else { el = document.createElement('div'); el.id = 'warnCard'; el.className = 'guide soft'; el.innerHTML = html; stream.appendChild(el); }
     scrollDown();
   }
 
@@ -496,8 +497,8 @@
       }
     } else {
       if (callingAnnounced) {
-        html += '<div class="ab-go">📞 The other learner is calling DVSA NOW</div>';
-        html += '<div class="ab-sub">Answer your phone — DVSA will ring the number saved on YOUR booking. Confirm you agree to the swap.</div>';
+        html += '<div class="ab-go">📞 They\'re calling DVSA now — stay by your phone!</div>';
+        html += '<div class="ab-sub">DVSA will ring YOU on your booking number within a few minutes. If you miss the call, the swap can\'t complete. Pick up and confirm you agree to the swap.</div>';
       } else if (bothReady && otherOnline) {
         if (!callStepsShown) { callStepsShown = true; showCallStepsForB(); }
         html += '<div class="ab-go">⏳ Ready — wait for the other learner to call</div>';
@@ -516,13 +517,13 @@
     }
 
     abInner.innerHTML = html;
-    const cb = document.getElementById('callBtn'); if (cb) cb.onclick = function () { if (!callingAnnounced) postRaw(SIG_CALLING); window.location.href = 'tel:03002001122'; };
+    const cb = document.getElementById('callBtn'); if (cb) cb.onclick = function () { if (!callingAnnounced) postRaw(SIG_CALLING); if (!aCallCardShown) { aCallCardShown = true; gcard('<div class="g-text">📞 <b>Calling DVSA now — keep this chat open.</b> Once you give them the booking reference, DVSA will ring the other learner (they\'re being told to stay by their phone). Stay on the line until it\'s all sorted.</div>', false, 'cheer'); } window.location.href = 'tel:03002001122'; };
     const cont = document.getElementById('continueBtn'); if (cont) cont.onclick = function () { if (awaiting) scrollDown(); else nextStep(); };
     const here = document.getElementById('hereBtn'); if (here) here.onclick = function () { postRaw('👋 I\'m here! Ready when you are.'); here.disabled = true; here.textContent = 'Sent ✓'; };
   }
 
-  function showCallStepsForA() { gcard('<div class="g-text">📞 <b>You\'re the caller.</b> Here\'s what happens:<ol style="margin:8px 0 0 18px;line-height:1.6;"><li>Call DVSA on <b>0300 200 1122</b>, option 1 (Mon–Fri, 8am–5pm).</li><li>Pass security checks and say you want to swap tests.</li><li>Give them the <b>other learner\'s booking reference</b> (shown in the bar below).</li><li>DVSA puts you on hold and phones the other learner to confirm.</li><li>Once they agree, DVSA completes the swap. Write down your new test details.</li></ol></div>', true); }
-  function showCallStepsForB() { gcard('<div class="g-text">⏳ <b>You wait — the other learner calls.</b> Here\'s what happens:<ol style="margin:8px 0 0 18px;line-height:1.6;"><li>They call DVSA and start the swap.</li><li>DVSA will phone <b>you</b> on the number saved on your booking — keep your line free.</li><li>Pass DVSA\'s security checks and confirm you agree.</li><li>DVSA completes it. Write down your new test details.</li></ol></div>', true); }
+  function showCallStepsForA() { gcard('<div class="g-text">📞 <b>You\'re the caller.</b> Here\'s what happens:<ol style="margin:8px 0 0 18px;line-height:1.6;"><li>Call DVSA on <b>0300 200 1122</b>, option 1 (Mon–Fri, 8am–5pm).</li><li>Pass security checks and say you want to swap tests.</li><li>Give them the <b>other learner\'s booking reference</b> (shown in the bar below).</li><li>DVSA puts you on hold and phones the other learner to confirm.</li><li>Once they agree, DVSA completes the swap. Write down your new test details.</li></ol><div style="margin-top:8px;font-size:13px;color:var(--muted);">If it doesn\'t go through, it\'s usually: a failed security check, the date/time/centre given wrong, the other learner not answering their phone, or both test changes already used.</div></div>', true); }
+  function showCallStepsForB() { gcard('<div class="g-text">⏳ <b>You wait — the other learner calls.</b> Here\'s what happens:<ol style="margin:8px 0 0 18px;line-height:1.6;"><li>They call DVSA and start the swap.</li><li>DVSA will phone <b>you</b> on the number saved on your booking — keep your line free.</li><li>Pass DVSA\'s security checks and confirm you agree.</li><li>DVSA completes it. Write down your new test details.</li></ol><div style="margin-top:8px;font-size:13px;color:var(--muted);">If it doesn\'t go through, it\'s usually: a failed security check, the date/time/centre given wrong, you not answering your phone, or both test changes already used.</div></div>', true); }
 
   // ---------- standard wiring ----------
   sendBtn.addEventListener('click', sendMessage);
