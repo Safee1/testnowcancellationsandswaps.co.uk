@@ -11,7 +11,8 @@
 <style>
   :root {
     --ink: #0A6B36; --ink-soft: #0E8C45; --paper: #F5F0E6; --paper-warm: #EBE3D2;
-    --accent: #D6206E; --muted: #5b6b62;
+    --accent: #D6206E; --muted: #5b6b62; --warn-bg: #fdeaf1; --warn-ink: #a01253;
+    --go-bg: #e3f1e8; --go-ink: #0A6B36; --go-border: #0E8C45;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
@@ -27,9 +28,7 @@
     padding: 16px 24px; display: flex; align-items: center; justify-content: space-between;
     flex-wrap: wrap; gap: 10px;
   }
-  header.bar .title {
-    font-family: 'Fraunces', serif; font-size: 18px; letter-spacing: -0.01em;
-  }
+  header.bar .title { font-family: 'Fraunces', serif; font-size: 18px; letter-spacing: -0.01em; }
   header.bar .meta { font-size: 12px; color: rgba(245,240,230,.7); }
   header.bar .pill {
     font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
@@ -43,6 +42,84 @@
   .complete-btn:hover { opacity: .9; }
   .complete-btn:disabled { opacity: .4; cursor: not-allowed; }
 
+  /* ---------- SWAP KIT ---------- */
+  .kit {
+    background: var(--paper-warm);
+    border-bottom: 1.5px solid rgba(10,107,54,.18);
+    flex-shrink: 0;
+    max-height: 55vh; overflow-y: auto;
+  }
+  .kit-toggle {
+    width: 100%; background: var(--ink-soft); color: var(--paper); border: none;
+    padding: 12px 20px; font-family: 'Fraunces', serif; font-size: 15px;
+    display: flex; align-items: center; justify-content: space-between; cursor: pointer;
+    position: sticky; top: 0; z-index: 2;
+  }
+  .kit-body { padding: 16px 18px 22px; max-width: 760px; margin: 0 auto; }
+  .kit-body.hidden { display: none; }
+  .kit-note { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.45; }
+  .kit-note.small { font-size: 12px; margin-top: 10px; margin-bottom: 0; }
+  .kit-section { margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px dashed rgba(10,107,54,.2); }
+  .kit-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .kit-section h3 { font-family: 'Fraunces', serif; font-size: 15px; margin-bottom: 10px; }
+  .kit-section ul { margin: 0 0 0 18px; font-size: 14px; line-height: 1.6; }
+  .kit-section label {
+    display: flex; align-items: flex-start; gap: 9px; font-size: 14px; line-height: 1.4;
+    margin-bottom: 9px; cursor: pointer;
+  }
+  .kit-section label input { margin-top: 3px; flex-shrink: 0; width: 16px; height: 16px; accent-color: var(--ink); }
+
+  .warn {
+    background: var(--warn-bg); color: var(--warn-ink); border: 1px solid #f3c6da;
+    padding: 10px 12px; border-radius: 10px; font-size: 13px; line-height: 1.45;
+    margin-bottom: 12px; font-weight: 500;
+  }
+
+  .ref-row { display: flex; gap: 8px; margin-bottom: 8px; }
+  .ref-row input {
+    flex: 1; border: 1.5px solid rgba(10,107,54,.3); border-radius: 10px;
+    padding: 10px 12px; font-family: inherit; font-size: 15px; background: var(--paper); color: var(--ink);
+  }
+  .ref-row input:focus { outline: none; border-color: var(--ink); }
+  .ref-row button, .kit-btn {
+    background: var(--ink); color: var(--paper); border: none; padding: 0 18px; height: 44px;
+    border-radius: 10px; font-family: inherit; font-weight: 600; cursor: pointer; font-size: 14px;
+  }
+  .ref-row button:disabled, .kit-btn:disabled { opacity: .4; cursor: not-allowed; }
+  .ref-state { font-size: 13px; color: var(--ink-soft); font-weight: 600; min-height: 18px; }
+
+  .other-ref {
+    margin-top: 12px; background: var(--paper); border: 2px solid var(--ink-soft);
+    border-radius: 12px; padding: 14px;
+  }
+  .other-ref.hidden { display: none; }
+  .other-ref-label { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 6px; }
+  .other-ref-num { font-family: 'Fraunces', serif; font-size: 26px; letter-spacing: .04em; color: var(--ink); word-break: break-all; }
+  .other-ref-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+  .kit-btn { width: 100%; height: 48px; margin-top: 4px; }
+  .ready-state { font-size: 13px; color: var(--muted); margin-top: 10px; line-height: 1.5; }
+  .ready-state b { color: var(--ink); }
+
+  .call-panel {
+    margin-top: 14px; background: var(--go-bg); border: 2px solid var(--go-border);
+    border-radius: 12px; padding: 16px;
+  }
+  .call-panel.hidden { display: none; }
+  .call-go { font-family: 'Fraunces', serif; font-size: 16px; color: var(--go-ink); margin-bottom: 10px; }
+  .call-num { font-size: 16px; font-weight: 600; margin-bottom: 12px; line-height: 1.5; }
+  .call-num a { color: var(--ink); }
+  .call-num span { font-size: 13px; font-weight: 400; color: var(--muted); }
+  .caller-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .caller-row button {
+    background: var(--accent); color: var(--paper); border: none; padding: 10px 16px;
+    border-radius: 999px; font-family: inherit; font-weight: 600; cursor: pointer; font-size: 13px;
+  }
+  .caller-row button:disabled { opacity: .4; cursor: not-allowed; }
+  .caller-row span { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .call-steps { margin: 0 0 0 18px; font-size: 14px; line-height: 1.6; }
+
+  /* ---------- CHAT STREAM ---------- */
   .stream {
     flex: 1; overflow-y: auto; padding: 24px;
     display: flex; flex-direction: column; gap: 10px;
@@ -57,7 +134,7 @@
   .sys  { align-self: center; color: var(--muted); font-size: 12px; padding: 6px 12px; font-style: italic; }
   .info {
     align-self: center; color: var(--muted); font-size: 13px; padding: 12px 16px;
-    background: var(--paper-warm); border-radius: 12px; max-width: 90%; text-align: center;
+    background: var(--paper-warm); border-radius: 12px; max-width: 90%; text-align: center; line-height: 1.5;
   }
 
   .composer {
@@ -95,9 +172,99 @@
   </div>
 </header>
 
+<!-- ================= SWAP KIT ================= -->
+<div class="kit" id="kit">
+  <button class="kit-toggle" id="kitToggle">
+    <span>📋 Swap kit — how to complete your swap</span>
+    <span id="kitChevron">▾</span>
+  </button>
+  <div class="kit-body" id="kitBody">
+
+    <p class="kit-note">
+      A swap means you and the other learner exchange your existing tests. You each call DVSA yourselves — by law no one can do it for you, and it must be done by phone (not online, email, text or WhatsApp). Work through the steps below together.
+    </p>
+
+    <!-- 1. Reference exchange -->
+    <div class="kit-section">
+      <h3>1. Swap booking references</h3>
+      <div class="warn">
+        ⚠️ Share ONLY your booking reference here. NEVER share your driving licence number, payment card, address, phone number or email with the other learner. Give those to DVSA only.
+      </div>
+      <div class="ref-row">
+        <input id="refInput" type="text" inputmode="text" autocomplete="off" placeholder="Your booking reference" />
+        <button id="refShare">Share</button>
+      </div>
+      <p id="myRefState" class="ref-state"></p>
+
+      <div id="otherRefBox" class="other-ref hidden">
+        <div class="other-ref-label">The other learner's booking reference — read this to DVSA</div>
+        <div class="other-ref-num" id="otherRefNum"></div>
+        <div class="other-ref-sub">You will not be asked for their name or contact details — only this reference number.</div>
+      </div>
+    </div>
+
+    <!-- 2. Eligibility -->
+    <div class="kit-section">
+      <h3>2. Check you both qualify</h3>
+      <p class="kit-note">Both of you must be able to tick all of these. If either of you can't, the swap can't go ahead.</p>
+      <label><input type="checkbox" class="elig"> I have at least 1 of my 2 allowed changes left</label>
+      <label><input type="checkbox" class="elig"> My test is at least 10 working days away (Mon–Sat count; Sundays and bank holidays do not)</label>
+      <label><input type="checkbox" class="elig"> Our test centres meet the rule: the same centre, one of my 3 nearest centres, or the centre I first booked at</label>
+      <label><input type="checkbox" class="elig"> We both have the same test type (e.g. weekday £62 with weekday £62, or evening/weekend £75 with the same)</label>
+      <label><input type="checkbox" class="elig"> My instructor agrees I'll be ready, and is free to take me to the new date, time and centre</label>
+    </div>
+
+    <!-- 3. Prep -->
+    <div class="kit-section">
+      <h3>3. Have these in front of you before you call</h3>
+      <ul>
+        <li>Your own driving licence number</li>
+        <li>Your own booking reference number</li>
+        <li>The payment card you booked with (DVSA will <b>never</b> ask for the full number or security code)</li>
+        <li>Details of any driving tests you've taken before</li>
+        <li>The other learner's booking reference (shown in step 1)</li>
+      </ul>
+    </div>
+
+    <!-- 4. Call -->
+    <div class="kit-section">
+      <h3>4. Call DVSA — both of you online at once</h3>
+      <p class="kit-note">
+        You both need to be at your phones at the same time. One of you calls; DVSA puts that person on hold and rings the other learner on the number saved on their booking. Tap below only when you're genuinely ready to call right now.
+      </p>
+      <button class="kit-btn" id="readyBtn" disabled>Tick all of step 2 first</button>
+      <p id="readyState" class="ready-state"></p>
+
+      <div class="call-panel hidden" id="callPanel">
+        <div class="call-go">✅ You're both ready — make the call now</div>
+        <div class="call-num">
+          DVSA: <a href="tel:03002001122">0300 200 1122</a> — choose option 1<br>
+          <span>Monday to Friday, 8am to 5pm</span>
+        </div>
+        <div class="caller-row">
+          <button id="callerBtn">I'll make the call</button>
+          <span id="callerState">Decide between you who calls.</span>
+        </div>
+        <ol class="call-steps">
+          <li>The caller phones DVSA, passes the security checks, and confirms they agree to the swap.</li>
+          <li>The caller gives DVSA the <b>other learner's booking reference</b> (shown in step 1 above).</li>
+          <li>DVSA puts the caller on hold and phones the other learner on the number saved on their booking.</li>
+          <li>The other learner passes security checks and confirms they agree to the swap.</li>
+          <li>DVSA completes the swap. Write down your new test details — you won't get an email, but your next DVSA reminder will show the new slot.</li>
+        </ol>
+        <p class="kit-note small">
+          DVSA won't complete the swap if either of you fails security, doesn't agree, or has used both changes — or if the other learner doesn't answer, or the phone number on their booking is wrong. Check your booking has your correct phone number before you call.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= CHAT ================= -->
 <div class="stream" id="stream">
   <div class="info">
-    You're in an anonymous chat with another learner. You can only see them as a label — never their name or number. Coordinate your swap together and tap "Mark swap complete" when it's done.
+    You're in an anonymous chat with another learner. You can only see them as a label — never their name or number. Use the <b>Swap kit</b> above to exchange booking references and call DVSA, then tap "Mark swap complete" when it's done.
   </div>
 </div>
 
@@ -108,6 +275,12 @@
 
 <script>
   const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
+
+  // markers passed through the chat channel (never shown as messages)
+  const REF_PREFIX = "__TN_REF__:";
+  const READY_PREFIX = "__TN_READY__:";
+  const CALLER_PREFIX = "__TN_CALLER__:";
+  const READY_TTL = 10 * 60 * 1000; // readiness counts as "live" for 10 minutes
 
   const qs = new URLSearchParams(location.search);
   const SID = qs.get('cs') || qs.get('sid') || '';
@@ -121,11 +294,34 @@
   const statusPill = document.getElementById('status-pill');
   const composer = document.getElementById('composer');
 
+  // swap kit elements
+  const kitToggle = document.getElementById('kitToggle');
+  const kitBody = document.getElementById('kitBody');
+  const kitChevron = document.getElementById('kitChevron');
+  const refInput = document.getElementById('refInput');
+  const refShare = document.getElementById('refShare');
+  const myRefState = document.getElementById('myRefState');
+  const otherRefBox = document.getElementById('otherRefBox');
+  const otherRefNum = document.getElementById('otherRefNum');
+  const eligBoxes = Array.from(document.querySelectorAll('.elig'));
+  const readyBtn = document.getElementById('readyBtn');
+  const readyState = document.getElementById('readyState');
+  const callPanel = document.getElementById('callPanel');
+  const callerBtn = document.getElementById('callerBtn');
+  const callerState = document.getElementById('callerState');
+
   let YOU_ARE = '';
   let OTHER_HANDLE = '';
   let LAST_INDEX = 0;
   let SESSION_STATUS = 'open';
   let POLLING = true;
+
+  // swap-kit state
+  let myRef = '';
+  let otherRef = '';
+  let myReadyAt = 0;
+  let otherReadyAt = 0;
+  let callerSide = '';
 
   if (!SID || !TK) {
     meta.textContent = 'Invalid chat link.';
@@ -135,6 +331,7 @@
     initSession();
   }
 
+  // ----- session -----
   function initSession() {
     fetch(SHEET_ENDPOINT + '?action=chatSession&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK))
       .then(r => r.json())
@@ -148,13 +345,14 @@
         if (SESSION_STATUS !== 'open') setClosedUI();
         pollMessages();
       })
-      .catch(err => {
+      .catch(() => {
         meta.textContent = 'Could not open chat.';
         composer.style.display = 'none';
         completeBtn.style.display = 'none';
       });
   }
 
+  // ----- polling -----
   function pollMessages() {
     if (!POLLING) return;
     fetch(SHEET_ENDPOINT + '?action=chatMessages&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK) + '&since=' + LAST_INDEX)
@@ -162,7 +360,7 @@
       .then(d => {
         if (d.result === 'success' && Array.isArray(d.messages)) {
           d.messages.forEach(m => {
-            renderMessage(m);
+            handleIncoming(m);
             LAST_INDEX = Math.max(LAST_INDEX, m.idx + 1);
           });
           if (d.status && d.status !== 'open' && SESSION_STATUS === 'open') {
@@ -172,9 +370,34 @@
         }
       })
       .catch(() => {})
-      .finally(() => {
-        if (POLLING) setTimeout(pollMessages, 2000);
-      });
+      .finally(() => { if (POLLING) setTimeout(pollMessages, 2000); });
+  }
+
+  // decide: is this a hidden marker, or a real chat message?
+  function handleIncoming(m) {
+    const t = String(m.text || '');
+    const fromMe = (m.sender === YOU_ARE);
+
+    if (t.indexOf(REF_PREFIX) === 0) {
+      const ref = t.slice(REF_PREFIX.length);
+      if (fromMe) { myRef = ref; }
+      else { otherRef = ref; }
+      updateKit();
+      return;
+    }
+    if (t.indexOf(READY_PREFIX) === 0) {
+      const ts = parseInt(t.slice(READY_PREFIX.length), 10) || 0;
+      if (fromMe) { myReadyAt = ts; }
+      else { otherReadyAt = ts; }
+      updateKit();
+      return;
+    }
+    if (t.indexOf(CALLER_PREFIX) === 0) {
+      callerSide = t.slice(CALLER_PREFIX.length);
+      updateKit();
+      return;
+    }
+    renderMessage(m);
   }
 
   function renderMessage(m) {
@@ -196,18 +419,143 @@
     stream.scrollTop = stream.scrollHeight;
   }
 
+  // ----- send a normal message -----
   function sendMessage() {
     const text = input.value.trim();
     if (!text || SESSION_STATUS !== 'open') return;
     input.value = '';
+    input.style.height = 'auto';
     sendBtn.disabled = true;
-    fetch(SHEET_ENDPOINT, {
+    postRaw(text).finally(() => { sendBtn.disabled = false; input.focus(); });
+  }
+
+  // ----- send a raw string (used for messages AND markers) -----
+  function postRaw(text) {
+    return fetch(SHEET_ENDPOINT, {
       method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({ action: 'chatSend', sid: SID, tk: TK, text: text })
-    })
-    .finally(() => { sendBtn.disabled = false; input.focus(); });
+    });
   }
+
+  // ================= SWAP KIT LOGIC =================
+
+  kitToggle.addEventListener('click', () => {
+    kitBody.classList.toggle('hidden');
+    kitChevron.textContent = kitBody.classList.contains('hidden') ? '▸' : '▾';
+  });
+
+  // share my booking reference (the ONLY thing safe to exchange)
+  refShare.addEventListener('click', () => {
+    if (SESSION_STATUS !== 'open') return;
+    const ref = refInput.value.trim();
+    if (!ref) { refInput.focus(); return; }
+    if (ref.length > 11) {
+      alert("That looks too long to be a booking reference. Do NOT enter your driving licence number — only your test booking reference (usually about 8 digits).");
+      return;
+    }
+    myRef = ref;
+    myRefState.textContent = 'Sharing your reference…';
+    refShare.disabled = true;
+    postRaw(REF_PREFIX + ref).finally(() => {
+      refShare.disabled = false;
+      updateKit();
+    });
+  });
+
+  // eligibility: enable the readiness button only when all 5 are ticked
+  function allEligible() { return eligBoxes.every(b => b.checked); }
+  eligBoxes.forEach(b => b.addEventListener('change', () => {
+    if (allEligible()) {
+      readyBtn.disabled = false;
+      if (!myReadyAt) readyBtn.textContent = "I'm ready to call now";
+    } else {
+      readyBtn.disabled = true;
+      if (!myReadyAt) readyBtn.textContent = 'Tick all of step 2 first';
+    }
+  }));
+
+  // mark myself ready (timestamped so it expires)
+  readyBtn.addEventListener('click', () => {
+    if (SESSION_STATUS !== 'open' || !allEligible()) return;
+    myReadyAt = Date.now();
+    readyBtn.disabled = true;
+    postRaw(READY_PREFIX + myReadyAt).finally(() => updateKit());
+    updateKit();
+  });
+
+  // say "I'll make the call"
+  callerBtn.addEventListener('click', () => {
+    if (SESSION_STATUS !== 'open') return;
+    callerSide = YOU_ARE;
+    postRaw(CALLER_PREFIX + YOU_ARE).finally(() => updateKit());
+    updateKit();
+  });
+
+  function fresh(ts) { return ts && (Date.now() - ts < READY_TTL); }
+  function minsAgo(ts) {
+    const m = Math.floor((Date.now() - ts) / 60000);
+    if (m <= 0) return 'just now';
+    if (m === 1) return '1 min ago';
+    return m + ' min ago';
+  }
+
+  function updateKit() {
+    // my reference state
+    if (myRef) {
+      myRefState.textContent = '✓ You shared your reference (' + myRef + ')';
+      refInput.value = myRef;
+    }
+
+    // other learner's reference
+    if (otherRef) {
+      otherRefNum.textContent = otherRef;
+      otherRefBox.classList.remove('hidden');
+    }
+
+    // readiness button label after I've marked ready
+    if (myReadyAt) {
+      readyBtn.disabled = true;
+      readyBtn.textContent = fresh(myReadyAt) ? "You're ready ✓" : "Tap again — re-confirm you're ready";
+      if (!fresh(myReadyAt)) {
+        // allow re-confirm once expired (only if still eligible)
+        readyBtn.disabled = !allEligible();
+      }
+    }
+
+    // readiness status text
+    const refsDone = myRef && otherRef;
+    let lines = [];
+    lines.push('You: ' + (fresh(myReadyAt) ? '<b>ready</b> (' + minsAgo(myReadyAt) + ')' : 'not ready yet'));
+    lines.push('Other learner: ' + (fresh(otherReadyAt) ? '<b>ready</b> (' + minsAgo(otherReadyAt) + ')' : 'not ready yet'));
+    if (!refsDone) lines.push('Waiting for both booking references to be shared.');
+    readyState.innerHTML = lines.join('<br>');
+
+    // reveal the call panel only when refs exchanged AND both ready & live
+    const bothLive = fresh(myReadyAt) && fresh(otherReadyAt);
+    if (refsDone && bothLive) {
+      callPanel.classList.remove('hidden');
+    } else {
+      callPanel.classList.add('hidden');
+    }
+
+    // who's calling
+    if (callerSide === YOU_ARE) {
+      callerState.textContent = '📞 You are calling DVSA.';
+      callerBtn.disabled = true;
+    } else if (callerSide && callerSide !== YOU_ARE) {
+      callerState.textContent = 'The other learner is calling DVSA — keep your phone free for their call.';
+      callerBtn.disabled = true;
+    } else {
+      callerState.textContent = 'Decide between you who calls.';
+      callerBtn.disabled = false;
+    }
+  }
+
+  // re-check freshness every 5s so readiness expires correctly
+  setInterval(() => { if (SESSION_STATUS === 'open') updateKit(); }, 5000);
+
+  // ================= STANDARD CHAT WIRING =================
 
   sendBtn.addEventListener('click', sendMessage);
   input.addEventListener('keydown', e => {
@@ -235,6 +583,9 @@
     sendBtn.disabled = true;
     input.disabled = true;
     input.placeholder = 'Chat closed';
+    refShare.disabled = true;
+    readyBtn.disabled = true;
+    callerBtn.disabled = true;
     const banner = document.createElement('div');
     banner.className = 'closed-banner';
     banner.textContent = 'This chat has been closed.';
