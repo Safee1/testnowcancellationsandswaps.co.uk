@@ -13,6 +13,7 @@
     --ink: #0A6B36; --ink-soft: #0E8C45; --paper: #F5F0E6; --paper-warm: #EBE3D2;
     --accent: #D6206E; --muted: #5b6b62; --warn-bg: #fdeaf1; --warn-ink: #a01253;
     --go-bg: #e3f1e8; --go-ink: #0A6B36; --go-border: #0E8C45;
+    --online: #22c55e; --offline: #b8b1a3;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
@@ -25,144 +26,97 @@
 
   header.bar {
     background: var(--ink); color: var(--paper);
-    padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 10px;
+    padding: 11px 18px; display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px; flex-shrink: 0;
   }
-  header.bar .brand { display: flex; align-items: center; gap: 12px; }
-  header.bar .brand img {
-    height: 38px; width: auto; border-radius: 8px; background: var(--paper);
-    padding: 3px; display: block;
-  }
-  header.bar .title { font-family: 'Fraunces', serif; font-size: 17px; letter-spacing: -0.01em; }
-  header.bar .meta { font-size: 12px; color: rgba(245,240,230,.7); }
-  header.bar .pill {
-    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
-    padding: 4px 10px; border-radius: 999px; background: rgba(245,240,230,.15);
-  }
-  .complete-btn {
-    background: var(--accent); color: var(--paper); border: none;
-    padding: 10px 18px; border-radius: 999px; font-family: inherit;
-    font-size: 13px; font-weight: 600; cursor: pointer; letter-spacing: .02em;
-  }
-  .complete-btn:hover { opacity: .9; }
+  header.bar .brand { display: flex; align-items: center; gap: 11px; min-width: 0; }
+  header.bar .brand img { height: 36px; width: auto; border-radius: 8px; background: var(--paper); padding: 3px; display: block; }
+  header.bar .title { font-family: 'Fraunces', serif; font-size: 16px; letter-spacing: -0.01em; }
+  header.bar .meta { font-size: 12px; color: rgba(245,240,230,.72); display: flex; align-items: center; gap: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; background: var(--offline); }
+  .dot.on { background: var(--online); }
+  header.bar .right { display: flex; align-items: center; gap: 10px; }
+  header.bar .pill { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; background: rgba(245,240,230,.15); }
+  .complete-btn { background: var(--accent); color: var(--paper); border: none; padding: 9px 15px; border-radius: 999px; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
   .complete-btn:disabled { opacity: .4; cursor: not-allowed; }
 
-  /* ---------- SWAP KIT ---------- */
-  .kit {
-    background: var(--paper-warm);
-    border-bottom: 1.5px solid rgba(10,107,54,.18);
-    flex-shrink: 0;
-    max-height: 58vh; overflow-y: auto;
+  /* slim action bar to open the swap steps */
+  .openkit-bar { flex-shrink: 0; background: var(--paper-warm); border-bottom: 1.5px solid rgba(10,107,54,.15); padding: 9px 14px; }
+  .openkit-bar button {
+    width: 100%; max-width: 760px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--ink-soft); color: var(--paper); border: none; padding: 11px 14px; border-radius: 12px;
+    font-family: inherit; font-weight: 600; font-size: 14px; cursor: pointer;
   }
-  .kit-toggle {
-    width: 100%; background: var(--ink-soft); color: var(--paper); border: none;
-    padding: 12px 20px; font-family: 'Fraunces', serif; font-size: 15px;
-    display: flex; align-items: center; justify-content: space-between; cursor: pointer;
-    position: sticky; top: 0; z-index: 2;
-  }
-  .kit-body { padding: 16px 18px 22px; max-width: 760px; margin: 0 auto; }
-  .kit-body.hidden { display: none; }
-  .kit-note { font-size: 13px; color: var(--muted); margin-bottom: 14px; line-height: 1.45; }
-  .kit-note.small { font-size: 12px; margin-top: 10px; margin-bottom: 0; }
-  .kit-section { margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px dashed rgba(10,107,54,.2); }
-  .kit-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-  .kit-section h3 { font-family: 'Fraunces', serif; font-size: 15px; margin-bottom: 10px; }
-  .kit-section ul { margin: 0 0 0 18px; font-size: 14px; line-height: 1.6; }
-  .kit-section label {
-    display: flex; align-items: flex-start; gap: 9px; font-size: 14px; line-height: 1.4;
-    margin-bottom: 9px; cursor: pointer;
-  }
-  .kit-section label input { margin-top: 3px; flex-shrink: 0; width: 16px; height: 16px; accent-color: var(--ink); }
 
-  .warn {
-    background: var(--warn-bg); color: var(--warn-ink); border: 1px solid #f3c6da;
-    padding: 10px 12px; border-radius: 10px; font-size: 13px; line-height: 1.45;
-    margin-bottom: 12px; font-weight: 500;
-  }
-  .err { color: var(--warn-ink); font-size: 13px; font-weight: 600; min-height: 18px; margin-top: 2px; }
-  .ok-state { font-size: 13px; color: var(--ink-soft); font-weight: 600; min-height: 18px; margin-top: 2px; }
-
-  .fields { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
-  .field-label { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 4px; display: block; }
-  .kit input[type="text"], .kit input[type="date"], .kit input[type="time"] {
-    width: 100%; border: 1.5px solid rgba(10,107,54,.3); border-radius: 10px;
-    padding: 10px 12px; font-family: inherit; font-size: 15px; background: var(--paper); color: var(--ink);
-  }
-  .kit input:focus { outline: none; border-color: var(--ink); }
-
-  .ref-row { display: flex; gap: 8px; margin-bottom: 6px; }
-  .ref-row input { flex: 1; }
-  .kit-btn {
-    background: var(--ink); color: var(--paper); border: none; padding: 0 18px; height: 44px;
-    border-radius: 10px; font-family: inherit; font-weight: 600; cursor: pointer; font-size: 14px;
-  }
-  .kit-btn.full { width: 100%; height: 48px; margin-top: 4px; }
-  .kit-btn:disabled { opacity: .4; cursor: not-allowed; }
-
-  .shared-box {
-    margin-top: 12px; background: var(--paper); border: 2px solid var(--ink-soft);
-    border-radius: 12px; padding: 14px;
-  }
-  .shared-box.hidden { display: none; }
-  .shared-box .lab { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 6px; }
-  .shared-box .big { font-family: 'Fraunces', serif; font-size: 22px; letter-spacing: .03em; color: var(--ink); word-break: break-word; }
-  .shared-box .sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
-
-  .locked-note { font-size: 13px; color: var(--muted); font-style: italic; }
-  .hidden { display: none; }
-
-  .ready-state { font-size: 13px; color: var(--muted); margin-top: 10px; line-height: 1.6; }
-  .ready-state b { color: var(--ink); }
-
-  .call-panel { margin-top: 14px; background: var(--go-bg); border: 2px solid var(--go-border); border-radius: 12px; padding: 16px; }
-  .call-go { font-family: 'Fraunces', serif; font-size: 16px; color: var(--go-ink); margin-bottom: 10px; }
-  .call-num { font-size: 16px; font-weight: 600; margin-bottom: 12px; line-height: 1.5; }
-  .call-num a { color: var(--ink); }
-  .call-num span { font-size: 13px; font-weight: 400; color: var(--muted); }
-  .caller-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 12px; }
-  .caller-row button { background: var(--accent); color: var(--paper); border: none; padding: 10px 16px; border-radius: 999px; font-family: inherit; font-weight: 600; cursor: pointer; font-size: 13px; }
-  .caller-row button:disabled { opacity: .4; cursor: not-allowed; }
-  .caller-row span { font-size: 13px; font-weight: 600; color: var(--ink); }
-  .call-steps { margin: 0 0 0 18px; font-size: 14px; line-height: 1.6; }
-
-  /* ---------- CHAT STREAM ---------- */
-  .stream {
-    flex: 1; overflow-y: auto; padding: 24px;
-    display: flex; flex-direction: column; gap: 10px;
-    max-width: 760px; width: 100%; margin: 0 auto;
-  }
-  .msg { max-width: 75%; padding: 10px 14px; border-radius: 14px; font-size: 15px; line-height: 1.4; }
+  /* ---------- CHAT ---------- */
+  .stream { flex: 1; overflow-y: auto; padding: 22px 20px; display: flex; flex-direction: column; gap: 10px; max-width: 760px; width: 100%; margin: 0 auto; }
+  .msg { max-width: 78%; padding: 10px 14px; border-radius: 14px; font-size: 15px; line-height: 1.4; }
   .msg .who { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; opacity: .65; margin-bottom: 3px; }
   .msg .when { font-size: 10px; opacity: .55; margin-top: 4px; }
   .me   { align-self: flex-end; background: var(--ink); color: var(--paper); border-bottom-right-radius: 4px; }
   .them { align-self: flex-start; background: var(--paper-warm); color: var(--ink); border-bottom-left-radius: 4px; }
   .mod  { align-self: center; background: var(--accent); color: var(--paper); font-size: 13px; max-width: 90%; text-align: center; }
-  .sys  { align-self: center; color: var(--muted); font-size: 12px; padding: 6px 12px; font-style: italic; text-align: center; }
-  .info {
-    align-self: center; color: var(--muted); font-size: 13px; padding: 12px 16px;
-    background: var(--paper-warm); border-radius: 12px; max-width: 90%; text-align: center; line-height: 1.5;
-  }
+  .sys  { align-self: center; color: var(--muted); font-size: 12.5px; padding: 5px 12px; text-align: center; background: rgba(10,107,54,.06); border-radius: 10px; max-width: 92%; }
+  .info { align-self: center; color: var(--muted); font-size: 13px; padding: 12px 16px; background: var(--paper-warm); border-radius: 12px; max-width: 92%; text-align: center; line-height: 1.5; }
 
-  .composer {
-    border-top: 1.5px solid rgba(10,107,54,.15); padding: 14px 20px; background: var(--paper);
-    display: flex; gap: 10px; max-width: 760px; margin: 0 auto; width: 100%;
-  }
-  .composer textarea {
-    flex: 1; resize: none; border: 1.5px solid rgba(10,107,54,.25); border-radius: 14px;
-    padding: 12px 14px; font-family: inherit; font-size: 15px; line-height: 1.4;
-    background: var(--paper); color: var(--ink); min-height: 46px; max-height: 120px;
-  }
+  .composer { border-top: 1.5px solid rgba(10,107,54,.15); padding: 13px 18px; background: var(--paper); display: flex; gap: 10px; max-width: 760px; margin: 0 auto; width: 100%; flex-shrink: 0; }
+  .composer textarea { flex: 1; resize: none; border: 1.5px solid rgba(10,107,54,.25); border-radius: 14px; padding: 12px 14px; font-family: inherit; font-size: 15px; line-height: 1.4; background: var(--paper); color: var(--ink); min-height: 46px; max-height: 120px; }
   .composer textarea:focus { outline: none; border-color: var(--ink); }
-  .composer button {
-    background: var(--ink); color: var(--paper); border: none; padding: 0 22px;
-    border-radius: 14px; font-family: inherit; font-weight: 600; cursor: pointer;
-  }
+  .composer button { background: var(--ink); color: var(--paper); border: none; padding: 0 22px; border-radius: 14px; font-family: inherit; font-weight: 600; cursor: pointer; }
   .composer button:disabled { opacity: .4; cursor: not-allowed; }
+  .closed-banner { padding: 14px; background: var(--paper-warm); color: var(--ink-soft); text-align: center; font-size: 14px; border-top: 1.5px solid rgba(10,107,54,.15); }
 
-  .closed-banner {
-    padding: 14px; background: var(--paper-warm); color: var(--ink-soft);
-    text-align: center; font-size: 14px; border-top: 1.5px solid rgba(10,107,54,.15);
+  /* ---------- SWAP OVERLAY (full screen) ---------- */
+  .overlay { position: fixed; inset: 0; background: var(--paper); z-index: 50; display: none; flex-direction: column; }
+  .overlay.show { display: flex; }
+  .ov-head { flex-shrink: 0; background: var(--ink); color: var(--paper); padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; }
+  .ov-head .t { font-family: 'Fraunces', serif; font-size: 17px; }
+  .ov-close { background: rgba(245,240,230,.18); color: var(--paper); border: none; width: 34px; height: 34px; border-radius: 50%; font-size: 18px; cursor: pointer; }
+  .ov-body { flex: 1; overflow-y: auto; padding: 18px; max-width: 720px; width: 100%; margin: 0 auto; }
+
+  .step { margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px dashed rgba(10,107,54,.2); }
+  .step:last-child { border-bottom: none; }
+  .step h3 { font-family: 'Fraunces', serif; font-size: 15px; margin-bottom: 9px; }
+  .step ul { margin: 0 0 0 18px; font-size: 14px; line-height: 1.6; }
+  .step label { display: flex; align-items: flex-start; gap: 9px; font-size: 14px; line-height: 1.4; margin-bottom: 9px; cursor: pointer; }
+  .step label input { margin-top: 3px; flex-shrink: 0; width: 16px; height: 16px; accent-color: var(--ink); }
+  .note { font-size: 13px; color: var(--muted); margin-bottom: 12px; line-height: 1.45; }
+  .note.small { font-size: 12px; margin-top: 10px; margin-bottom: 0; }
+  .warn { background: var(--warn-bg); color: var(--warn-ink); border: 1px solid #f3c6da; padding: 10px 12px; border-radius: 10px; font-size: 13px; line-height: 1.45; margin-bottom: 12px; font-weight: 500; }
+  .err { color: var(--warn-ink); font-size: 13px; font-weight: 600; min-height: 18px; margin-top: 2px; }
+  .ok-state { font-size: 13px; color: var(--ink-soft); font-weight: 600; min-height: 18px; margin-top: 2px; }
+
+  .fields { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+  .field-label { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 4px; display: block; }
+  .overlay input[type="text"], .overlay input[type="date"], .overlay input[type="time"] {
+    width: 100%; border: 1.5px solid rgba(10,107,54,.3); border-radius: 10px; padding: 10px 12px;
+    font-family: inherit; font-size: 15px; background: var(--paper); color: var(--ink);
   }
+  .overlay input:focus { outline: none; border-color: var(--ink); }
+  .row { display: flex; gap: 8px; margin-bottom: 6px; }
+  .row input { flex: 1; }
+  .btn { background: var(--ink); color: var(--paper); border: none; padding: 0 18px; height: 44px; border-radius: 10px; font-family: inherit; font-weight: 600; cursor: pointer; font-size: 14px; }
+  .btn.full { width: 100%; height: 48px; margin-top: 4px; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn.go { background: var(--accent); }
+
+  .sbox { margin-top: 12px; background: var(--paper-warm); border: 2px solid var(--ink-soft); border-radius: 12px; padding: 14px; }
+  .sbox.hidden { display: none; }
+  .sbox .lab { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 6px; }
+  .sbox .big { font-family: 'Fraunces', serif; font-size: 22px; letter-spacing: .03em; color: var(--ink); word-break: break-word; }
+  .sbox .sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .hidden { display: none; }
+
+  .presence { display: flex; gap: 18px; margin-bottom: 12px; font-size: 14px; }
+  .presence span { display: flex; align-items: center; gap: 7px; }
+
+  .call-box { background: var(--go-bg); border: 2px solid var(--go-border); border-radius: 12px; padding: 16px; }
+  .call-box .go { font-family: 'Fraunces', serif; font-size: 16px; color: var(--go-ink); margin-bottom: 8px; }
+  .call-num { font-size: 16px; font-weight: 600; margin: 10px 0; line-height: 1.5; }
+  .call-num a { color: var(--ink); }
+  .call-num span { font-size: 13px; font-weight: 400; color: var(--muted); }
+  .call-steps { margin: 10px 0 0 18px; font-size: 14px; line-height: 1.6; }
+  .reason { font-size: 13px; color: var(--muted); margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -175,137 +129,19 @@
       <div class="meta" id="meta">Connecting…</div>
     </div>
   </div>
-  <div style="display:flex; align-items:center; gap:12px;">
+  <div class="right">
     <span class="pill" id="status-pill">Open</span>
-    <button class="complete-btn" id="complete-btn">Mark swap complete</button>
+    <button class="complete-btn" id="complete-btn">Mark complete</button>
   </div>
 </header>
 
-<!-- ================= SWAP KIT ================= -->
-<div class="kit" id="kit">
-  <button class="kit-toggle" id="kitToggle">
-    <span>📋 Swap kit — how to complete your swap</span>
-    <span id="kitChevron">▾</span>
-  </button>
-  <div class="kit-body" id="kitBody">
-
-    <p class="kit-note">
-      A swap means you and the other learner exchange your existing tests. By law you each call DVSA yourselves — no one can do it for you, and it must be done by phone (not online, email, text or WhatsApp). Work through the steps below together.
-    </p>
-
-    <!-- 1. Reference exchange -->
-    <div class="kit-section">
-      <h3>Step 1 — Swap booking references</h3>
-      <div class="warn">
-        ⚠️ Share ONLY your booking reference here. NEVER share your driving licence number, payment card, address, phone number or email with the other learner. Give those to DVSA only.
-      </div>
-      <div class="ref-row">
-        <input id="refInput" type="text" inputmode="numeric" autocomplete="off" placeholder="Your booking reference (numbers from your DVSA email)" />
-        <button class="kit-btn" id="refShare">Share</button>
-      </div>
-      <p id="refErr" class="err"></p>
-      <p id="myRefState" class="ok-state"></p>
-
-      <div id="otherRefBox" class="shared-box hidden">
-        <div class="lab">The other learner's booking reference — read this to DVSA</div>
-        <div class="big" id="otherRefNum"></div>
-        <div class="sub">You will not be asked for their name or contact details — only this reference number.</div>
-      </div>
-    </div>
-
-    <!-- 2. Test details + verify -->
-    <div class="kit-section">
-      <h3>Step 2 — Confirm your test details</h3>
-      <p class="kit-note">Enter the test you have booked now. Once you confirm it's correct, you'll both see the slot you're swapping into, and the eligibility checks will appear.</p>
-      <div class="fields">
-        <div>
-          <label class="field-label" for="tDate">Test date</label>
-          <input id="tDate" type="date" />
-        </div>
-        <div>
-          <label class="field-label" for="tTime">Test time</label>
-          <input id="tTime" type="time" />
-        </div>
-        <div>
-          <label class="field-label" for="tCentre">Test centre</label>
-          <input id="tCentre" type="text" autocomplete="off" placeholder="e.g. Wednesbury" />
-        </div>
-      </div>
-      <button class="kit-btn full" id="verifyBtn">I've checked these are correct</button>
-      <p id="verifyState" class="ok-state"></p>
-
-      <div id="otherTestBox" class="shared-box hidden">
-        <div class="lab">The slot you would swap into</div>
-        <div class="big" id="otherTestDetails"></div>
-        <div class="sub">This is the other learner's current test. Check it works for you and your instructor.</div>
-      </div>
-    </div>
-
-    <!-- 3. Eligibility (revealed after step 2 verified) -->
-    <div class="kit-section">
-      <h3>Step 3 — Check you both qualify</h3>
-      <p id="eligLocked" class="locked-note">Confirm your test details in Step 2 first — the checks will appear here.</p>
-      <div id="eligBlock" class="hidden">
-        <p class="kit-note">Both of you must be able to tick all of these. If either of you can't, the swap can't go ahead.</p>
-        <label><input type="checkbox" class="elig"> I have at least 1 of my 2 allowed changes left</label>
-        <label><input type="checkbox" class="elig"> My test is at least 10 working days away (Mon–Sat count; Sundays and bank holidays do not)</label>
-        <label><input type="checkbox" class="elig"> Our test centres meet the rule: the same centre, one of my 3 nearest centres, or the centre I first booked at</label>
-        <label><input type="checkbox" class="elig"> We both have the same test type (e.g. weekday £62 with weekday £62, or evening/weekend £75 with the same)</label>
-        <label><input type="checkbox" class="elig"> My instructor agrees I'll be ready, and is free to take me to the new date, time and centre</label>
-      </div>
-    </div>
-
-    <!-- 4. Prep -->
-    <div class="kit-section">
-      <h3>Step 4 — Have these in front of you before you call</h3>
-      <ul>
-        <li>Your own driving licence number</li>
-        <li>Your own booking reference number</li>
-        <li>The payment card you booked with (DVSA will <b>never</b> ask for the full number or security code)</li>
-        <li>Details of any driving tests you've taken before</li>
-        <li>The other learner's booking reference (shown in Step 1)</li>
-      </ul>
-    </div>
-
-    <!-- 5. Call -->
-    <div class="kit-section">
-      <h3>Step 5 — Call DVSA, both online at once</h3>
-      <p class="kit-note">
-        You both need to be at your phones at the same time. One of you calls; DVSA puts that person on hold and rings the other learner on the number saved on their booking. Tap below only when you're genuinely ready to call right now.
-      </p>
-      <button class="kit-btn full" id="readyBtn" disabled>Finish Steps 1–3 first</button>
-      <p id="readyState" class="ready-state"></p>
-
-      <div class="call-panel hidden" id="callPanel">
-        <div class="call-go">✅ You're both ready — make the call now</div>
-        <div class="call-num">
-          DVSA: <a href="tel:03002001122">0300 200 1122</a> — choose option 1<br>
-          <span>Monday to Friday, 8am to 5pm</span>
-        </div>
-        <div class="caller-row">
-          <button id="callerBtn">I'll make the call</button>
-          <span id="callerState">Decide between you who calls.</span>
-        </div>
-        <ol class="call-steps">
-          <li>The caller phones DVSA, passes the security checks, and confirms they agree to the swap.</li>
-          <li>The caller gives DVSA the <b>other learner's booking reference</b> (shown in Step 1 above).</li>
-          <li>DVSA puts the caller on hold and phones the other learner on the number saved on their booking.</li>
-          <li>The other learner passes security checks and confirms they agree to the swap.</li>
-          <li>DVSA completes the swap. Write down your new test details — you won't get an email, but your next DVSA reminder will show the new slot.</li>
-        </ol>
-        <p class="kit-note small">
-          DVSA won't complete the swap if either of you fails security, doesn't agree, or has used both changes — or if the other learner doesn't answer, or the phone number on their booking is wrong. Check your booking has your correct phone number before you call.
-        </p>
-      </div>
-    </div>
-
-  </div>
+<div class="openkit-bar">
+  <button id="openKit">📋 Open swap steps — share details &amp; call DVSA</button>
 </div>
 
-<!-- ================= CHAT ================= -->
 <div class="stream" id="stream">
   <div class="info">
-    You're in an anonymous chat with another learner. You can only see them as a label — never their name or number. Use the <b>Swap kit</b> above to share details and call DVSA, then tap "Mark swap complete" when it's done.
+    You're in an anonymous chat with another learner — you'll only ever see them as a label, never their name or number. Tap <b>Open swap steps</b> above to share booking references and call DVSA together. Use the chat below to agree a time to call.
   </div>
 </div>
 
@@ -314,15 +150,102 @@
   <button id="send">Send</button>
 </div>
 
+<!-- ================= SWAP OVERLAY ================= -->
+<div class="overlay" id="overlay">
+  <div class="ov-head">
+    <div class="t">📋 How to complete your swap</div>
+    <button class="ov-close" id="closeKit">✕</button>
+  </div>
+  <div class="ov-body">
+
+    <p class="note">
+      A swap means you and the other learner exchange your existing tests. By law you each deal with DVSA yourselves — no one can do it for you, and it must be done by phone. Work through these together.
+    </p>
+
+    <!-- Step 1: reference -->
+    <div class="step">
+      <h3>Step 1 — Swap booking references</h3>
+      <div class="warn">⚠️ Share ONLY your booking reference here. NEVER share your driving licence number, payment card, address, phone number or email with the other learner — give those to DVSA only.</div>
+      <div class="row">
+        <input id="refInput" type="text" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="Your 8-digit booking reference" />
+        <button class="btn" id="refShare">Share</button>
+      </div>
+      <p id="refErr" class="err"></p>
+      <p id="myRefState" class="ok-state"></p>
+      <div id="otherRefBox" class="sbox hidden">
+        <div class="lab">The other learner's booking reference — read this to DVSA</div>
+        <div class="big" id="otherRefNum"></div>
+        <div class="sub">You won't be asked for their name or contact details — only this reference.</div>
+      </div>
+    </div>
+
+    <!-- Step 2: optional test details -->
+    <div class="step">
+      <h3>Step 2 — Share your test slot <span style="font-weight:400;color:var(--muted);font-size:13px;">(optional)</span></h3>
+      <p class="note">Optional — if you share your current test, the other learner sees exactly what they'd swap into. Don't want to? Skip this and go straight to the checks in Step 3.</p>
+      <div class="fields">
+        <div><label class="field-label" for="tDate">Test date</label><input id="tDate" type="date" /></div>
+        <div><label class="field-label" for="tTime">Test time</label><input id="tTime" type="time" /></div>
+        <div><label class="field-label" for="tCentre">Test centre</label><input id="tCentre" type="text" autocomplete="off" placeholder="e.g. Wednesbury" /></div>
+      </div>
+      <button class="btn full" id="shareTest">Share my test slot</button>
+      <p id="testErr" class="err"></p>
+      <p id="testState" class="ok-state"></p>
+      <div id="otherTestBox" class="sbox hidden">
+        <div class="lab">The slot you would swap into</div>
+        <div class="big" id="otherTestDetails"></div>
+        <div class="sub">Check this works for you and your instructor before swapping.</div>
+      </div>
+    </div>
+
+    <!-- Step 3: eligibility (always available) -->
+    <div class="step">
+      <h3>Step 3 — Check you both qualify</h3>
+      <p class="note">Both of you must be able to tick all of these. If either can't, the swap can't go ahead.</p>
+      <label><input type="checkbox" class="elig"> I have at least 1 of my 2 allowed changes left</label>
+      <label><input type="checkbox" class="elig"> My test is at least 10 working days away (Mon–Sat count; Sundays and bank holidays do not)</label>
+      <label><input type="checkbox" class="elig"> Our test centres meet the rule: the same centre, one of my 3 nearest centres, or the centre I first booked at</label>
+      <label><input type="checkbox" class="elig"> We both have the same test type (e.g. weekday £62 with weekday £62, or evening/weekend £75 with the same)</label>
+      <label><input type="checkbox" class="elig"> My instructor agrees I'll be ready, and is free to take me to the new date, time and centre</label>
+    </div>
+
+    <!-- Step 4: prep -->
+    <div class="step">
+      <h3>Step 4 — Have these in front of you before the call</h3>
+      <ul>
+        <li>Your own driving licence number</li>
+        <li>Your own booking reference number</li>
+        <li>The payment card you booked with (DVSA will <b>never</b> ask for the full number or security code)</li>
+        <li>Details of any driving tests you've taken before</li>
+        <li>The other learner's booking reference (from Step 1)</li>
+      </ul>
+    </div>
+
+    <!-- Step 5: call -->
+    <div class="step">
+      <h3>Step 5 — Call DVSA (both online at once)</h3>
+      <div class="presence">
+        <span><span class="dot on"></span> You: online</span>
+        <span><span class="dot" id="otherDot"></span> <span id="otherPresence">Other learner: offline</span></span>
+      </div>
+      <div id="callArea"></div>
+      <p class="note small">
+        DVSA won't complete the swap if either of you fails security, doesn't agree, or has used both changes — or if the other learner doesn't answer or has the wrong number on their booking. Check your booking has your correct phone number first.
+      </p>
+    </div>
+
+  </div>
+</div>
+
 <script>
   const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
 
-  // Plain-English signal messages. They read naturally in the chat AND drive the kit.
-  const SIG_REF    = "🔖 My booking reference: ";
-  const SIG_TEST   = "📅 My test: ";
-  const SIG_READY  = "✅ I'm ready to call DVSA now";
-  const SIG_CALLER = "📞 I'll make the call to DVSA";
-  const READY_TTL  = 12 * 60 * 1000; // readiness counts as "live" for 12 minutes
+  // plain-English signals — shown as neutral system lines, never as the sender's bubble
+  const SIG_REF     = "🔖 BOOKING_REF:";
+  const SIG_TEST    = "📅 TEST_SLOT:";
+  const SIG_CALLING = "📞 CALLING_NOW";
+  const ONLINE_WINDOW = 20000; // other counts as online if seen within 20s
+  const PING_EVERY = 8000;
 
   const qs = new URLSearchParams(location.search);
   const SID = qs.get('cs') || qs.get('sid') || '';
@@ -336,10 +259,9 @@
   const statusPill = document.getElementById('status-pill');
   const composer = document.getElementById('composer');
 
-  // kit elements
-  const kitToggle = document.getElementById('kitToggle');
-  const kitBody = document.getElementById('kitBody');
-  const kitChevron = document.getElementById('kitChevron');
+  const overlay = document.getElementById('overlay');
+  const openKit = document.getElementById('openKit');
+  const closeKit = document.getElementById('closeKit');
   const refInput = document.getElementById('refInput');
   const refShare = document.getElementById('refShare');
   const refErr = document.getElementById('refErr');
@@ -349,33 +271,26 @@
   const tDate = document.getElementById('tDate');
   const tTime = document.getElementById('tTime');
   const tCentre = document.getElementById('tCentre');
-  const verifyBtn = document.getElementById('verifyBtn');
-  const verifyState = document.getElementById('verifyState');
+  const shareTest = document.getElementById('shareTest');
+  const testErr = document.getElementById('testErr');
+  const testState = document.getElementById('testState');
   const otherTestBox = document.getElementById('otherTestBox');
   const otherTestDetails = document.getElementById('otherTestDetails');
-  const eligLocked = document.getElementById('eligLocked');
-  const eligBlock = document.getElementById('eligBlock');
   const eligBoxes = Array.from(document.querySelectorAll('.elig'));
-  const readyBtn = document.getElementById('readyBtn');
-  const readyState = document.getElementById('readyState');
-  const callPanel = document.getElementById('callPanel');
-  const callerBtn = document.getElementById('callerBtn');
-  const callerState = document.getElementById('callerState');
+  const otherDot = document.getElementById('otherDot');
+  const otherPresence = document.getElementById('otherPresence');
+  const callArea = document.getElementById('callArea');
 
   let YOU_ARE = '';
   let OTHER_HANDLE = '';
   let LAST_INDEX = 0;
   let SESSION_STATUS = 'open';
   let POLLING = true;
-  let firstPollDone = false;
 
-  // kit state
   let myRef = '';
   let otherRef = '';
-  let myVerified = false;
-  let myReadyAt = 0;
-  let otherReadyAt = 0;
-  let callerSide = '';
+  let otherOnline = false;
+  let callingAnnounced = false;
 
   if (tDate) { try { tDate.min = new Date().toISOString().split('T')[0]; } catch (e) {} }
 
@@ -383,6 +298,7 @@
     meta.textContent = 'Invalid chat link.';
     composer.style.display = 'none';
     completeBtn.style.display = 'none';
+    openKit.disabled = true;
   } else {
     initSession();
   }
@@ -396,64 +312,91 @@
         YOU_ARE = d.youAre;
         OTHER_HANDLE = d.otherHandle;
         SESSION_STATUS = d.status;
-        meta.textContent = 'You are ' + (YOU_ARE === 'A' ? 'Learner A' : 'Learner B') + ' · chatting with ' + OTHER_HANDLE;
-        if (d.context) meta.textContent += ' · ' + d.context;
+        meta.innerHTML = 'You are ' + (YOU_ARE === 'A' ? 'Learner A' : 'Learner B') + ' · ' + escapeHtml(OTHER_HANDLE);
         if (SESSION_STATUS !== 'open') setClosedUI();
         pollMessages();
+        pingLoop();
+        updateCall();
       })
       .catch(() => {
         meta.textContent = 'Could not open chat.';
         composer.style.display = 'none';
         completeBtn.style.display = 'none';
+        openKit.disabled = true;
       });
   }
 
-  // ----- polling -----
+  // ----- presence ping (also tells me if the other is live) -----
+  function pingLoop() {
+    if (!POLLING) return;
+    fetch(SHEET_ENDPOINT + '?action=chatPing&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK))
+      .then(r => r.json())
+      .then(d => {
+        if (d.result === 'success') {
+          const otherSeen = (YOU_ARE === 'A') ? d.bSeen : d.aSeen;
+          otherOnline = !!(otherSeen && d.now && (d.now - otherSeen < ONLINE_WINDOW));
+          updatePresence();
+          updateCall();
+        }
+      })
+      .catch(() => {})
+      .finally(() => { if (POLLING) setTimeout(pingLoop, PING_EVERY); });
+  }
+
+  function updatePresence() {
+    otherDot.className = 'dot' + (otherOnline ? ' on' : '');
+    otherPresence.textContent = 'Other learner: ' + (otherOnline ? 'online' : 'offline');
+  }
+
+  // ----- polling for messages -----
   function pollMessages() {
     if (!POLLING) return;
-    const wasFirst = !firstPollDone;
     fetch(SHEET_ENDPOINT + '?action=chatMessages&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK) + '&since=' + LAST_INDEX)
       .then(r => r.json())
       .then(d => {
         if (d.result === 'success' && Array.isArray(d.messages)) {
-          d.messages.forEach(m => {
-            handleIncoming(m, wasFirst);
-            LAST_INDEX = Math.max(LAST_INDEX, m.idx + 1);
-          });
-          if (d.status && d.status !== 'open' && SESSION_STATUS === 'open') {
-            SESSION_STATUS = d.status;
-            setClosedUI();
-          }
+          d.messages.forEach(m => { handleIncoming(m); LAST_INDEX = Math.max(LAST_INDEX, m.idx + 1); });
+          if (d.status && d.status !== 'open' && SESSION_STATUS === 'open') { SESSION_STATUS = d.status; setClosedUI(); }
         }
-        if (wasFirst) firstPollDone = true;
-        updateKit();
       })
       .catch(() => {})
       .finally(() => { if (POLLING) setTimeout(pollMessages, 2000); });
   }
 
-  // Parse signals out of a message, then render it normally (signals read as plain English).
-  // backfill = true means this came from the first history load (not "live now").
-  function handleIncoming(m, backfill) {
+  // signals -> neutral system line + state; everything else -> normal bubble
+  function handleIncoming(m) {
     const t = String(m.text || '');
-    const fromMe = (m.sender === YOU_ARE);
+    const mine = (m.sender === YOU_ARE);
+    const who = mine ? 'You' : OTHER_HANDLE;
 
     if (t.indexOf(SIG_REF) === 0) {
       const ref = t.slice(SIG_REF.length).trim();
-      if (fromMe) myRef = ref; else otherRef = ref;
-    } else if (t.indexOf(SIG_TEST) === 0) {
-      const details = t.slice(SIG_TEST.length).trim();
-      if (!fromMe) { otherTestDetails.textContent = details; otherTestBox.classList.remove('hidden'); }
-    } else if (t.indexOf(SIG_READY) === 0) {
-      // only counts as "live" if it arrived during this live session, not from history
-      const stamp = backfill ? 1 : Date.now();
-      if (fromMe) myReadyAt = stamp; else otherReadyAt = stamp;
-    } else if (t.indexOf(SIG_CALLER) === 0) {
-      // "📞 I'll make the call to DVSA — Learner A" : work out who from sender
-      callerSide = m.sender;
+      if (mine) myRef = ref; else otherRef = ref;
+      renderSys('🔖 ' + who + ' shared a booking reference');
+      updateCall();
+      return;
     }
-
+    if (t.indexOf(SIG_TEST) === 0) {
+      const details = t.slice(SIG_TEST.length).trim();
+      if (!mine) { otherTestDetails.textContent = details; otherTestBox.classList.remove('hidden'); }
+      renderSys('📅 ' + who + ' shared a test slot' + (mine ? '' : ': ' + details));
+      return;
+    }
+    if (t.indexOf(SIG_CALLING) === 0) {
+      callingAnnounced = true;
+      renderSys('📞 ' + who + ' is calling DVSA now');
+      updateCall();
+      return;
+    }
     renderMessage(m);
+  }
+
+  function renderSys(text) {
+    const div = document.createElement('div');
+    div.className = 'sys';
+    div.textContent = text;
+    stream.appendChild(div);
+    stream.scrollTop = stream.scrollHeight;
   }
 
   function renderMessage(m) {
@@ -475,16 +418,13 @@
     stream.scrollTop = stream.scrollHeight;
   }
 
-  // ----- send a normal message -----
+  // ----- send -----
   function sendMessage() {
     const text = input.value.trim();
     if (!text || SESSION_STATUS !== 'open') return;
-    input.value = '';
-    input.style.height = 'auto';
-    sendBtn.disabled = true;
+    input.value = ''; input.style.height = 'auto'; sendBtn.disabled = true;
     postRaw(text).finally(() => { sendBtn.disabled = false; input.focus(); });
   }
-
   function postRaw(text) {
     return fetch(SHEET_ENDPOINT, {
       method: 'POST', mode: 'no-cors',
@@ -493,188 +433,138 @@
     });
   }
 
-  // ================= SWAP KIT LOGIC =================
+  // ================= OVERLAY =================
+  openKit.addEventListener('click', () => { overlay.classList.add('show'); });
+  closeKit.addEventListener('click', () => { overlay.classList.remove('show'); });
 
-  kitToggle.addEventListener('click', () => {
-    kitBody.classList.toggle('hidden');
-    kitChevron.textContent = kitBody.classList.contains('hidden') ? '▸' : '▾';
-  });
-
-  // --- Step 1: booking reference (validated) ---
+  // Step 1: booking reference — must be exactly 8 digits
   refShare.addEventListener('click', () => {
     if (SESSION_STATUS !== 'open') return;
     refErr.textContent = '';
-    const raw = refInput.value.trim();
-    const digits = raw.replace(/\s+/g, '');
-
-    if (!digits) { refErr.textContent = 'Enter your booking reference.'; refInput.focus(); return; }
-    // guard: a GB driving licence number is 16 characters and contains letters — that's NOT a booking reference
-    if (digits.length === 16 || /[a-zA-Z]/.test(digits)) {
-      refErr.textContent = "That looks like your driving licence number. Enter your booking reference instead (numbers only, from your DVSA confirmation).";
-      return;
+    const v = refInput.value.replace(/\s+/g, '');
+    if (/[a-zA-Z]/.test(v) || v.length === 16) {
+      refErr.textContent = "That looks like your licence number. Enter your booking reference instead — 8 digits from your DVSA confirmation."; return;
     }
-    if (!/^[0-9]+$/.test(digits)) {
-      refErr.textContent = 'Your booking reference is numbers only — please check.';
-      return;
+    if (!/^[0-9]{8}$/.test(v)) {
+      refErr.textContent = "Your booking reference is 8 digits (numbers only). Please check it."; return;
     }
-    if (digits.length < 6 || digits.length > 18) {
-      refErr.textContent = "That doesn't look right. Check your booking reference on your DVSA confirmation email or text.";
-      return;
-    }
-
-    myRef = digits;
-    refShare.disabled = true;
-    myRefState.textContent = 'Sharing…';
-    postRaw(SIG_REF + digits).finally(() => { refShare.disabled = false; updateKit(); });
+    myRef = v; refShare.disabled = true; myRefState.textContent = 'Sharing…';
+    postRaw(SIG_REF + v).finally(() => { refShare.disabled = false; updateCall(); });
   });
 
-  // --- Step 2: test details + manual verify ---
-  verifyBtn.addEventListener('click', () => {
+  // Step 2: optional test slot
+  shareTest.addEventListener('click', () => {
     if (SESSION_STATUS !== 'open') return;
-    const d = tDate.value;
-    const tm = tTime.value;
-    const c = tCentre.value.trim();
-    if (!d || !tm || !c) {
-      verifyState.style.color = '';
-      verifyState.textContent = 'Fill in your test date, time and centre first.';
-      return;
-    }
-    myVerified = true;
-    // friendly display, e.g. "12 June 2026 at 09:14, Wednesbury"
+    testErr.textContent = '';
+    const d = tDate.value, tm = tTime.value, c = tCentre.value.trim();
+    if (!d || !tm || !c) { testErr.textContent = 'Fill in date, time and centre to share your slot (or skip this step).'; return; }
     const pretty = formatDate(d) + ' at ' + tm + ', ' + c;
-    verifyBtn.disabled = true;
-    tDate.disabled = true; tTime.disabled = true; tCentre.disabled = true;
-    verifyState.textContent = '✓ Confirmed: ' + pretty;
-    postRaw(SIG_TEST + pretty).finally(() => updateKit());
-    revealEligibility();
-    updateKit();
+    shareTest.disabled = true; tDate.disabled = true; tTime.disabled = true; tCentre.disabled = true;
+    testState.textContent = '✓ Shared: ' + pretty;
+    postRaw(SIG_TEST + pretty);
   });
-
-  function revealEligibility() {
-    eligLocked.classList.add('hidden');
-    eligBlock.classList.remove('hidden');
-  }
 
   function formatDate(iso) {
     try {
-      const parts = iso.split('-');
-      const dt = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-      const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-      return dt.getDate() + ' ' + months[dt.getMonth()] + ' ' + dt.getFullYear();
+      const p = iso.split('-');
+      const dt = new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]));
+      const M = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      return dt.getDate() + ' ' + M[dt.getMonth()] + ' ' + dt.getFullYear();
     } catch (e) { return iso; }
   }
 
-  // --- Step 3: eligibility ticks gate the readiness button ---
+  // Step 3
   function allEligible() { return eligBoxes.length > 0 && eligBoxes.every(b => b.checked); }
-  eligBoxes.forEach(b => b.addEventListener('change', updateKit));
+  eligBoxes.forEach(b => b.addEventListener('change', updateCall));
 
-  // --- Step 5: ready + caller ---
-  readyBtn.addEventListener('click', () => {
-    if (SESSION_STATUS !== 'open' || !readyReady()) return;
-    myReadyAt = Date.now();
-    readyBtn.disabled = true;
-    postRaw(SIG_READY).finally(() => updateKit());
-    updateKit();
-  });
-
-  callerBtn.addEventListener('click', () => {
-    if (SESSION_STATUS !== 'open') return;
-    callerSide = YOU_ARE;
-    postRaw(SIG_CALLER + ' — ' + (YOU_ARE === 'A' ? 'Learner A' : 'Learner B')).finally(() => updateKit());
-    updateKit();
-  });
-
-  // can I tap "ready"? need refs shared, my details verified, all eligibility ticked
-  function readyReady() { return myRef && myVerified && allEligible(); }
-
-  function fresh(ts) { return ts && (Date.now() - ts < READY_TTL); }
-  function minsAgo(ts) {
-    const m = Math.floor((Date.now() - ts) / 60000);
-    if (m <= 0) return 'just now';
-    if (m === 1) return '1 min ago';
-    return m + ' min ago';
-  }
-
-  function updateKit() {
-    // Step 1 — my reference
+  // ================= CALL SECTION (Learner A is the caller) =================
+  function updateCall() {
     if (myRef) {
       myRefState.textContent = '✓ You shared your booking reference (' + myRef + ')';
       if (!refInput.value) refInput.value = myRef;
     }
     if (otherRef) { otherRefNum.textContent = otherRef; otherRefBox.classList.remove('hidden'); }
 
-    // Step 3 — readiness button enablement
-    if (!myReadyAt) {
-      if (readyReady()) { readyBtn.disabled = false; readyBtn.textContent = "I'm ready to call now"; }
-      else { readyBtn.disabled = true; readyBtn.textContent = 'Finish Steps 1–3 first'; }
+    const refsShared = myRef && otherRef;
+    const callerIsMe = (YOU_ARE === 'A'); // Learner A (the listing that started this swap) makes the call
+
+    let html = '';
+
+    if (callerIsMe) {
+      const eligOk = allEligible();
+      const canCall = otherOnline && refsShared && eligOk;
+      if (canCall) {
+        html += '<div class="call-box">';
+        html += '<div class="go">✅ You\'re both online and ready — you make the call</div>';
+        html += '<div class="call-num">Call DVSA: <a href="tel:03002001122">0300 200 1122</a> — option 1<br><span>Monday to Friday, 8am to 5pm</span></div>';
+        html += '<button class="btn go full" id="callBtn">📞 I\'m calling DVSA now</button>';
+        html += '<div class="sbox" style="margin-top:12px;"><div class="lab">Read this booking reference to DVSA</div><div class="big">' + escapeHtml(otherRef) + '</div></div>';
+        html += '<ol class="call-steps">';
+        html += '<li>Pass DVSA\'s security checks and confirm you agree to the swap.</li>';
+        html += '<li>Give DVSA the booking reference shown above.</li>';
+        html += '<li>DVSA puts you on hold and phones the other learner on their booking number.</li>';
+        html += '<li>They confirm they agree, and DVSA completes the swap.</li>';
+        html += '<li>Write down your new test details — your next DVSA reminder will show the new slot.</li>';
+        html += '</ol></div>';
+      } else {
+        html += '<button class="btn full" disabled>📞 Call DVSA now</button>';
+        let reasons = [];
+        if (!otherOnline) reasons.push('the other learner to come online');
+        if (!refsShared) reasons.push('both booking references to be shared (Step 1)');
+        if (!eligOk) reasons.push('all of Step 3 to be ticked');
+        html += '<div class="reason">You\'re the designated caller. Waiting for: ' + reasons.join('; ') + '.</div>';
+      }
     } else {
-      readyBtn.textContent = fresh(myReadyAt) ? "You're ready ✓" : "Tap again to re-confirm you're ready";
-      readyBtn.disabled = fresh(myReadyAt) ? true : !readyReady();
+      // Learner B
+      html += '<div class="call-box">';
+      if (callingAnnounced) {
+        html += '<div class="go">📞 The other learner is calling DVSA now</div>';
+        html += '<div class="reason">Keep your phone free — DVSA will ring you on the number saved on your booking. Pass their security checks and confirm you agree to the swap.</div>';
+      } else if (otherOnline && refsShared) {
+        html += '<div class="go">You\'re both online</div>';
+        html += '<div class="reason">The other learner is the designated caller. Stay on this page — when they call DVSA, DVSA will phone you on your booking number. Have your details ready (Step 4) and confirm you agree when they call.</div>';
+      } else {
+        html += '<div class="reason">Stay online. Once you\'ve both shared booking references (Step 1) and you\'re both online, the other learner will call DVSA, and DVSA will then phone you.</div>';
+      }
+      html += '</div>';
     }
 
-    // Step 5 — status lines
-    const refsDone = myRef && otherRef;
-    let lines = [];
-    lines.push('You: ' + (fresh(myReadyAt) ? '<b>ready</b> (' + minsAgo(myReadyAt) + ')' : 'not ready yet'));
-    lines.push('Other learner: ' + (fresh(otherReadyAt) ? '<b>ready</b> (' + minsAgo(otherReadyAt) + ')' : 'not ready yet'));
-    if (!refsDone) lines.push('Waiting for both booking references to be shared.');
-    readyState.innerHTML = lines.join('<br>');
+    callArea.innerHTML = html;
 
-    // reveal call panel: refs exchanged AND both ready & live
-    if (refsDone && fresh(myReadyAt) && fresh(otherReadyAt)) callPanel.classList.remove('hidden');
-    else callPanel.classList.add('hidden');
-
-    // who's calling
-    if (callerSide === YOU_ARE) { callerState.textContent = '📞 You are calling DVSA.'; callerBtn.disabled = true; }
-    else if (callerSide && callerSide !== YOU_ARE) { callerState.textContent = 'The other learner is calling DVSA — keep your phone free for their call.'; callerBtn.disabled = true; }
-    else { callerState.textContent = 'Decide between you who calls.'; callerBtn.disabled = false; }
+    const cb = document.getElementById('callBtn');
+    if (cb) cb.addEventListener('click', () => {
+      if (!callingAnnounced) postRaw(SIG_CALLING);
+      window.location.href = 'tel:03002001122';
+    });
   }
 
-  setInterval(() => { if (SESSION_STATUS === 'open') updateKit(); }, 5000);
-
-  // ================= STANDARD CHAT WIRING =================
-
+  // ================= STANDARD WIRING =================
   sendBtn.addEventListener('click', sendMessage);
-  input.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-  });
-  input.addEventListener('input', () => {
-    input.style.height = 'auto';
-    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
-  });
+  input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+  input.addEventListener('input', () => { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 120) + 'px'; });
 
   completeBtn.addEventListener('click', () => {
     if (SESSION_STATUS !== 'open') return;
     if (!confirm('Mark this swap as complete? The chat will close for both of you.')) return;
-    fetch(SHEET_ENDPOINT, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK })
-    });
+    fetch(SHEET_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK }) });
   });
 
   function setClosedUI() {
     statusPill.textContent = 'Closed';
     statusPill.style.background = 'rgba(245,240,230,.08)';
-    completeBtn.disabled = true;
-    sendBtn.disabled = true;
-    input.disabled = true;
-    input.placeholder = 'Chat closed';
+    completeBtn.disabled = true; sendBtn.disabled = true; input.disabled = true; input.placeholder = 'Chat closed';
     if (refShare) refShare.disabled = true;
-    if (verifyBtn) verifyBtn.disabled = true;
-    if (readyBtn) readyBtn.disabled = true;
-    if (callerBtn) callerBtn.disabled = true;
+    if (shareTest) shareTest.disabled = true;
     const banner = document.createElement('div');
-    banner.className = 'closed-banner';
-    banner.textContent = 'This chat has been closed.';
+    banner.className = 'closed-banner'; banner.textContent = 'This chat has been closed.';
     composer.parentNode.replaceChild(banner, composer);
     POLLING = false;
+    callArea.innerHTML = '<div class="reason">This chat is closed.</div>';
   }
 
   function escapeHtml(s) {
-    return String(s || '')
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 </script>
 </body>
