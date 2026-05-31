@@ -31,14 +31,15 @@
   .complete-btn { background:var(--accent); color:var(--paper); border:none; padding:9px 15px; border-radius:999px; font-family:inherit; font-size:12px; font-weight:600; cursor:pointer; }
   .complete-btn:disabled { opacity:.4; cursor:not-allowed; }
 
-  /* progress strip */
-  .progress { flex-shrink:0; background:#0c5a2e; color:var(--paper); padding:9px 16px; display:flex; flex-direction:column; gap:6px; }
-  .prow { display:flex; align-items:center; gap:10px; font-size:12px; }
-  .plabel { width:104px; flex-shrink:0; color:rgba(245,240,230,.9); font-weight:600; }
-  .pdots { display:flex; gap:4px; flex-shrink:0; }
-  .pseg { width:30px; height:6px; border-radius:3px; background:rgba(245,240,230,.22); transition:background .3s; }
-  .pseg.on { background:var(--online); }
-  .pstage { color:rgba(245,240,230,.72); font-size:11px; }
+  /* progress strip — high contrast so it's clearly visible */
+  .progress { flex-shrink:0; background:#0b5230; color:#fff; padding:11px 16px; display:flex; flex-direction:column; gap:8px; border-bottom:2px solid rgba(0,0,0,.12); }
+  .ptitle { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.65); margin-bottom:1px; }
+  .prow { display:flex; align-items:center; gap:10px; font-size:13px; }
+  .plabel { width:108px; flex-shrink:0; color:#fff; font-weight:600; }
+  .pdots { display:flex; gap:5px; flex-shrink:0; }
+  .pseg { width:34px; height:8px; border-radius:4px; background:rgba(255,255,255,.30); transition:background .3s; }
+  .pseg.on { background:#34d058; }
+  .pstage { color:rgba(255,255,255,.85); font-size:12px; }
 
   /* chat stream */
   .stream { flex:1; overflow-y:auto; padding:20px 18px; display:flex; flex-direction:column; gap:10px; max-width:760px; width:100%; margin:0 auto; }
@@ -67,6 +68,7 @@
   .g-warnbox li { margin-bottom:5px; }
   .g-warnbox a { color:var(--warn-ink); font-weight:600; }
   .guide.ok { border-left-color:var(--accent); }
+  .guide.cheer { background:#eafaf0; border-left-color:#22c55e; }
   .swapinto { align-self:flex-start; max-width:90%; background:var(--paper-warm); border:1.5px solid var(--ink-soft); border-radius:14px; padding:12px 15px; font-size:14.5px; line-height:1.5; }
 
   /* pinned action bar */
@@ -108,6 +110,7 @@
 </header>
 
 <div class="progress" id="progress" style="display:none;">
+  <div class="ptitle">Swap progress</div>
   <div class="prow"><span class="plabel">You</span><span class="pdots" id="youDots"></span><span class="pstage" id="youStage"></span></div>
   <div class="prow"><span class="plabel" id="otherLabel">Other learner</span><span class="pdots" id="otherDots"></span><span class="pstage" id="otherStage"></span></div>
 </div>
@@ -159,7 +162,8 @@
   let slotSent = false, doneSent = false, myDone = false;
   let otherRef = '', otherSlot = null, otherDone = false, otherOnline = false, callingAnnounced = false;
   let centresData = [], centresLoaded = false, movesMap = {};
-  let prepShown = false, callStepsShown = false, swapIntoShown = false, nudgeSent = false;
+  let prepShown = false, callStepsShown = false, swapIntoShown = false;
+  let motivatorShown = false, endShown = false;
 
   if (!SID || !TK) {
     metaText.textContent = 'Invalid chat link.';
@@ -238,11 +242,12 @@
         otherSlot = { date: p[0] || '', time: p[1] || '', centre: p[2] || '', type: p[3] || '' };
         if (!swapIntoShown) { swapIntoShown = true; const c = document.createElement('div'); c.className = 'swapinto'; c.innerHTML = '↔ <b>The slot you\'d swap into:</b><br>' + escapeHtml(prettySlot(otherSlot)); stream.appendChild(c); scrollDown(); }
       }
-      refreshWarnings(); renderProgress(); renderActionBar(); return;
+      renderProgress(); maybeEndState(); renderActionBar(); return;
     }
     if (t.indexOf(SIG_DONE) === 0) {
-      if (mine) { myDone = true; doneSent = true; } else { otherDone = true; }
-      renderProgress(); renderActionBar(); return;
+      if (mine) { myDone = true; doneSent = true; }
+      else { otherDone = true; if (!myDone && !motivatorShown) { motivatorShown = true; gcard('<div class="g-text">🎉 <b>' + escapeHtml(OTHER_HANDLE) + ' has finished their checks and is ready to call!</b> You\'re almost there — finish your few steps and you can swap together. 💪</div>', false, 'cheer'); } }
+      renderProgress(); maybeEndState(); renderActionBar(); return;
     }
     if (t.indexOf(SIG_CALLING) === 0) { callingAnnounced = true; renderActionBar(); return; }
     renderMessage(m);
@@ -256,7 +261,6 @@
     else { div.className = 'msg them'; div.innerHTML = '<div class="who">' + escapeHtml(OTHER_HANDLE) + '</div>' + escapeHtml(m.text) + '<div class="when">' + m.ts + '</div>'; }
     stream.appendChild(div); scrollDown();
   }
-  function renderSys(text) { const d = document.createElement('div'); d.className = 'sys'; d.textContent = text; stream.appendChild(d); scrollDown(); }
   function scrollDown() { stream.scrollTop = stream.scrollHeight; }
 
   // ---------- progress ----------
@@ -281,12 +285,12 @@
   function postRaw(text) { return fetch(SHEET_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatSend', sid: SID, tk: TK, text: text }) }); }
 
   // ================= GUIDED FLOW =================
-  function gcard(html, ok) { const c = document.createElement('div'); c.className = 'guide' + (ok ? ' ok' : ''); c.innerHTML = html; stream.appendChild(c); scrollDown(); return c; }
+  function gcard(html, ok, extra) { const c = document.createElement('div'); c.className = 'guide' + (ok ? ' ok' : '') + (extra ? ' ' + extra : ''); c.innerHTML = html; stream.appendChild(c); scrollDown(); return c; }
 
   function flowKickoff() {
     if (SESSION_STATUS !== 'open') return;
     if (myDone) { finishSetup(); return; }
-    if (!myRef && !myDate) gcard('<div class="g-text">👋 Let\'s set up your swap. I\'ll ask a few quick questions — answer them and the other learner does the same. First one\'s below.</div>', true);
+    if (!myRef && !myDate) gcard('<div class="g-text">👋 Let\'s set up your swap — it only takes a minute. I\'ll ask a few quick questions; the other learner answers the same. First one\'s below.</div>', true);
     nextStep();
   }
 
@@ -297,7 +301,7 @@
     if (!myTime) return stepTime();
     if (!myCentre) return stepCentre();
     if (!myType) return stepType();
-    if (!slotSent) { slotSent = true; postRaw(SIG_SLOT + [myDate, myTime, myCentre, myType].join('|')); refreshWarnings(); renderProgress(); }
+    if (!slotSent) { slotSent = true; postRaw(SIG_SLOT + [myDate, myTime, myCentre, myType].join('|')); renderProgress(); }
     if (myChangesLeft === null) return stepChanges();
     if (myInstructorOk === null) return stepInstructor();
     return finishSetup();
@@ -331,7 +335,7 @@
     const err = document.createElement('div'); err.className = 'g-err';
     btn.onclick = function () {
       err.textContent = ''; if (!inp.value) { err.textContent = 'Pick your test date.'; return; }
-      myDate = inp.value; awaiting = false; inp.disabled = true; btn.disabled = true; refreshWarnings(); nextStep();
+      myDate = inp.value; awaiting = false; inp.disabled = true; btn.disabled = true; nextStep();
     };
     wrap.appendChild(inp); wrap.appendChild(btn); c.appendChild(wrap); c.appendChild(err); scrollDown();
   }
@@ -390,8 +394,8 @@
     const wrap = document.createElement('div'); wrap.className = 'g-controls';
     const yes = document.createElement('button'); yes.className = 'g-btn'; yes.textContent = 'Yes, I have a change left';
     const no = document.createElement('button'); no.className = 'g-btn alt'; no.textContent = 'No / not sure';
-    yes.onclick = function () { myChangesLeft = true; awaiting = false; yes.disabled = true; no.disabled = true; refreshWarnings(); nextStep(); };
-    no.onclick = function () { myChangesLeft = false; awaiting = false; yes.disabled = true; no.disabled = true; refreshWarnings(); nextStep(); };
+    yes.onclick = function () { myChangesLeft = true; awaiting = false; yes.disabled = true; no.disabled = true; nextStep(); };
+    no.onclick = function () { myChangesLeft = false; awaiting = false; yes.disabled = true; no.disabled = true; nextStep(); };
     wrap.appendChild(yes); wrap.appendChild(no); c.appendChild(wrap); scrollDown();
   }
 
@@ -401,8 +405,8 @@
     const wrap = document.createElement('div'); wrap.className = 'g-controls';
     const yes = document.createElement('button'); yes.className = 'g-btn'; yes.textContent = 'Yes';
     const no = document.createElement('button'); no.className = 'g-btn alt'; no.textContent = 'Not yet';
-    yes.onclick = function () { myInstructorOk = true; awaiting = false; yes.disabled = true; no.disabled = true; refreshWarnings(); nextStep(); };
-    no.onclick = function () { myInstructorOk = false; awaiting = false; yes.disabled = true; no.disabled = true; refreshWarnings(); nextStep(); };
+    yes.onclick = function () { myInstructorOk = true; awaiting = false; yes.disabled = true; no.disabled = true; nextStep(); };
+    no.onclick = function () { myInstructorOk = false; awaiting = false; yes.disabled = true; no.disabled = true; nextStep(); };
     wrap.appendChild(yes); wrap.appendChild(no); c.appendChild(wrap); scrollDown();
   }
 
@@ -410,14 +414,23 @@
     if (!doneSent) { doneSent = true; myDone = true; postRaw(SIG_DONE); renderProgress(); }
     if (!prepShown) {
       prepShown = true;
-      gcard('<div class="g-text">✅ <b>You\'ve shared everything.</b> Before you\'re on the call with DVSA, have these ready:<ul style="margin:8px 0 0 18px;line-height:1.6;"><li>Your driving licence number</li><li>Your booking reference</li><li>The payment card you booked with (DVSA never asks for the full number or security code)</li><li>Details of any tests you\'ve taken before</li><li>The other learner\'s booking reference (I\'ll show it when it\'s time)</li></ul></div>', true);
+      gcard('<div class="g-text">✅ <b>Nice — that\'s your part done!</b> While you wait for the other learner, get these ready for the call:<ul style="margin:8px 0 0 18px;line-height:1.6;"><li>Your driving licence number</li><li>Your booking reference</li><li>The payment card you booked with (DVSA never asks for the full number or security code)</li><li>Details of any tests you\'ve taken before</li><li>The other learner\'s booking reference (I\'ll show it when it\'s time)</li></ul></div>', true);
     }
-    // auto "are you there?" nudge if the other learner hasn't finished
-    if (!otherDone && !nudgeSent) { nudgeSent = true; postRaw('👋 I\'ve finished my side and I\'m ready to call DVSA — are you there? Reply when you\'re set and we\'ll do it together.'); }
-    refreshWarnings(); renderActionBar();
+    maybeEndState(); renderActionBar();
   }
 
-  // ---------- warnings: PERSONAL (only I see) + MUTUAL (both see their own copy) ----------
+  // show warnings / cheer ONLY once both learners have finished
+  function maybeEndState() {
+    if (!(myDone && otherDone)) return;
+    refreshWarnings();
+    if (!endShown) {
+      endShown = true;
+      const w = computeWarnings();
+      if (w.length === 0) gcard('<div class="g-text">🎉 <b>You\'re both ready and everything checks out!</b> Time to sort the call with DVSA — see the bar at the bottom for what to do next.</div>', false, 'cheer');
+    }
+  }
+
+  // ---------- warnings (shown only at the call stage) ----------
   function workingDaysUntil(iso) {
     try {
       const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -429,22 +442,22 @@
   }
   function centresCompatible(a, b) { if (!a || !b) return true; if (a === b) return true; const ma = movesMap[a] || [], mb = movesMap[b] || []; return ma.indexOf(b) >= 0 || mb.indexOf(a) >= 0; }
 
-  function myWarnings() {
+  function computeWarnings() {
     const w = [];
-    // personal — about MY own test only
-    if (myDate) { const wd = workingDaysUntil(myDate); if (wd < 10) w.push('Your test is only about ' + wd + ' working days away. DVSA needs a swap requested at least 10 working days before, so it may refuse.'); }
-    if (myChangesLeft === false) w.push('You said you may not have a test change left — DVSA won\'t allow a swap if you\'ve used both your changes.');
-    if (myInstructorOk === false) w.push('Your instructor hasn\'t confirmed yet — check they agree and can take you to the new slot before you swap.');
-    // mutual — about the pair (both learners see their own copy)
+    if (myDate) { const wd = workingDaysUntil(myDate); if (wd < 10) w.push('Your test is only about ' + wd + ' working days away. DVSA needs a swap requested at least 10 working days before your test, so it may refuse.'); }
+    if (otherSlot && otherSlot.date) { const wd2 = workingDaysUntil(otherSlot.date); if (wd2 < 10) w.push('The other learner\'s test is only about ' + wd2 + ' working days away, which may be too soon for DVSA to allow a swap.'); }
     if (myType && otherSlot && otherSlot.type && myType !== otherSlot.type) w.push('Your test types don\'t match — one is a weekday (£62) test and the other an evening/weekend (£75) test. DVSA only swaps like-for-like.');
     if (myCentre && otherSlot && otherSlot.centre && centresLoaded && !centresCompatible(myCentre, otherSlot.centre)) w.push('Your test centres may not be swap-eligible. From 9 June 2026 you can only swap within your 3 nearest centres (or your original booked centre).');
+    if (myChangesLeft === false) w.push('You said you may not have a test change left — DVSA won\'t allow a swap if you\'ve used both your changes.');
+    if (myInstructorOk === false) w.push('Your instructor hasn\'t confirmed yet — check they agree and can take you to the new slot before you swap.');
     return w;
   }
   function refreshWarnings() {
-    const w = myWarnings();
     let el = document.getElementById('warnCard');
+    if (!(myDone && otherDone)) { if (el) el.remove(); return; } // only after both finish
+    const w = computeWarnings();
     if (!w.length) { if (el) el.remove(); return; }
-    const html = '<div class="g-text g-warnbox"><b>⚠️ Heads up — this swap may not be allowed</b><ul>' + w.map(x => '<li>' + escapeHtml(x) + '</li>').join('') + '</ul>You can still talk it through, but DVSA may refuse the swap on the call. Full rules: <a href="' + DVSA_URL + '" target="_blank" rel="noopener">DVSA swap guidance</a>.</div>';
+    const html = '<div class="g-text g-warnbox"><b>⚠️ Heads up before you call — this swap may not be allowed</b><ul>' + w.map(x => '<li>' + escapeHtml(x) + '</li>').join('') + '</ul>You can still talk it through and try, but DVSA may refuse the swap on the call. Full rules: <a href="' + DVSA_URL + '" target="_blank" rel="noopener">DVSA swap guidance</a>.</div>';
     if (el) { el.innerHTML = html; } else { el = document.createElement('div'); el.id = 'warnCard'; el.className = 'guide'; el.innerHTML = html; stream.appendChild(el); }
     scrollDown();
   }
@@ -459,14 +472,14 @@
     const isA = (YOU_ARE === 'A');
     const refsShared = myRef && otherRef;
     const bothReady = myDone && otherDone;
-    const warnFlag = myWarnings().length > 0;
+    const warnFlag = bothReady && computeWarnings().length > 0;
     let html = '';
 
     if (isA) {
       if (bothReady && otherOnline && refsShared) {
         if (!callStepsShown) { callStepsShown = true; showCallStepsForA(); }
         html += '<div class="ab-go">📞 It\'s your job to call DVSA — do it now</div>';
-        html += '<div class="ab-sub">You\'re both online and ready. Call below; DVSA then rings the other learner. ' + (warnFlag ? '⚠️ Possible issue — see chat.' : '') + '</div>';
+        html += '<div class="ab-sub">You\'re both online and ready. Call below; DVSA then rings the other learner. ' + (warnFlag ? '⚠️ See the heads-up in the chat first.' : '') + '</div>';
         html += '<div class="ab-ref"><div class="l">Read this booking reference to DVSA</div><div class="n">' + escapeHtml(otherRef) + '</div></div>';
         html += '<button class="ab-btn" id="callBtn">📞 Call DVSA — 0300 200 1122</button>';
       } else {
@@ -476,7 +489,7 @@
         if (!otherOnline) need.push('the other learner to come online');
         if (!refsShared) need.push('both booking references shared');
         html += '<div class="ab-grey">📞 You\'ll call DVSA — not ready yet</div>';
-        html += '<div class="ab-sub">Waiting for: ' + need.join('; ') + '.' + (warnFlag ? ' ⚠️ Possible issue — see chat.' : '') + '</div>';
+        html += '<div class="ab-sub">Waiting for: ' + need.join('; ') + '.</div>';
         html += '<button class="ab-btn grey" disabled>📞 Call DVSA — 0300 200 1122</button>';
         if (!myDone) html += '<button class="ab-btn small" id="continueBtn">Continue my questions</button>';
         else html += '<button class="ab-btn small" id="hereBtn">👋 Tell them I\'m here</button>';
@@ -488,7 +501,7 @@
       } else if (bothReady && otherOnline) {
         if (!callStepsShown) { callStepsShown = true; showCallStepsForB(); }
         html += '<div class="ab-go">⏳ Ready — wait for the other learner to call</div>';
-        html += '<div class="ab-sub">They\'ll phone DVSA, then DVSA rings YOU on your booking number. Keep your phone free and stay on this page. ' + (warnFlag ? '⚠️ Possible issue — see chat.' : '') + '</div>';
+        html += '<div class="ab-sub">They\'ll phone DVSA, then DVSA rings YOU on your booking number. Keep your phone free and stay on this page. ' + (warnFlag ? '⚠️ See the heads-up in the chat first.' : '') + '</div>';
         html += '<button class="ab-btn small" id="hereBtn">👋 Nudge them to call</button>';
       } else {
         const need = [];
