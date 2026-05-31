@@ -21,7 +21,7 @@
 
   header.bar { background:var(--ink); color:var(--paper); padding:11px 18px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; flex-shrink:0; }
   header.bar .brand { display:flex; align-items:center; gap:11px; min-width:0; }
-  header.bar .brand img { height:36px; width:auto; border-radius:8px; background:var(--paper); padding:3px; display:block; }
+  header.bar .brand img { height:34px; width:auto; border-radius:8px; background:var(--paper); padding:3px; display:block; }
   header.bar .title { font-family:'Fraunces',serif; font-size:16px; }
   header.bar .meta { font-size:12px; color:rgba(245,240,230,.75); display:flex; align-items:center; gap:6px; margin-top:2px; }
   .dot { width:8px; height:8px; border-radius:50%; display:inline-block; background:var(--offline); }
@@ -30,6 +30,15 @@
   header.bar .pill { font-size:11px; letter-spacing:.12em; text-transform:uppercase; padding:4px 10px; border-radius:999px; background:rgba(245,240,230,.15); }
   .complete-btn { background:var(--accent); color:var(--paper); border:none; padding:9px 15px; border-radius:999px; font-family:inherit; font-size:12px; font-weight:600; cursor:pointer; }
   .complete-btn:disabled { opacity:.4; cursor:not-allowed; }
+
+  /* progress strip */
+  .progress { flex-shrink:0; background:#0c5a2e; color:var(--paper); padding:9px 16px; display:flex; flex-direction:column; gap:6px; }
+  .prow { display:flex; align-items:center; gap:10px; font-size:12px; }
+  .plabel { width:104px; flex-shrink:0; color:rgba(245,240,230,.9); font-weight:600; }
+  .pdots { display:flex; gap:4px; flex-shrink:0; }
+  .pseg { width:30px; height:6px; border-radius:3px; background:rgba(245,240,230,.22); transition:background .3s; }
+  .pseg.on { background:var(--online); }
+  .pstage { color:rgba(245,240,230,.72); font-size:11px; }
 
   /* chat stream */
   .stream { flex:1; overflow-y:auto; padding:20px 18px; display:flex; flex-direction:column; gap:10px; max-width:760px; width:100%; margin:0 auto; }
@@ -42,7 +51,7 @@
   .sys { align-self:center; color:var(--muted); font-size:12.5px; padding:5px 12px; text-align:center; background:rgba(10,107,54,.06); border-radius:10px; max-width:92%; }
   .info { align-self:center; color:var(--muted); font-size:13px; padding:12px 16px; background:var(--paper-warm); border-radius:12px; max-width:92%; text-align:center; line-height:1.5; }
 
-  /* guide (bot) cards */
+  /* guide cards */
   .guide { align-self:flex-start; max-width:90%; background:#fff; border:1.5px solid rgba(10,107,54,.25); border-left:4px solid var(--ink-soft); border-radius:14px; padding:13px 15px; font-size:14.5px; line-height:1.5; }
   .guide .g-text b { color:var(--ink); }
   .g-warn { display:block; margin-top:6px; color:var(--warn-ink); font-size:12.5px; }
@@ -58,6 +67,7 @@
   .g-warnbox li { margin-bottom:5px; }
   .g-warnbox a { color:var(--warn-ink); font-weight:600; }
   .guide.ok { border-left-color:var(--accent); }
+  .swapinto { align-self:flex-start; max-width:90%; background:var(--paper-warm); border:1.5px solid var(--ink-soft); border-radius:14px; padding:12px 15px; font-size:14.5px; line-height:1.5; }
 
   /* pinned action bar */
   .actionbar { flex-shrink:0; border-top:1.5px solid rgba(10,107,54,.15); background:var(--paper-warm); padding:12px 16px; }
@@ -70,7 +80,7 @@
   .ab-ref .n { font-family:'Fraunces',serif; font-size:22px; letter-spacing:.04em; color:var(--ink); }
   .ab-btn { margin-top:10px; width:100%; background:var(--accent); color:var(--paper); border:none; height:50px; border-radius:12px; font-family:inherit; font-weight:600; font-size:16px; cursor:pointer; }
   .ab-btn.grey { background:#cfc7b6; color:#7a7363; cursor:not-allowed; }
-  .ab-btn.small { height:40px; font-size:14px; background:var(--ink); }
+  .ab-btn.small { height:40px; font-size:14px; background:var(--ink); margin-top:8px; }
 
   /* composer */
   .composer { border-top:1.5px solid rgba(10,107,54,.15); padding:12px 18px; background:var(--paper); display:flex; gap:10px; max-width:760px; margin:0 auto; width:100%; flex-shrink:0; }
@@ -97,6 +107,11 @@
   </div>
 </header>
 
+<div class="progress" id="progress" style="display:none;">
+  <div class="prow"><span class="plabel">You</span><span class="pdots" id="youDots"></span><span class="pstage" id="youStage"></span></div>
+  <div class="prow"><span class="plabel" id="otherLabel">Other learner</span><span class="pdots" id="otherDots"></span><span class="pstage" id="otherStage"></span></div>
+</div>
+
 <div class="stream" id="stream">
   <div class="info">
     You're in an anonymous chat with another learner — you only ever see them as a label, never their name or number. I'll guide you both through the swap step by step. You can also chat freely to help each other.
@@ -114,9 +129,8 @@
   const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
   const DVSA_URL = "https://www.gov.uk/guidance/swapping-your-driving-test-with-another-learner-driver";
 
-  // plain-text signals (rendered as neutral lines, never as the sender's own bubble)
   const SIG_REF = "🔖 BOOKING_REF:";
-  const SIG_SLOT = "📅 TEST_SLOT:";       // date|time|centre|type
+  const SIG_SLOT = "📅 TEST_SLOT:";
   const SIG_DONE = "✅ READY_TO_CALL";
   const SIG_CALLING = "📞 CALLING_NOW";
   const ONLINE_WINDOW = 22000;
@@ -135,27 +149,22 @@
   const statusPill = document.getElementById('status-pill');
   const composer = document.getElementById('composer');
   const abInner = document.getElementById('abInner');
+  const progressEl = document.getElementById('progress');
 
   let YOU_ARE = '', OTHER_HANDLE = '', LAST_INDEX = 0, SESSION_STATUS = 'open', POLLING = true;
   let firstPollDone = false, flowStarted = false, awaiting = false;
 
-  // my answers
   let myRef = '', myDate = '', myTime = '', myCentre = '', myType = '';
   let myChangesLeft = null, myInstructorOk = null;
   let slotSent = false, doneSent = false, myDone = false;
-  // other side
   let otherRef = '', otherSlot = null, otherDone = false, otherOnline = false, callingAnnounced = false;
-  // misc
   let centresData = [], centresLoaded = false, movesMap = {};
-  let prepShown = false, callStepsShown = false;
+  let prepShown = false, callStepsShown = false, swapIntoShown = false, nudgeSent = false;
 
   if (!SID || !TK) {
     metaText.textContent = 'Invalid chat link.';
     composer.style.display = 'none'; completeBtn.style.display = 'none'; abInner.innerHTML = '';
-  } else {
-    loadCentres();
-    initSession();
-  }
+  } else { loadCentres(); initSession(); }
 
   // ---------- session ----------
   function initSession() {
@@ -165,6 +174,9 @@
         if (d.result !== 'success') throw new Error(d.message || 'failed');
         YOU_ARE = d.youAre; OTHER_HANDLE = d.otherHandle; SESSION_STATUS = d.status;
         metaText.textContent = 'You are ' + (YOU_ARE === 'A' ? 'Learner A' : 'Learner B') + ' · ' + OTHER_HANDLE;
+        progressEl.style.display = 'flex';
+        document.getElementById('otherLabel').textContent = OTHER_HANDLE;
+        renderProgress();
         if (SESSION_STATUS !== 'open') setClosedUI();
         pollMessages(); pingLoop();
       })
@@ -172,19 +184,13 @@
   }
 
   function loadCentres() {
-    fetch(SHEET_ENDPOINT + '?action=centres')
-      .then(r => r.json())
-      .then(d => {
-        if (d.result === 'success' && Array.isArray(d.centres)) {
-          centresData = d.centres;
-          centresData.forEach(it => {
-            const m = (it.moves || []).map(x => String(x).split(' - ')[0].trim()).filter(Boolean);
-            movesMap[it.centre] = m;
-          });
-          centresLoaded = true;
-        }
-      })
-      .catch(() => {});
+    fetch(SHEET_ENDPOINT + '?action=centres').then(r => r.json()).then(d => {
+      if (d.result === 'success' && Array.isArray(d.centres)) {
+        centresData = d.centres;
+        centresData.forEach(it => { movesMap[it.centre] = (it.moves || []).map(x => String(x).split(' - ')[0].trim()).filter(Boolean); });
+        centresLoaded = true;
+      }
+    }).catch(() => {});
   }
 
   // ---------- presence ----------
@@ -199,9 +205,7 @@
           otherDot.className = 'dot' + (otherOnline ? ' on' : '');
           renderActionBar();
         }
-      })
-      .catch(() => {})
-      .finally(() => { if (POLLING) setTimeout(pingLoop, PING_EVERY); });
+      }).catch(() => {}).finally(() => { if (POLLING) setTimeout(pingLoop, PING_EVERY); });
   }
 
   // ---------- message poll ----------
@@ -215,9 +219,7 @@
           if (d.status && d.status !== 'open' && SESSION_STATUS === 'open') { SESSION_STATUS = d.status; setClosedUI(); }
         }
         if (!firstPollDone) { firstPollDone = true; if (!flowStarted) { flowStarted = true; flowKickoff(); } }
-      })
-      .catch(() => {})
-      .finally(() => { if (POLLING) setTimeout(pollMessages, 2000); });
+      }).catch(() => {}).finally(() => { if (POLLING) setTimeout(pollMessages, 2000); });
   }
 
   function handleIncoming(m) {
@@ -226,26 +228,23 @@
 
     if (t.indexOf(SIG_REF) === 0) {
       const ref = t.slice(SIG_REF.length).trim();
-      if (mine) { if (!myRef) myRef = ref; }
-      else { otherRef = ref; renderSys('🔖 ' + OTHER_HANDLE + ' shared a booking reference'); }
-      renderActionBar(); return;
+      if (mine) { if (!myRef) myRef = ref; } else { otherRef = ref; }
+      renderProgress(); renderActionBar(); return;
     }
     if (t.indexOf(SIG_SLOT) === 0) {
       const p = t.slice(SIG_SLOT.length).split('|');
       if (mine) { myDate = myDate || p[0]; myTime = myTime || p[1]; myCentre = myCentre || p[2]; myType = myType || p[3]; slotSent = true; }
-      else { otherSlot = { date: p[0] || '', time: p[1] || '', centre: p[2] || '', type: p[3] || '' }; renderSys('📅 ' + OTHER_HANDLE + "'s test: " + prettySlot(otherSlot)); }
-      refreshWarnings(); renderActionBar(); return;
+      else {
+        otherSlot = { date: p[0] || '', time: p[1] || '', centre: p[2] || '', type: p[3] || '' };
+        if (!swapIntoShown) { swapIntoShown = true; const c = document.createElement('div'); c.className = 'swapinto'; c.innerHTML = '↔ <b>The slot you\'d swap into:</b><br>' + escapeHtml(prettySlot(otherSlot)); stream.appendChild(c); scrollDown(); }
+      }
+      refreshWarnings(); renderProgress(); renderActionBar(); return;
     }
     if (t.indexOf(SIG_DONE) === 0) {
-      if (mine) { myDone = true; doneSent = true; }
-      else { otherDone = true; renderSys('✅ ' + OTHER_HANDLE + ' has finished their checks and is ready to call'); }
-      renderActionBar(); return;
+      if (mine) { myDone = true; doneSent = true; } else { otherDone = true; }
+      renderProgress(); renderActionBar(); return;
     }
-    if (t.indexOf(SIG_CALLING) === 0) {
-      callingAnnounced = true;
-      renderSys((mine ? '📞 You are' : '📞 ' + OTHER_HANDLE + ' is') + ' calling DVSA now');
-      renderActionBar(); return;
-    }
+    if (t.indexOf(SIG_CALLING) === 0) { callingAnnounced = true; renderActionBar(); return; }
     renderMessage(m);
   }
 
@@ -257,9 +256,20 @@
     else { div.className = 'msg them'; div.innerHTML = '<div class="who">' + escapeHtml(OTHER_HANDLE) + '</div>' + escapeHtml(m.text) + '<div class="when">' + m.ts + '</div>'; }
     stream.appendChild(div); scrollDown();
   }
-
   function renderSys(text) { const d = document.createElement('div'); d.className = 'sys'; d.textContent = text; stream.appendChild(d); scrollDown(); }
   function scrollDown() { stream.scrollTop = stream.scrollHeight; }
+
+  // ---------- progress ----------
+  function stageOf(ref, slot, done) { if (done) return 3; if (slot) return 2; if (ref) return 1; return 0; }
+  function setDots(id, stage) { let h = ''; for (let i = 1; i <= 3; i++) h += '<span class="pseg' + (i <= stage ? ' on' : '') + '"></span>'; document.getElementById(id).innerHTML = h; }
+  function setStage(id, stage) { const t = ['Getting started…', 'Booking reference ✓', 'Test details ✓', 'Ready to call ✓']; document.getElementById(id).textContent = t[stage]; }
+  function renderProgress() {
+    if (!YOU_ARE) return;
+    const mine = stageOf(myRef, slotSent, myDone);
+    const oth = stageOf(otherRef, !!otherSlot, otherDone);
+    setDots('youDots', mine); setStage('youStage', mine);
+    setDots('otherDots', oth); setStage('otherStage', oth);
+  }
 
   // ---------- send ----------
   function sendMessage() {
@@ -268,9 +278,7 @@
     input.value = ''; input.style.height = 'auto'; sendBtn.disabled = true;
     postRaw(text).finally(() => { sendBtn.disabled = false; input.focus(); });
   }
-  function postRaw(text) {
-    return fetch(SHEET_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatSend', sid: SID, tk: TK, text: text }) });
-  }
+  function postRaw(text) { return fetch(SHEET_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatSend', sid: SID, tk: TK, text: text }) }); }
 
   // ================= GUIDED FLOW =================
   function gcard(html, ok) { const c = document.createElement('div'); c.className = 'guide' + (ok ? ' ok' : ''); c.innerHTML = html; stream.appendChild(c); scrollDown(); return c; }
@@ -278,7 +286,7 @@
   function flowKickoff() {
     if (SESSION_STATUS !== 'open') return;
     if (myDone) { finishSetup(); return; }
-    if (!myRef && !myDate) { gcard('<div class="g-text">👋 Let\'s set up your swap. I\'ll ask a few quick questions — answer them and the other learner does the same. First up below.</div>', true); }
+    if (!myRef && !myDate) gcard('<div class="g-text">👋 Let\'s set up your swap. I\'ll ask a few quick questions — answer them and the other learner does the same. First one\'s below.</div>', true);
     nextStep();
   }
 
@@ -289,7 +297,7 @@
     if (!myTime) return stepTime();
     if (!myCentre) return stepCentre();
     if (!myType) return stepType();
-    if (!slotSent) { slotSent = true; postRaw(SIG_SLOT + [myDate, myTime, myCentre, myType].join('|')); renderSys('✓ You shared your test slot'); refreshWarnings(); }
+    if (!slotSent) { slotSent = true; postRaw(SIG_SLOT + [myDate, myTime, myCentre, myType].join('|')); refreshWarnings(); renderProgress(); }
     if (myChangesLeft === null) return stepChanges();
     if (myInstructorOk === null) return stepInstructor();
     return finishSetup();
@@ -297,7 +305,7 @@
 
   function stepRef() {
     awaiting = true;
-    const c = gcard('<div class="g-text"><b>Step 1 of 6 — Booking reference.</b> What\'s your <b>8-digit booking reference</b>? It\'s on your DVSA confirmation email or text message.<span class="g-warn">Share ONLY this. Never share your licence number, payment card, address, phone or email with the other learner.</span></div>');
+    const c = gcard('<div class="g-text"><b>Step 1 of 6 — Booking reference.</b> What\'s your <b>8-digit booking reference</b>? It\'s on your DVSA confirmation email or text.<span class="g-warn">Share ONLY this. Never share your licence number, payment card, address, phone or email.</span></div>');
     const wrap = document.createElement('div'); wrap.className = 'g-controls';
     const inp = document.createElement('input'); inp.type = 'text'; inp.setAttribute('inputmode', 'numeric'); inp.maxLength = 8; inp.placeholder = 'e.g. 68194673';
     const btn = document.createElement('button'); btn.className = 'g-btn'; btn.textContent = 'Share';
@@ -308,7 +316,7 @@
       if (/[a-zA-Z]/.test(v) || v.length === 16) { err.textContent = 'That looks like a driving licence number. Enter your 8-digit booking reference instead.'; return; }
       if (!/^[0-9]{8}$/.test(v)) { err.textContent = 'Your booking reference is 8 digits, numbers only. Please check it.'; return; }
       myRef = v; awaiting = false; inp.disabled = true; btn.disabled = true;
-      postRaw(SIG_REF + v); renderSys('✓ You shared your booking reference (' + v + ')'); nextStep();
+      postRaw(SIG_REF + v); renderProgress(); nextStep();
     };
     wrap.appendChild(inp); wrap.appendChild(btn); c.appendChild(wrap); c.appendChild(err); scrollDown(); inp.focus();
   }
@@ -322,12 +330,8 @@
     const btn = document.createElement('button'); btn.className = 'g-btn'; btn.textContent = 'Next';
     const err = document.createElement('div'); err.className = 'g-err';
     btn.onclick = function () {
-      err.textContent = '';
-      if (!inp.value) { err.textContent = 'Pick your test date.'; return; }
-      myDate = inp.value; awaiting = false; inp.disabled = true; btn.disabled = true;
-      const wd = workingDaysUntil(myDate);
-      if (wd < 10) renderSys('⚠️ Your test is about ' + wd + ' working days away. DVSA needs swaps at least 10 working days before — see the warning I\'ll show shortly.');
-      nextStep();
+      err.textContent = ''; if (!inp.value) { err.textContent = 'Pick your test date.'; return; }
+      myDate = inp.value; awaiting = false; inp.disabled = true; btn.disabled = true; refreshWarnings(); nextStep();
     };
     wrap.appendChild(inp); wrap.appendChild(btn); c.appendChild(wrap); c.appendChild(err); scrollDown();
   }
@@ -345,19 +349,15 @@
 
   function stepCentre() {
     awaiting = true;
-    const c = gcard('<div class="g-text"><b>Step 4 of 6 — Test centre.</b> Which test centre is your test at?<span class="g-warn">From 9 June 2026 you can only swap with someone at the same centre, one of your 3 nearest centres, or your original booked centre.</span></div>');
+    const c = gcard('<div class="g-text"><b>Step 4 of 6 — Test centre.</b> Which test centre is your test at?<span class="g-warn">From 9 June 2026 you can only swap with the same centre, one of your 3 nearest, or your original booked centre.</span></div>');
     const wrap = document.createElement('div'); wrap.className = 'g-controls';
     const err = document.createElement('div'); err.className = 'g-err';
     const btn = document.createElement('button'); btn.className = 'g-btn'; btn.textContent = 'Next';
     let control;
-    if (centresLoaded && centresData.length) {
-      control = buildCentreSelect();
-    } else {
-      control = document.createElement('input'); control.type = 'text'; control.placeholder = 'Type your test centre, e.g. Wednesbury';
-    }
+    if (centresLoaded && centresData.length) control = buildCentreSelect();
+    else { control = document.createElement('input'); control.type = 'text'; control.placeholder = 'Type your test centre, e.g. Wednesbury'; }
     btn.onclick = function () {
-      err.textContent = '';
-      const v = (control.value || '').trim();
+      err.textContent = ''; const v = (control.value || '').trim();
       if (!v) { err.textContent = 'Choose or type your test centre.'; return; }
       myCentre = v; awaiting = false; control.disabled = true; btn.disabled = true; nextStep();
     };
@@ -369,11 +369,7 @@
     const def = document.createElement('option'); def.value = ''; def.textContent = '— choose your centre —'; sel.appendChild(def);
     const byReg = {};
     centresData.forEach(it => { (byReg[it.region] = byReg[it.region] || []).push(it.centre); });
-    Object.keys(byReg).sort().forEach(reg => {
-      const og = document.createElement('optgroup'); og.label = reg;
-      byReg[reg].sort().forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; og.appendChild(o); });
-      sel.appendChild(og);
-    });
+    Object.keys(byReg).sort().forEach(reg => { const og = document.createElement('optgroup'); og.label = reg; byReg[reg].sort().forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; og.appendChild(o); }); sel.appendChild(og); });
     return sel;
   }
 
@@ -383,9 +379,8 @@
     const wrap = document.createElement('div'); wrap.className = 'g-controls';
     const b1 = document.createElement('button'); b1.className = 'g-btn'; b1.textContent = 'Weekday (£62)';
     const b2 = document.createElement('button'); b2.className = 'g-btn alt'; b2.textContent = 'Evening / weekend (£75)';
-    function pick(val) { myType = val; awaiting = false; b1.disabled = true; b2.disabled = true; nextStep(); }
-    b1.onclick = function () { pick('weekday'); };
-    b2.onclick = function () { pick('weekend'); };
+    function pick(v) { myType = v; awaiting = false; b1.disabled = true; b2.disabled = true; nextStep(); }
+    b1.onclick = function () { pick('weekday'); }; b2.onclick = function () { pick('weekend'); };
     wrap.appendChild(b1); wrap.appendChild(b2); c.appendChild(wrap); scrollDown();
   }
 
@@ -395,8 +390,8 @@
     const wrap = document.createElement('div'); wrap.className = 'g-controls';
     const yes = document.createElement('button'); yes.className = 'g-btn'; yes.textContent = 'Yes, I have a change left';
     const no = document.createElement('button'); no.className = 'g-btn alt'; no.textContent = 'No / not sure';
-    yes.onclick = function () { myChangesLeft = true; awaiting = false; yes.disabled = true; no.disabled = true; nextStep(); };
-    no.onclick = function () { myChangesLeft = false; awaiting = false; yes.disabled = true; no.disabled = true; renderSys('⚠️ Without a change left, DVSA may not let you swap. I\'ll flag this below.'); nextStep(); };
+    yes.onclick = function () { myChangesLeft = true; awaiting = false; yes.disabled = true; no.disabled = true; refreshWarnings(); nextStep(); };
+    no.onclick = function () { myChangesLeft = false; awaiting = false; yes.disabled = true; no.disabled = true; refreshWarnings(); nextStep(); };
     wrap.appendChild(yes); wrap.appendChild(no); c.appendChild(wrap); scrollDown();
   }
 
@@ -406,22 +401,23 @@
     const wrap = document.createElement('div'); wrap.className = 'g-controls';
     const yes = document.createElement('button'); yes.className = 'g-btn'; yes.textContent = 'Yes';
     const no = document.createElement('button'); no.className = 'g-btn alt'; no.textContent = 'Not yet';
-    yes.onclick = function () { myInstructorOk = true; awaiting = false; yes.disabled = true; no.disabled = true; nextStep(); };
-    no.onclick = function () { myInstructorOk = false; awaiting = false; yes.disabled = true; no.disabled = true; renderSys('⚠️ Check with your instructor before swapping — I\'ll flag this below.'); nextStep(); };
+    yes.onclick = function () { myInstructorOk = true; awaiting = false; yes.disabled = true; no.disabled = true; refreshWarnings(); nextStep(); };
+    no.onclick = function () { myInstructorOk = false; awaiting = false; yes.disabled = true; no.disabled = true; refreshWarnings(); nextStep(); };
     wrap.appendChild(yes); wrap.appendChild(no); c.appendChild(wrap); scrollDown();
   }
 
   function finishSetup() {
-    if (!doneSent) { doneSent = true; myDone = true; postRaw(SIG_DONE); }
+    if (!doneSent) { doneSent = true; myDone = true; postRaw(SIG_DONE); renderProgress(); }
     if (!prepShown) {
       prepShown = true;
       gcard('<div class="g-text">✅ <b>You\'ve shared everything.</b> Before you\'re on the call with DVSA, have these ready:<ul style="margin:8px 0 0 18px;line-height:1.6;"><li>Your driving licence number</li><li>Your booking reference</li><li>The payment card you booked with (DVSA never asks for the full number or security code)</li><li>Details of any tests you\'ve taken before</li><li>The other learner\'s booking reference (I\'ll show it when it\'s time)</li></ul></div>', true);
     }
-    refreshWarnings();
-    renderActionBar();
+    // auto "are you there?" nudge if the other learner hasn't finished
+    if (!otherDone && !nudgeSent) { nudgeSent = true; postRaw('👋 I\'ve finished my side and I\'m ready to call DVSA — are you there? Reply when you\'re set and we\'ll do it together.'); }
+    refreshWarnings(); renderActionBar();
   }
 
-  // ---------- compatibility warnings (soft) ----------
+  // ---------- warnings: PERSONAL (only I see) + MUTUAL (both see their own copy) ----------
   function workingDaysUntil(iso) {
     try {
       const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -431,23 +427,21 @@
       return count;
     } catch (e) { return 99; }
   }
-  function centresCompatible(a, b) {
-    if (!a || !b) return true;
-    if (a === b) return true;
-    const ma = movesMap[a] || [], mb = movesMap[b] || [];
-    return ma.indexOf(b) >= 0 || mb.indexOf(a) >= 0;
-  }
-  function computeWarnings() {
+  function centresCompatible(a, b) { if (!a || !b) return true; if (a === b) return true; const ma = movesMap[a] || [], mb = movesMap[b] || []; return ma.indexOf(b) >= 0 || mb.indexOf(a) >= 0; }
+
+  function myWarnings() {
     const w = [];
-    if (myDate) { const wd = workingDaysUntil(myDate); if (wd < 10) w.push('Your test is only about ' + wd + ' working days away. DVSA needs a swap requested at least 10 working days before your test, so it may refuse.'); }
-    if (otherSlot && otherSlot.date) { const wd2 = workingDaysUntil(otherSlot.date); if (wd2 < 10) w.push('The other learner\'s test is only about ' + wd2 + ' working days away, which may be too soon for DVSA to allow a swap.'); }
-    if (myType && otherSlot && otherSlot.type && myType !== otherSlot.type) w.push('Your test types are different — one is a weekday (£62) test and the other an evening/weekend (£75) test. DVSA only swaps like-for-like.');
-    if (myCentre && otherSlot && otherSlot.centre && centresLoaded && !centresCompatible(myCentre, otherSlot.centre)) w.push('Your test centres may not be swap-eligible. From 9 June 2026 you can only swap within your 3 nearest centres (or your original booked centre).');
+    // personal — about MY own test only
+    if (myDate) { const wd = workingDaysUntil(myDate); if (wd < 10) w.push('Your test is only about ' + wd + ' working days away. DVSA needs a swap requested at least 10 working days before, so it may refuse.'); }
     if (myChangesLeft === false) w.push('You said you may not have a test change left — DVSA won\'t allow a swap if you\'ve used both your changes.');
+    if (myInstructorOk === false) w.push('Your instructor hasn\'t confirmed yet — check they agree and can take you to the new slot before you swap.');
+    // mutual — about the pair (both learners see their own copy)
+    if (myType && otherSlot && otherSlot.type && myType !== otherSlot.type) w.push('Your test types don\'t match — one is a weekday (£62) test and the other an evening/weekend (£75) test. DVSA only swaps like-for-like.');
+    if (myCentre && otherSlot && otherSlot.centre && centresLoaded && !centresCompatible(myCentre, otherSlot.centre)) w.push('Your test centres may not be swap-eligible. From 9 June 2026 you can only swap within your 3 nearest centres (or your original booked centre).');
     return w;
   }
   function refreshWarnings() {
-    const w = computeWarnings();
+    const w = myWarnings();
     let el = document.getElementById('warnCard');
     if (!w.length) { if (el) el.remove(); return; }
     const html = '<div class="g-text g-warnbox"><b>⚠️ Heads up — this swap may not be allowed</b><ul>' + w.map(x => '<li>' + escapeHtml(x) + '</li>').join('') + '</ul>You can still talk it through, but DVSA may refuse the swap on the call. Full rules: <a href="' + DVSA_URL + '" target="_blank" rel="noopener">DVSA swap guidance</a>.</div>';
@@ -455,29 +449,24 @@
     scrollDown();
   }
 
-  function prettySlot(s) {
-    const tl = s.type === 'weekday' ? 'weekday £62' : (s.type === 'weekend' ? 'evening/weekend £75' : '');
-    return formatDate(s.date) + ' at ' + s.time + ', ' + s.centre + (tl ? ' (' + tl + ')' : '');
-  }
-  function formatDate(iso) {
-    try { const p = iso.split('-'); const dt = new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2])); const M = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']; return dt.getDate() + ' ' + M[dt.getMonth()] + ' ' + dt.getFullYear(); } catch (e) { return iso; }
-  }
+  function prettySlot(s) { const tl = s.type === 'weekday' ? 'weekday £62' : (s.type === 'weekend' ? 'evening/weekend £75' : ''); return formatDate(s.date) + ' at ' + s.time + ', ' + s.centre + (tl ? ' (' + tl + ')' : ''); }
+  function formatDate(iso) { try { const p = iso.split('-'); const dt = new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2])); const M = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']; return dt.getDate() + ' ' + M[dt.getMonth()] + ' ' + dt.getFullYear(); } catch (e) { return iso; } }
 
-  // ================= ACTION BAR (call coordination) =================
+  // ================= ACTION BAR =================
   function renderActionBar() {
     if (SESSION_STATUS !== 'open') { abInner.innerHTML = '<div class="ab-grey">Chat closed.</div>'; return; }
     if (!YOU_ARE) { abInner.innerHTML = ''; return; }
     const isA = (YOU_ARE === 'A');
     const refsShared = myRef && otherRef;
     const bothReady = myDone && otherDone;
-    const warnFlag = computeWarnings().length > 0;
+    const warnFlag = myWarnings().length > 0;
     let html = '';
 
     if (isA) {
       if (bothReady && otherOnline && refsShared) {
         if (!callStepsShown) { callStepsShown = true; showCallStepsForA(); }
         html += '<div class="ab-go">📞 It\'s your job to call DVSA — do it now</div>';
-        html += '<div class="ab-sub">You\'re both online and ready. Call the number below; DVSA will then ring the other learner. ' + (warnFlag ? '⚠️ Possible issue — see chat.' : '') + '</div>';
+        html += '<div class="ab-sub">You\'re both online and ready. Call below; DVSA then rings the other learner. ' + (warnFlag ? '⚠️ Possible issue — see chat.' : '') + '</div>';
         html += '<div class="ab-ref"><div class="l">Read this booking reference to DVSA</div><div class="n">' + escapeHtml(otherRef) + '</div></div>';
         html += '<button class="ab-btn" id="callBtn">📞 Call DVSA — 0300 200 1122</button>';
       } else {
@@ -490,15 +479,17 @@
         html += '<div class="ab-sub">Waiting for: ' + need.join('; ') + '.' + (warnFlag ? ' ⚠️ Possible issue — see chat.' : '') + '</div>';
         html += '<button class="ab-btn grey" disabled>📞 Call DVSA — 0300 200 1122</button>';
         if (!myDone) html += '<button class="ab-btn small" id="continueBtn">Continue my questions</button>';
+        else html += '<button class="ab-btn small" id="hereBtn">👋 Tell them I\'m here</button>';
       }
     } else {
       if (callingAnnounced) {
         html += '<div class="ab-go">📞 The other learner is calling DVSA NOW</div>';
-        html += '<div class="ab-sub">Answer your phone — DVSA will ring the number saved on YOUR booking. Confirm you agree to the swap when they ask.</div>';
+        html += '<div class="ab-sub">Answer your phone — DVSA will ring the number saved on YOUR booking. Confirm you agree to the swap.</div>';
       } else if (bothReady && otherOnline) {
         if (!callStepsShown) { callStepsShown = true; showCallStepsForB(); }
         html += '<div class="ab-go">⏳ Ready — wait for the other learner to call</div>';
         html += '<div class="ab-sub">They\'ll phone DVSA, then DVSA rings YOU on your booking number. Keep your phone free and stay on this page. ' + (warnFlag ? '⚠️ Possible issue — see chat.' : '') + '</div>';
+        html += '<button class="ab-btn small" id="hereBtn">👋 Nudge them to call</button>';
       } else {
         const need = [];
         if (!myDone) need.push('finish your questions');
@@ -507,22 +498,18 @@
         html += '<div class="ab-grey">⏳ Waiting — the other learner makes the call</div>';
         html += '<div class="ab-sub">Waiting for: ' + need.join('; ') + '.</div>';
         if (!myDone) html += '<button class="ab-btn small" id="continueBtn">Continue my questions</button>';
+        else html += '<button class="ab-btn small" id="hereBtn">👋 Tell them I\'m here</button>';
       }
     }
 
     abInner.innerHTML = html;
-    const cb = document.getElementById('callBtn');
-    if (cb) cb.onclick = function () { if (!callingAnnounced) postRaw(SIG_CALLING); window.location.href = 'tel:03002001122'; };
-    const cont = document.getElementById('continueBtn');
-    if (cont) cont.onclick = function () { if (awaiting) { scrollDown(); } else { nextStep(); } };
+    const cb = document.getElementById('callBtn'); if (cb) cb.onclick = function () { if (!callingAnnounced) postRaw(SIG_CALLING); window.location.href = 'tel:03002001122'; };
+    const cont = document.getElementById('continueBtn'); if (cont) cont.onclick = function () { if (awaiting) scrollDown(); else nextStep(); };
+    const here = document.getElementById('hereBtn'); if (here) here.onclick = function () { postRaw('👋 I\'m here! Ready when you are.'); here.disabled = true; here.textContent = 'Sent ✓'; };
   }
 
-  function showCallStepsForA() {
-    gcard('<div class="g-text">📞 <b>You\'re the caller.</b> Here\'s exactly what happens:<ol style="margin:8px 0 0 18px;line-height:1.6;"><li>Call DVSA on <b>0300 200 1122</b>, option 1 (Mon–Fri, 8am–5pm).</li><li>Pass their security checks and say you want to swap tests.</li><li>Give them the <b>other learner\'s booking reference</b> (shown in the bar below).</li><li>DVSA puts you on hold and phones the other learner to confirm.</li><li>Once they agree, DVSA completes the swap. Write down your new test details.</li></ol></div>', true);
-  }
-  function showCallStepsForB() {
-    gcard('<div class="g-text">⏳ <b>You wait — the other learner calls.</b> Here\'s what happens:<ol style="margin:8px 0 0 18px;line-height:1.6;"><li>They call DVSA and start the swap.</li><li>DVSA will phone <b>you</b> on the number saved on your booking — so keep your line free.</li><li>Pass DVSA\'s security checks and confirm you agree to the swap.</li><li>DVSA completes it. Write down your new test details.</li></ol></div>', true);
-  }
+  function showCallStepsForA() { gcard('<div class="g-text">📞 <b>You\'re the caller.</b> Here\'s what happens:<ol style="margin:8px 0 0 18px;line-height:1.6;"><li>Call DVSA on <b>0300 200 1122</b>, option 1 (Mon–Fri, 8am–5pm).</li><li>Pass security checks and say you want to swap tests.</li><li>Give them the <b>other learner\'s booking reference</b> (shown in the bar below).</li><li>DVSA puts you on hold and phones the other learner to confirm.</li><li>Once they agree, DVSA completes the swap. Write down your new test details.</li></ol></div>', true); }
+  function showCallStepsForB() { gcard('<div class="g-text">⏳ <b>You wait — the other learner calls.</b> Here\'s what happens:<ol style="margin:8px 0 0 18px;line-height:1.6;"><li>They call DVSA and start the swap.</li><li>DVSA will phone <b>you</b> on the number saved on your booking — keep your line free.</li><li>Pass DVSA\'s security checks and confirm you agree.</li><li>DVSA completes it. Write down your new test details.</li></ol></div>', true); }
 
   // ---------- standard wiring ----------
   sendBtn.addEventListener('click', sendMessage);
@@ -543,9 +530,7 @@
     composer.parentNode.replaceChild(banner, composer); POLLING = false;
   }
 
-  // periodic refresh so presence/time-based UI stays current
   setInterval(() => { if (SESSION_STATUS === 'open') renderActionBar(); }, 5000);
-
   function escapeHtml(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
 </script>
 </body>
