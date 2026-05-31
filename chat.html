@@ -107,10 +107,10 @@
 </div>
 
 <script>
-  const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbxpe8NkaNRxaBdEIJusOfDHWBKbnKnzMoX0DwT-JoxFr2QHjseTO_t0gTlc4P3iaiH4/exec";
+  const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
 
   const qs = new URLSearchParams(location.search);
-  const SID = qs.get('sid') || '';
+  const SID = qs.get('cs') || qs.get('sid') || '';
   const TK = qs.get('tk') || '';
 
   const stream = document.getElementById('stream');
@@ -136,7 +136,7 @@
   }
 
   function initSession() {
-    fetch(SHEET_ENDPOINT + '?action=chatSession&sid=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK))
+    fetch(SHEET_ENDPOINT + '?action=chatSession&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK))
       .then(r => r.json())
       .then(d => {
         if (d.result !== 'success') throw new Error(d.message || 'failed');
@@ -157,7 +157,7 @@
 
   function pollMessages() {
     if (!POLLING) return;
-    fetch(SHEET_ENDPOINT + '?action=chatMessages&sid=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK) + '&since=' + LAST_INDEX)
+    fetch(SHEET_ENDPOINT + '?action=chatMessages&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK) + '&since=' + LAST_INDEX)
       .then(r => r.json())
       .then(d => {
         if (d.result === 'success' && Array.isArray(d.messages)) {
