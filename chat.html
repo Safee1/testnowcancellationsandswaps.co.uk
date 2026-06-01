@@ -92,6 +92,25 @@
   .composer button { background:var(--ink); color:var(--paper); border:none; padding:0 22px; border-radius:14px; font-family:inherit; font-weight:600; cursor:pointer; }
   .composer button:disabled { opacity:.4; cursor:not-allowed; }
   .closed-banner { padding:14px; background:var(--paper-warm); color:var(--ink-soft); text-align:center; font-size:14px; border-top:1.5px solid rgba(10,107,54,.15); }
+
+  /* quick-reply chips */
+  .chips { flex-shrink:0; display:flex; gap:8px; overflow-x:auto; padding:9px 14px; background:var(--paper); border-top:1px solid rgba(10,107,54,.1); -webkit-overflow-scrolling:touch; }
+  .chips::-webkit-scrollbar { height:0; }
+  .chip { flex-shrink:0; white-space:nowrap; background:var(--paper-warm); color:var(--ink); border:1.5px solid rgba(10,107,54,.3); border-radius:999px; padding:8px 14px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; }
+  .chip:hover { background:#e3dcc9; }
+  .chip:active { transform:scale(.97); }
+
+  /* outcome modal */
+  .modal { position:fixed; inset:0; background:rgba(10,40,24,.55); z-index:80; display:none; align-items:center; justify-content:center; padding:20px; }
+  .modal.show { display:flex; }
+  .modal-card { background:var(--paper); border-radius:18px; padding:20px; max-width:380px; width:100%; max-height:85vh; overflow-y:auto; }
+  .modal-card h3 { font-family:'Fraunces',serif; font-size:18px; margin-bottom:4px; }
+  .modal-card p { font-size:13px; color:var(--muted); margin-bottom:14px; }
+  .outcome-btn { width:100%; text-align:left; background:#fff; border:1.5px solid rgba(10,107,54,.25); border-radius:12px; padding:13px 14px; font-family:inherit; font-size:14.5px; font-weight:600; color:var(--ink); cursor:pointer; margin-bottom:9px; }
+  .outcome-btn:hover { border-color:var(--ink); }
+  .outcome-btn.good { border-left:4px solid #22c55e; }
+  .outcome-btn.bad { border-left:4px solid var(--accent); }
+  .modal-cancel { width:100%; background:none; border:none; color:var(--muted); font-family:inherit; font-size:14px; padding:10px; cursor:pointer; margin-top:2px; }
 </style>
 </head>
 <body>
@@ -106,7 +125,7 @@
   </div>
   <div class="right">
     <span class="pill" id="status-pill">Open</span>
-    <button class="complete-btn" id="complete-btn">Mark complete</button>
+    <button class="complete-btn" id="complete-btn">🏁 Finish</button>
   </div>
 </header>
 
@@ -124,9 +143,24 @@
 
 <div class="actionbar" id="actionbar"><div class="inner" id="abInner"></div></div>
 
+<div class="chips" id="chips" style="display:none;"></div>
+
 <div class="composer" id="composer">
   <textarea id="input" placeholder="Type a message…" rows="1"></textarea>
   <button id="send">Send</button>
+</div>
+
+<div class="modal" id="outcomeModal">
+  <div class="modal-card">
+    <h3>How did the swap go?</h3>
+    <p>This records the outcome and closes the chat for both of you.</p>
+    <button class="outcome-btn good" data-msg="✅ Swap completed — we did it!">✅ Swap completed</button>
+    <button class="outcome-btn bad" data-msg="❌ DVSA refused or cancelled the swap.">❌ DVSA refused / cancelled it</button>
+    <button class="outcome-btn bad" data-msg="📵 The other learner didn't answer the phone, so it couldn't complete.">📵 No answer on the phone</button>
+    <button class="outcome-btn bad" data-msg="🔐 A security check failed at DVSA, so it couldn't complete.">🔐 Security check failed</button>
+    <button class="outcome-btn bad" data-msg="📅 Our tests weren't eligible (date/time/centre or type), so DVSA couldn't swap.">📅 Not eligible (date/time/centre)</button>
+    <button class="modal-cancel" id="modalCancel">← Keep chatting</button>
+  </div>
 </div>
 
 <script>
@@ -182,6 +216,7 @@
         progressEl.style.display = 'flex';
         document.getElementById('otherLabel').textContent = OTHER_HANDLE;
         renderProgress();
+        if (SESSION_STATUS === 'open') buildChips();
         if (SESSION_STATUS !== 'open') setClosedUI();
         pollMessages(); pingLoop();
       })
@@ -482,6 +517,7 @@
         html += '<div class="ab-go">📞 It\'s your job to call DVSA — do it now</div>';
         html += '<div class="ab-sub">You\'re both online and ready. Call below; DVSA then rings the other learner. ' + (warnFlag ? '⚠️ See the heads-up in the chat first.' : '') + '</div>';
         html += '<div class="ab-ref"><div class="l">Read this booking reference to DVSA</div><div class="n">' + escapeHtml(otherRef) + '</div></div>';
+        html += '<button class="ab-btn small" id="copyRefBtn">📋 Copy reference</button>';
         html += '<button class="ab-btn" id="callBtn">📞 Call DVSA — 0300 200 1122</button>';
       } else {
         const need = [];
@@ -518,6 +554,7 @@
 
     abInner.innerHTML = html;
     const cb = document.getElementById('callBtn'); if (cb) cb.onclick = function () { if (!callingAnnounced) postRaw(SIG_CALLING); if (!aCallCardShown) { aCallCardShown = true; gcard('<div class="g-text">📞 <b>Calling DVSA now — keep this chat open.</b> Once you give them the booking reference, DVSA will ring the other learner (they\'re being told to stay by their phone). Stay on the line until it\'s all sorted.</div>', false, 'cheer'); } window.location.href = 'tel:03002001122'; };
+    const copyBtn = document.getElementById('copyRefBtn'); if (copyBtn) copyBtn.onclick = function () { copyText(otherRef, copyBtn); };
     const cont = document.getElementById('continueBtn'); if (cont) cont.onclick = function () { if (awaiting) scrollDown(); else nextStep(); };
     const here = document.getElementById('hereBtn'); if (here) here.onclick = function () { postRaw('👋 I\'m here! Ready when you are.'); here.disabled = true; here.textContent = 'Sent ✓'; };
   }
@@ -532,14 +569,67 @@
 
   completeBtn.addEventListener('click', () => {
     if (SESSION_STATUS !== 'open') return;
-    if (!confirm('Mark this swap as complete? The chat will close for both of you.')) return;
-    fetch(SHEET_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK }) });
+    document.getElementById('outcomeModal').classList.add('show');
   });
+
+  // outcome modal wiring
+  (function () {
+    const modal = document.getElementById('outcomeModal');
+    const cancel = document.getElementById('modalCancel');
+    if (cancel) cancel.onclick = function () { modal.classList.remove('show'); };
+    document.querySelectorAll('.outcome-btn').forEach(b => {
+      b.onclick = function () {
+        if (SESSION_STATUS !== 'open') { modal.classList.remove('show'); return; }
+        const msg = b.getAttribute('data-msg');
+        postRaw('🏁 Outcome: ' + msg);
+        setTimeout(function () { fetch(SHEET_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK }) }); }, 350);
+        modal.classList.remove('show');
+      };
+    });
+  })();
+
+  // quick-reply chips (role-aware), keep both sides interactive
+  function buildChips() {
+    const chips = document.getElementById('chips');
+    if (!chips) return;
+    const common = [
+      ['👋 I\'m here', '👋 I\'m here! Ready when you are.'],
+      ['⏱️ Give me 5', 'Give me about 5 minutes ⏱️'],
+      ['❓ What stage are you on?', 'What stage are you on?'],
+      ['❓ How long will you be?', 'How long will you be?'],
+      ['👍 Ready when you are', 'I\'m ready when you are 👍']
+    ];
+    const role = (YOU_ARE === 'A')
+      ? [['📞 Calling now', '📞 I\'m calling DVSA now — stay close to your phone, they\'ll ring you!']]
+      : [['📱 By my phone', '📱 I\'m right by my phone, ready for DVSA to call.']];
+    const all = common.concat(role);
+    chips.innerHTML = '';
+    all.forEach(function (pair) {
+      const b = document.createElement('button');
+      b.className = 'chip';
+      b.textContent = pair[0];
+      b.onclick = function () { if (SESSION_STATUS === 'open') postRaw(pair[1]); };
+      chips.appendChild(b);
+    });
+    chips.style.display = 'flex';
+  }
+
+  function copyText(txt, btn) {
+    function done() { if (btn) { const old = btn.textContent; btn.textContent = 'Copied ✓'; setTimeout(function () { btn.textContent = old; }, 1500); } }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(txt).then(done).catch(function () { fallbackCopy(txt, done); }); }
+      else fallbackCopy(txt, done);
+    } catch (e) { fallbackCopy(txt, done); }
+  }
+  function fallbackCopy(txt, done) {
+    try { const ta = document.createElement('textarea'); ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); done(); } catch (e) {}
+  }
 
   function setClosedUI() {
     statusPill.textContent = 'Closed'; statusPill.style.background = 'rgba(245,240,230,.08)';
     completeBtn.disabled = true; sendBtn.disabled = true; input.disabled = true; input.placeholder = 'Chat closed';
     abInner.innerHTML = '<div class="ab-grey">This chat is closed.</div>';
+    const chipsEl = document.getElementById('chips'); if (chipsEl) chipsEl.style.display = 'none';
     const banner = document.createElement('div'); banner.className = 'closed-banner'; banner.textContent = 'This chat has been closed.';
     composer.parentNode.replaceChild(banner, composer); POLLING = false;
   }
