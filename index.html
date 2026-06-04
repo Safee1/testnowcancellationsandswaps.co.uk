@@ -120,15 +120,21 @@
   nav.links a { opacity: .75; transition: opacity .2s; }
   nav.links a:hover { opacity: 1; }
   .btn {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     padding: 12px 22px;
     border-radius: 999px;
     font-weight: 500;
     font-size: 14px;
+    line-height: 1;
     transition: all .2s ease;
     cursor: pointer;
     border: none;
     font-family: inherit;
+    text-align: center;
+    white-space: nowrap;
   }
   .btn-primary {
     background: var(--ink);
@@ -774,6 +780,48 @@
     .consent-btns { width: 100%; }
     .consent-btns .btn { flex: 1; text-align: center; }
   }
+
+  /* ===== SWAP-CARD CLEANUP + BUTTON POLISH ===== */
+  @media (max-width: 600px) {
+    /* Turn the overlapping rotated cards into a clean vertical stack */
+    .swap-illo {
+      position: static;
+      height: auto;
+      max-width: 360px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    .swap-card {
+      position: static;
+      transform: none !important;
+      width: 100%;
+      max-width: 340px;
+      padding: 18px 20px;
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+    .swap-card.a { margin: 0; }
+    .swap-card.b { box-shadow: 4px 4px 0 var(--accent); }
+    .swap-card h3 { font-size: 15px; margin-bottom: 12px; }
+    .swap-card .row { font-size: 13px; padding: 6px 0; }
+    .swap-card .stamp { margin-top: 12px; }
+
+    /* Arrow becomes a neat connector sitting between the two cards */
+    .swap-arrow {
+      position: static;
+      transform: none;
+      animation: none;
+      width: 44px;
+      height: 44px;
+      font-size: 20px;
+      margin: -10px 0;          /* slight overlap onto the cards' gap */
+      z-index: 3;
+      box-shadow: 0 2px 8px rgba(0,0,0,.18);
+    }
+    .swap-arrow span { animation: none; transform: rotate(90deg); } /* point down between stacked cards */
+  }
 </style>
 </head>
 <body>
@@ -808,7 +856,7 @@
         Swap your DVSA practical test date with another learner who wants yours. Free, anonymous, and human — no bots, no fees, no cancellation roulette.
       </p>
       <div class="cta-row">
-        <a href="#swap" class="btn btn-primary">List my test &nbsp;→</a>
+        <a href="#swap" class="btn btn-primary">List my test <span aria-hidden="true">→</span></a>
         <a href="#how" class="btn btn-ghost">How does it work?</a>
       </div>
       <p class="cta-note" style="margin-top:18px;">No account required. Takes about 90 seconds.</p>
@@ -1008,7 +1056,7 @@
         </div>
       </div>
       <div class="form-submit">
-        <button type="submit" class="btn btn-primary">Submit my listing &nbsp;→</button>
+        <button type="submit" class="btn btn-primary">Submit my listing <span aria-hidden="true">→</span></button>
         <small>By submitting, you agree we can contact you about a potential swap. We'll never share your details without your say-so.</small>
       </div>
     </form>
@@ -1156,7 +1204,7 @@
           );
           if (!proceed) {
             btn.disabled = false;
-            btn.innerHTML = 'Submit my listing &nbsp;→';
+            btn.innerHTML = 'Submit my listing <span aria-hidden="true">→</span>';
             return;
           }
         }
@@ -1199,13 +1247,13 @@
         alert("Thanks! Your swap has been listed. We'll be in touch when we find a match.");
         form.reset();
         btn.disabled = false;
-        btn.innerHTML = 'Submit my listing &nbsp;→';
+        btn.innerHTML = 'Submit my listing <span aria-hidden="true">→</span>';
         btn.style.background = '';
       }, 500);
     })
     .catch(() => {
       btn.disabled = false;
-      btn.innerHTML = 'Submit my listing &nbsp;→';
+      btn.innerHTML = 'Submit my listing <span aria-hidden="true">→</span>';
       alert("Something went wrong sending your listing. Please try again, or email us directly.");
     });
   }
