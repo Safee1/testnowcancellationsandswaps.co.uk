@@ -823,13 +823,20 @@
     .swap-arrow span { animation: none; transform: rotate(90deg); } /* point down between stacked cards */
   }
 
-  /* ===== NAV FIX (mobile) — stop button overlapping the brand ===== */
+  /* ===== NAV FIX (mobile) — keep tagline, stack it under the logo ===== */
   @media (max-width: 600px) {
-    .nav-inner { gap: 12px; }
-    .brand { min-width: 0; flex-shrink: 1; }          /* allow brand to give way, not collide */
-    .brand .brand-tag { display: none; }               /* logo already shows the name */
+    .nav-inner { gap: 12px; align-items: center; }
+    /* Stack logo over the tagline so it stays visible without colliding */
+    .brand { min-width: 0; flex-shrink: 1; flex-direction: column; align-items: flex-start; gap: 4px; }
+    .brand .brand-tag {
+      display: block;
+      padding-left: 0;
+      margin-left: 0;
+      border-left: none;        /* drop the divider when stacked */
+    }
+    .brand .brand-tag small { font-size: 9.5px; letter-spacing: .12em; }
     nav.links { flex-shrink: 0; }                      /* keep the button intact */
-    nav.links .btn { padding: 10px 16px; font-size: 13px; }
+    nav.links .btn { padding: 10px 15px; font-size: 13px; }
     .logo-img { height: 24px; }
   }
 </style>
