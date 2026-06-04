@@ -7,6 +7,22 @@
 <meta name="description" content="Swap your DVSA practical driving test date with another learner. Free, anonymous, no fees. Skip the months-long DVSA wait.">
 <meta name="theme-color" content="#0A6B36">
 
+<!-- Favicon (uses existing logo) -->
+<link rel="icon" type="image/jpeg" href="logo.jpg">
+<link rel="apple-touch-icon" href="logo.jpg">
+
+<!-- Open Graph / social share preview -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TestNow Cancellations & Swaps">
+<meta property="og:title" content="Free UK Driving Test Swaps — skip the wait">
+<meta property="og:description" content="Swap your DVSA practical driving test date with another learner who wants yours. Free, anonymous, no fees.">
+<meta property="og:url" content="https://testnowcancellationsandswaps.co.uk/">
+<meta property="og:image" content="https://testnowcancellationsandswaps.co.uk/logo.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Free UK Driving Test Swaps — skip the wait">
+<meta name="twitter:description" content="Swap your DVSA practical driving test date with another learner. Free, anonymous, no fees.">
+<meta name="twitter:image" content="https://testnowcancellationsandswaps.co.uk/logo.jpg">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
@@ -839,6 +855,55 @@
     nav.links .btn { padding: 10px 15px; font-size: 13px; }
     .logo-img { height: 24px; }
   }
+
+  /* ===== Success confirmation card (replaces browser alert) ===== */
+  .form-success {
+    display: none;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 24px;
+    padding: 48px 40px;
+    max-width: 760px;
+    margin: 0 auto;
+    box-shadow: 8px 8px 0 var(--accent);
+    text-align: center;
+  }
+  .form-success .tick {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--paper);
+    display: grid; place-items: center;
+    font-size: 32px;
+    margin: 0 auto 22px;
+  }
+  .form-success h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 28px;
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+  .form-success p { color: rgba(245,240,230,.85); font-size: 16px; max-width: 46ch; margin: 0 auto 10px; }
+  .form-success .again {
+    display: inline-block;
+    margin-top: 22px;
+    padding: 12px 24px;
+    border-radius: 999px;
+    border: 1.5px solid var(--paper);
+    color: var(--paper);
+    font-size: 14px;
+    cursor: pointer;
+    background: transparent;
+    font-family: inherit;
+    transition: all .2s ease;
+  }
+  .form-success .again:hover { background: var(--paper); color: var(--ink); }
+  @media (max-width: 600px) {
+    .form-success { padding: 36px 22px; border-radius: 18px; box-shadow: 5px 5px 0 var(--accent); }
+    .form-success h3 { font-size: 23px; }
+    .form-success .again { width: 100%; }
+  }
 </style>
 </head>
 <body>
@@ -1077,6 +1142,14 @@
         <small>By submitting, you agree we can contact you about a potential swap. We'll never share your details without your say-so.</small>
       </div>
     </form>
+
+    <div class="form-success" id="form-success">
+      <div class="tick">✓</div>
+      <h3>You're listed! 🎉</h3>
+      <p>Thanks — your swap is now on our board. As soon as we find a learner whose test fits yours (and yours fits theirs), we'll be in touch with a private chat link.</p>
+      <p>Keep an eye on your email and phone. You can close this page — your listing stays active.</p>
+      <button type="button" class="again" id="list-another">List another test</button>
+    </div>
   </div>
 </section>
 
@@ -1261,7 +1334,14 @@
       btn.textContent = 'Submitted ✓';
       btn.style.background = 'var(--accent)';
       setTimeout(() => {
-        alert("Thanks! Your swap has been listed. We'll be in touch when we find a match.");
+        // Hide the form, show the on-page success card
+        form.style.display = 'none';
+        var card = document.getElementById('form-success');
+        if (card) {
+          card.style.display = 'block';
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        // Reset the button state underneath (for when they list another)
         form.reset();
         btn.disabled = false;
         btn.innerHTML = 'Submit my listing <span aria-hidden="true">→</span>';
@@ -1516,6 +1596,19 @@
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
     d.min = yyyy + '-' + mm + '-' + dd;
+  })();
+
+  // "List another test" — bring the form back, hide the success card
+  (function(){
+    var again = document.getElementById('list-another');
+    if (again) {
+      again.addEventListener('click', function(){
+        var card = document.getElementById('form-success');
+        var form = document.getElementById('swap-form');
+        if (card) card.style.display = 'none';
+        if (form) { form.style.display = ''; form.scrollIntoView({ behavior:'smooth', block:'start' }); }
+      });
+    }
   })();
 </script>
 </body>
