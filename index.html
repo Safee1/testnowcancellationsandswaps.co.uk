@@ -710,6 +710,70 @@
     line-height: 1.5;
   }
   .disclaimer strong { color: var(--ink); }
+
+  /* ===== MOBILE POLISH (≤600px) — layout only, nothing functional ===== */
+  @media (max-width: 600px) {
+    .wrap { padding: 0 18px; }
+
+    /* Calmer vertical rhythm */
+    section.block { padding: 56px 0; }
+    .hero { padding: 40px 0 56px; }
+    .section-head { margin-bottom: 36px; }
+
+    /* Headline + lede sized for small screens */
+    h1.headline { font-size: 40px; line-height: 1.0; margin-bottom: 22px; max-width: 100%; }
+    .lede { font-size: 17px; margin-bottom: 28px; }
+    .eyebrow { margin-bottom: 22px; font-size: 11px; }
+
+    /* CTAs go full-width and stack neatly */
+    .cta-row { gap: 10px; }
+    .cta-row .btn { width: 100%; text-align: center; }
+
+    /* Decorative swap cards: smaller, never overflow */
+    .swap-illo { height: 360px; max-width: 320px; }
+    .swap-card { width: 220px; padding: 18px; box-shadow: 4px 4px 0 var(--ink); }
+    .swap-card.b { box-shadow: 4px 4px 0 var(--accent); }
+    .swap-card h3 { font-size: 15px; }
+    .swap-arrow { width: 52px; height: 52px; font-size: 22px; }
+
+    /* Marquee a touch smaller */
+    .strip { padding: 16px 0; }
+    .strip-track { font-size: 18px; gap: 40px; }
+    .strip-track span { gap: 40px; }
+
+    /* Section titles tighter */
+    .section-title { font-size: 32px; }
+
+    /* Steps / board / promise spacing */
+    .step { padding: 26px; }
+    .step-num { font-size: 46px; margin-bottom: 16px; }
+    .step h3 { font-size: 21px; }
+
+    .board-grid { grid-template-columns: 1fr; gap: 14px; }
+    .bcard { padding: 20px; }
+
+    .promise { padding: 40px 24px; border-radius: 18px; }
+
+    /* Form: comfortable on mobile, full-width submit */
+    .form-wrap { padding: 28px 20px; box-shadow: 5px 5px 0 var(--ink); }
+    .form-submit { gap: 12px; }
+    .form-submit .btn { width: 100%; text-align: center; }
+
+    /* FAQ summary not too large */
+    summary { font-size: 19px; gap: 16px; }
+
+    /* Footer: simpler stack */
+    .foot-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+    .foot-brand { grid-column: 1 / -1; }
+    footer { padding: 56px 0 32px; margin-top: 56px; }
+    .foot-bottom { flex-direction: column; align-items: flex-start; }
+
+    /* Consent banner sits tighter to the screen edges */
+    .consent { left: 12px; right: 12px; bottom: 12px; padding: 16px 18px; }
+    .consent-inner { gap: 14px; }
+    .consent-btns { width: 100%; }
+    .consent-btns .btn { flex: 1; text-align: center; }
+  }
 </style>
 </head>
 <body>
