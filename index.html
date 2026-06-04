@@ -1385,7 +1385,6 @@
     count.textContent = rows.length + (rows.length === 1 ? ' test available' : ' tests available');
     grid.innerHTML = rows.map(r =>
       '<div class="bcard">' +
-        '<span class="bsample">Sample</span>' +
         '<div class="bregion">' + (r.region || '') + '</div>' +
         '<div class="bcentre">' + (r.centre || '') + '</div>' +
         '<div class="bdate"><span>Date</span><span>' + fmtDate(r.date) + '</span></div>' +
@@ -1405,13 +1404,18 @@
     });
   }
 
+  function hideBoardSection() {
+    const sec = document.getElementById('board');
+    if (sec) sec.style.display = 'none';
+  }
   function loadBoard() {
-    const grid = document.getElementById('board-grid');
     fetch(SHEET_ENDPOINT + '?action=board')
       .then(r => r.json())
       .then(d => {
         if (d.result !== 'success' || !Array.isArray(d.listings)) throw new Error('bad');
         BOARD = d.listings;
+        // No real listings yet -> hide the whole board section (no fake data shown)
+        if (!BOARD.length) { hideBoardSection(); return; }
         const sel = document.getElementById('board-filter');
         const regions = [...new Set(BOARD.map(r => r.region).filter(Boolean))].sort();
         sel.innerHTML = '<option value="">All regions</option>' +
@@ -1421,7 +1425,8 @@
         renderBoard('');
       })
       .catch(() => {
-        grid.innerHTML = '<div class="board-empty">Couldn\'t load listings right now. Please refresh.</div>';
+        // If it can't load, hide it rather than showing a broken/empty board
+        hideBoardSection();
       });
   }
   loadBoard();
