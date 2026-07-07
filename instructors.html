@@ -194,12 +194,15 @@ document.getElementById('isubmit').addEventListener('click', function(){
   })
   .then(function(r){ return r.json(); })
   .then(function(d){
-    if (d.result === 'success' || d.result === 'duplicate') {
+    if (d.result === 'success') {
       msg.className = 'imsg ok';
       var link = 'instructor.html?tk=' + encodeURIComponent(d.token || '');
-      msg.innerHTML = (d.result === 'success' ? "You're registered! " : "You're already registered. ") +
-        'Your personal dashboard: <a href="' + link + '">open dashboard</a>.<br><strong>Save this link</strong> \u2014 it\u2019s your key to viewing and taking leads.';
+      msg.innerHTML = "You're registered! Your personal dashboard: <a href=\"" + link + "\">open dashboard</a>.<br><strong>Save this link</strong> \u2014 it\u2019s your key to viewing and taking leads.";
       btn.textContent = 'Registered \u2713'; btn.disabled = true;
+    } else if (d.result === 'duplicate') {
+      msg.className = 'imsg ok';
+      msg.textContent = d.message || "Already registered \u2014 we've emailed your dashboard link to the address on file.";
+      btn.disabled = false; btn.innerHTML = 'Register free <span aria-hidden="true">&nbsp;&rarr;</span>';
     } else {
       throw new Error(d.message || 'error');
     }
