@@ -158,8 +158,8 @@ function load() {
       CREDITS = d.instructor.credits;
       document.getElementById('credits').textContent = 'Credits: ' + CREDITS;
       var grid = document.getElementById('grid');
-      if (!d.leads.length) { document.getElementById('empty').style.display = ''; return; }
       renderMine(d.mine || []);
+      if (!d.leads.length) { document.getElementById('empty').style.display = ''; return; }
       grid.innerHTML = d.leads.map(function(l){
         return '<div class="lcard">' +
           '<div class="lregion">' + esc(l.region) + '</div>' +
