@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instructor Dashboard — TestNow</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0A6B36">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0A6B36;
+    --ink-soft: #0E8C45;
+    --paper: #F5F0E6;
+    --paper-warm: #EBE3D2;
+    --accent: #D6206E;
+    --muted: #5b6b62;
+    --max: 820px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter Tight', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; opacity: .35; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.05 0 0 0 0 0.16 0 0 0 0 0.12 0 0 0 .12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  a { color: var(--accent); text-decoration: underline; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 28px; position: relative; z-index: 1; }
+
+  header.nav {
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(10,107,54,.15);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+  .brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+  .brand img { height: 30px; }
+  .brand-tag { padding-left: 14px; border-left: 1.5px solid rgba(10,107,54,.25); }
+  .brand-tag small {
+    font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted);
+  }
+  .back { font-size: 14px; color: var(--ink); text-decoration: none; opacity: .8; }
+  .back:hover { opacity: 1; color: var(--accent); }
+
+  main { padding: 70px 0 100px; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif; font-weight: 500;
+    font-size: clamp(36px, 6vw, 60px); line-height: 1.02; letter-spacing: -0.03em; margin-bottom: 16px;
+  }
+  .updated { color: var(--muted); font-size: 14px; margin-bottom: 40px; }
+  .draft-flag {
+    background: var(--paper-warm); border-left: 4px solid var(--accent);
+    padding: 18px 22px; border-radius: 12px; font-size: 14px; margin-bottom: 48px; color: var(--ink-soft);
+  }
+  .draft-flag strong { color: var(--ink); }
+  h2 {
+    font-family: 'Fraunces', serif; font-weight: 600;
+    font-size: 24px; letter-spacing: -0.01em; margin: 40px 0 12px;
+  }
+  p { margin-bottom: 16px; font-size: 16px; color: var(--ink-soft); }
+  .placeholder { background: rgba(214,32,110,.12); padding: 1px 6px; border-radius: 4px; font-weight: 600; color: var(--accent); }
+  footer {
+    border-top: 1.5px solid var(--ink); padding: 40px 0; text-align: center; font-size: 13px; color: var(--muted);
+  }
+</style>
+<style>
+  .lead-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 22px; }
+  @media (min-width: 700px) { .lead-grid { grid-template-columns: 1fr 1fr; } }
+  .lcard { background: #fff; border: 1.5px solid var(--ink); border-radius: 16px; padding: 20px; box-shadow: 4px 4px 0 var(--ink); }
+  .lcard .lregion { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 6px; }
+  .lcard .lcentre { font-family: 'Fraunces', serif; font-size: 21px; font-weight: 600; color: var(--ink); margin-bottom: 10px; }
+  .lcard .lrow { display: flex; justify-content: space-between; font-size: 14px; padding: 5px 0; border-bottom: 1px dashed rgba(10,107,54,.25); }
+  .lcard .lrow:last-of-type { border-bottom: none; }
+  .lcard .lrow span { color: rgba(31,41,35,.7); }
+  .lcard .lrow strong { color: var(--ink); }
+  .lbtn { display: inline-flex; align-items: center; justify-content: center; width: 100%; margin-top: 14px; padding: 12px 18px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; font-size: 14.5px; font-weight: 600; background: var(--ink); color: var(--paper); }
+  .lbtn:disabled { opacity: .55; cursor: default; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--paper-warm); border-radius: 14px; padding: 14px 18px; margin-top: 20px; flex-wrap: wrap; }
+  .topbar .who { font-weight: 600; color: var(--ink); }
+  .topbar .credits { font-size: 14px; }
+  .empty, .error { margin-top: 24px; padding: 18px 20px; border-radius: 14px; font-size: 15px; background: var(--paper-warm); }
+  .error { background: #fdeaea; color: #a01313; }
+  .masknote { font-size: 13px; color: rgba(31,41,35,.65); margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <img src="logo.jpg" alt="TestNow">
+      <span class="brand-tag"><small>Cancellations &amp; Swaps</small></span>
+    </a>
+    <a class="back" href="instructors.html">Instructor home</a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="eyebrow">Instructor dashboard</div>
+    <h1>Available learner requests</h1>
+    <p class="masknote">Contact details stay hidden until you take a lead. Each lead can only ever be taken by one instructor.</p>
+
+    <div class="topbar" id="topbar" style="display:none;">
+      <div class="who" id="who"></div>
+      <div class="credits" id="credits"></div>
+      <button class="lbtn" style="width:auto;padding:10px 16px;" id="buycredits">Buy 5 credits — £200</button>
+    </div>
+
+    <div class="empty" id="paidbanner" style="display:none;background:#e7f4ec;border:1.5px solid var(--ink);">
+      ✅ Payment received. Your lead's contact details are being released — they'll appear in <strong>My leads</strong> below within a minute (refresh if needed), and we've emailed them to you too.
+    </div>
+
+    <div class="error" id="err" style="display:none;"></div>
+    <div class="empty" id="empty" style="display:none;">No learner requests in your regions right now. We'll email you when new ones come in.</div>
+    <div class="lead-grid" id="grid"></div>
+
+    <div id="minewrap" style="display:none;margin-top:44px;">
+      <div class="eyebrow">My leads</div>
+      <h1 style="font-size:26px;">Leads you've taken</h1>
+      <p class="masknote">These are exclusively yours. Contact the learner promptly — leads are non-refundable once details are released.</p>
+      <div class="lead-grid" id="minegrid"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  &copy; <span id="yr"></span> testnowcancellationsandswaps.co.uk &middot; Independent &amp; not affiliated with DVSA or gov.uk.
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+var ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
+var TK = new URLSearchParams(location.search).get('tk') || '';
+
+function esc(s){ var d=document.createElement('div'); d.textContent=String(s==null?'':s); return d.innerHTML; }
+
+function load() {
+  if (!TK) { showErr("This page needs your personal dashboard link. Check the email/confirmation you got when you registered."); return; }
+  fetch(ENDPOINT + '?action=leadsBoard&tk=' + encodeURIComponent(TK))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.result !== 'success') { showErr(d.message || "Couldn't load your dashboard."); return; }
+      document.getElementById('topbar').style.display = '';
+      document.getElementById('who').textContent = d.instructor.name;
+      CREDITS = d.instructor.credits;
+      document.getElementById('credits').textContent = 'Credits: ' + CREDITS;
+      var grid = document.getElementById('grid');
+      if (!d.leads.length) { document.getElementById('empty').style.display = ''; return; }
+      renderMine(d.mine || []);
+      grid.innerHTML = d.leads.map(function(l){
+        return '<div class="lcard">' +
+          '<div class="lregion">' + esc(l.region) + '</div>' +
+          '<div class="lcentre">' + esc(l.centre) + '</div>' +
+          '<div class="lrow"><span>Test date</span><strong>' + esc(l.date) + '</strong></div>' +
+          '<div class="lrow"><span>Needs</span><strong>Instructor for their test</strong></div>' +
+          '<div class="lrow"><span>Wants</span><strong>' + esc(l.wantedWhen || '—') + '</strong></div>' +
+          '<button class="lbtn" onclick="buyLead(\'' + esc(l.id) + '\')">Take this lead — £50</button>' +
+          (CREDITS > 0 ? '<button class="lbtn" style="background:var(--accent);margin-top:8px;" onclick="useCredit(\'' + esc(l.id) + '\')">Use 1 credit instead</button>' : '') +
+          '</div>';
+      }).join('');
+    })
+    .catch(function(){ showErr("Couldn't load your dashboard — try again in a minute."); });
+}
+function showErr(m){ var e=document.getElementById('err'); e.style.display=''; e.textContent=m; }
+
+var CREDITS = 0;
+
+if (new URLSearchParams(location.search).get('paid') === '1') {
+  document.getElementById('paidbanner').style.display = '';
+}
+
+function post(body) {
+  return fetch(ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(body)
+  }).then(function(r){ return r.json(); });
+}
+
+function buyLead(id) {
+  post({ action: 'createCheckout', tk: TK, kind: 'lead', leadId: id })
+    .then(function(d){
+      if (d.result === 'success' && d.url) { location.href = d.url; }
+      else { showErr(d.message || 'Could not start checkout.'); }
+    })
+    .catch(function(){ showErr('Could not start checkout — try again.'); });
+}
+
+function useCredit(id) {
+  if (!confirm('Use 1 credit to take this lead? Contact details are revealed immediately and credits are non-refundable.')) return;
+  post({ action: 'claimLead', tk: TK, leadId: id })
+    .then(function(d){
+      if (d.result === 'success' && d.contact) {
+        alert('Lead is yours!\n\nName: ' + d.contact.name + '\nPhone: ' + d.contact.phone + '\nEmail: ' + d.contact.email + '\n\nWe have emailed you a copy. It also appears in My leads.');
+        load2();
+      } else { showErr(d.message || 'Could not claim the lead.'); }
+    })
+    .catch(function(){ showErr('Could not claim — try again.'); });
+}
+
+function renderMine(mine) {
+  if (!mine.length) return;
+  document.getElementById('minewrap').style.display = '';
+  document.getElementById('minegrid').innerHTML = mine.map(function(l){
+    return '<div class="lcard" style="border-color:var(--accent);box-shadow:4px 4px 0 var(--accent);">' +
+      '<div class="lregion">' + esc(l.region) + '</div>' +
+      '<div class="lcentre">' + esc(l.contact.name) + '</div>' +
+      '<div class="lrow"><span>Phone</span><strong><a href="tel:' + esc(l.contact.phone) + '">' + esc(l.contact.phone) + '</a></strong></div>' +
+      '<div class="lrow"><span>Email</span><strong><a href="mailto:' + esc(l.contact.email) + '">' + esc(l.contact.email) + '</a></strong></div>' +
+      '<div class="lrow"><span>Centre</span><strong>' + esc(l.centre) + '</strong></div>' +
+      '<div class="lrow"><span>Test date</span><strong>' + esc(l.date) + '</strong></div>' +
+      '</div>';
+  }).join('');
+}
+
+function load2(){ document.getElementById('grid').innerHTML=''; document.getElementById('empty').style.display='none'; load(); }
+
+document.getElementById('buycredits').addEventListener('click', function(){
+  post({ action: 'createCheckout', tk: TK, kind: 'credits' })
+    .then(function(d){
+      if (d.result === 'success' && d.url) { location.href = d.url; }
+      else { showErr(d.message || 'Could not start checkout.'); }
+    })
+    .catch(function(){ showErr('Could not start checkout — try again.'); });
+});
+
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Driving Instructors — TestNow</title>
+<meta name="description" content="Get matched with UK learners who need an instructor for their upcoming driving test.">
+<meta name="theme-color" content="#0A6B36">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0A6B36;
+    --ink-soft: #0E8C45;
+    --paper: #F5F0E6;
+    --paper-warm: #EBE3D2;
+    --accent: #D6206E;
+    --muted: #5b6b62;
+    --max: 820px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter Tight', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; opacity: .35; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.05 0 0 0 0 0.16 0 0 0 0 0.12 0 0 0 .12 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  a { color: var(--accent); text-decoration: underline; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 28px; position: relative; z-index: 1; }
+
+  header.nav {
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(10,107,54,.15);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1240px; margin: 0 auto; padding: 0 28px; }
+  .brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+  .brand img { height: 30px; }
+  .brand-tag { padding-left: 14px; border-left: 1.5px solid rgba(10,107,54,.25); }
+  .brand-tag small {
+    font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted);
+  }
+  .back { font-size: 14px; color: var(--ink); text-decoration: none; opacity: .8; }
+  .back:hover { opacity: 1; color: var(--accent); }
+
+  main { padding: 70px 0 100px; }
+  .eyebrow {
+    font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif; font-weight: 500;
+    font-size: clamp(36px, 6vw, 60px); line-height: 1.02; letter-spacing: -0.03em; margin-bottom: 16px;
+  }
+  .updated { color: var(--muted); font-size: 14px; margin-bottom: 40px; }
+  .draft-flag {
+    background: var(--paper-warm); border-left: 4px solid var(--accent);
+    padding: 18px 22px; border-radius: 12px; font-size: 14px; margin-bottom: 48px; color: var(--ink-soft);
+  }
+  .draft-flag strong { color: var(--ink); }
+  h2 {
+    font-family: 'Fraunces', serif; font-weight: 600;
+    font-size: 24px; letter-spacing: -0.01em; margin: 40px 0 12px;
+  }
+  p { margin-bottom: 16px; font-size: 16px; color: var(--ink-soft); }
+  .placeholder { background: rgba(214,32,110,.12); padding: 1px 6px; border-radius: 4px; font-weight: 600; color: var(--accent); }
+  footer {
+    border-top: 1.5px solid var(--ink); padding: 40px 0; text-align: center; font-size: 13px; color: var(--muted);
+  }
+</style>
+<style>
+  /* Page-specific: signup form */
+  .iform { background: #fff; border: 1.5px solid var(--ink); border-radius: 18px; padding: 26px 20px; margin-top: 26px; box-shadow: 5px 5px 0 var(--ink); }
+  .iform .field { margin-bottom: 18px; }
+  .iform label { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; color: var(--ink); margin-bottom: 7px; }
+  .iform input[type=text], .iform input[type=email], .iform input[type=tel] {
+    width: 100%; padding: 13px 14px; font-size: 16px; font-family: inherit;
+    border: 1.5px solid rgba(10,107,54,.35); border-radius: 10px; background: var(--paper);
+  }
+  .iform input:focus { outline: none; border-color: var(--ink); }
+  .regions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+  .regions label { display: flex; gap: 8px; align-items: center; text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 14px; cursor: pointer; margin: 0; }
+  .regions input { width: auto; }
+  .ibtn { display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 14px 22px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 600; background: var(--ink); color: var(--paper); }
+  .ibtn:disabled { opacity: .6; cursor: default; }
+  .imsg { display: none; margin-top: 16px; padding: 14px 16px; border-radius: 12px; font-size: 14.5px; }
+  .imsg.ok { display: block; background: #e7f4ec; color: #0A6B36; border: 1.5px solid #0A6B36; }
+  .imsg.err { display: block; background: #fdeaea; color: #a01313; border: 1.5px solid #a01313; }
+  .how { margin: 22px 0 0; padding: 0; list-style: none; }
+  .how li { padding: 8px 0 8px 30px; position: relative; font-size: 15.5px; }
+  .how li::before { content: "✓"; position: absolute; left: 0; top: 8px; color: var(--accent); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <img src="logo.jpg" alt="TestNow">
+      <span class="brand-tag"><small>Cancellations &amp; Swaps</small></span>
+    </a>
+    <a class="back" href="index.html">&larr; Back to site</a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="eyebrow">For driving instructors</div>
+    <h1>Learners near you need an instructor for their test.</h1>
+    <p>Learners on TestNow sometimes have a test booked but no instructor (or no car) for the day. When they ask for help, we can pass their details to a local instructor — that could be you.</p>
+
+    <ul class="how">
+      <li>Free to register — no subscription, no monthly fee.</li>
+      <li>Browse available learner requests in your regions (details anonymised).</li>
+      <li>Pay only when you choose to take a lead — their contact details are then released to you alone.</li>
+      <li>Every learner has explicitly agreed to be contacted by an instructor.</li>
+    </ul>
+
+    <div class="iform">
+      <div class="field">
+        <label for="iname">Your name</label>
+        <input type="text" id="iname" required>
+      </div>
+      <div class="field">
+        <label for="ischool">Driving school (optional)</label>
+        <input type="text" id="ischool">
+      </div>
+      <div class="field">
+        <label for="iemail">Email</label>
+        <input type="email" id="iemail" required>
+      </div>
+      <div class="field">
+        <label for="iphone">Mobile</label>
+        <input type="tel" id="iphone" required>
+      </div>
+      <div class="field">
+        <label>Regions you cover</label>
+        <div class="regions" id="iregions">
+          <label><input type="checkbox" value="East of England"> East of England</label>
+          <label><input type="checkbox" value="East Midlands"> East Midlands</label>
+          <label><input type="checkbox" value="London"> London</label>
+          <label><input type="checkbox" value="North-east England"> North-east England</label>
+          <label><input type="checkbox" value="North-west England"> North-west England</label>
+          <label><input type="checkbox" value="South-east England"> South-east England</label>
+          <label><input type="checkbox" value="South-west England"> South-west England</label>
+          <label><input type="checkbox" value="West Midlands"> West Midlands</label>
+          <label><input type="checkbox" value="Yorkshire and the Humber"> Yorkshire and the Humber</label>
+          <label><input type="checkbox" value="Scotland"> Scotland</label>
+          <label><input type="checkbox" value="Wales"> Wales</label>
+        </div>
+      </div>
+      <button class="ibtn" id="isubmit" type="button">Register free <span aria-hidden="true">&nbsp;&rarr;</span></button>
+      <div class="imsg" id="imsg"></div>
+    </div>
+
+    <p style="margin-top:26px;font-size:13.5px;color:rgba(31,41,35,.75);">We handle your data as set out in our <a href="privacy.html">Privacy Notice</a>. Registering doesn't commit you to anything — you only pay if you choose to take a lead.</p>
+  </div>
+</main>
+
+<footer>
+  &copy; <span id="yr"></span> testnowcancellationsandswaps.co.uk &middot; Independent &amp; not affiliated with DVSA or gov.uk.
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+var ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
+
+document.getElementById('isubmit').addEventListener('click', function(){
+  var btn = this, msg = document.getElementById('imsg');
+  var name = document.getElementById('iname').value.trim();
+  var school = document.getElementById('ischool').value.trim();
+  var email = document.getElementById('iemail').value.trim();
+  var phone = document.getElementById('iphone').value.trim();
+  var regions = Array.prototype.slice.call(document.querySelectorAll('#iregions input:checked')).map(function(c){ return c.value; }).join(', ');
+
+  msg.className = 'imsg';
+  if (!name || !email || !phone) { msg.className='imsg err'; msg.textContent='Please fill in your name, email and mobile.'; return; }
+  if (!/^\S+@\S+\.\S+$/.test(email)) { msg.className='imsg err'; msg.textContent='That email doesn\'t look right.'; return; }
+  if (!regions) { msg.className='imsg err'; msg.textContent='Tick at least one region you cover.'; return; }
+
+  btn.disabled = true; btn.textContent = 'Registering\u2026';
+
+  fetch(ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: 'instructorSignup', name: name, school: school, email: email, phone: phone, regions: regions })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d.result === 'success' || d.result === 'duplicate') {
+      msg.className = 'imsg ok';
+      var link = 'instructor.html?tk=' + encodeURIComponent(d.token || '');
+      msg.innerHTML = (d.result === 'success' ? "You're registered! " : "You're already registered. ") +
+        'Your personal dashboard: <a href="' + link + '">open dashboard</a>.<br><strong>Save this link</strong> \u2014 it\u2019s your key to viewing and taking leads.';
+      btn.textContent = 'Registered \u2713'; btn.disabled = true;
+    } else {
+      throw new Error(d.message || 'error');
+    }
+  })
+  .catch(function(){
+    msg.className = 'imsg err';
+    msg.textContent = "Couldn't register right now — please try again in a minute.";
+    btn.disabled = false; btn.innerHTML = 'Register free <span aria-hidden="true">&nbsp;&rarr;</span>';
+  });
+});
+</script>
+</body>
+</html>

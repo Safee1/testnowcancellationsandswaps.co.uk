@@ -904,6 +904,11 @@
     .form-success h3 { font-size: 23px; }
     .form-success .again { width: 100%; }
   }
+
+  /* Instructor consent tick */
+  .consent-box { background: var(--paper-warm); border-radius: 12px; padding: 14px 16px; }
+  .consent-label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; font-size: 14px; line-height: 1.45; text-transform: none; letter-spacing: 0; }
+  .consent-label input { width: auto; margin-top: 3px; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -1136,6 +1141,22 @@
           <label for="notes">Anything else? (optional)</label>
           <textarea id="notes" name="notes" placeholder="Theory test expiry date, weekday/weekend preference, etc."></textarea>
         </div>
+
+        <div class="field full">
+          <label for="has-instructor">Do you already have an instructor available for your test?</label>
+          <select id="has-instructor" name="has-instructor" required>
+            <option value="">Choose…</option>
+            <option value="yes">Yes — I'm sorted</option>
+            <option value="no">No — I'd like help finding one</option>
+          </select>
+        </div>
+
+        <div class="field full consent-box" id="instructor-consent-box" style="display:none;">
+          <label class="consent-label">
+            <input type="checkbox" id="instructor-consent">
+            <span>I agree that a driving instructor may contact me by phone or email about my test. My details are only shared for this purpose.</span>
+          </label>
+        </div>
       </div>
       <div class="form-submit">
         <button type="submit" class="btn btn-primary">Submit my listing <span aria-hidden="true">→</span></button>
@@ -1209,6 +1230,7 @@
         <a href="#how">How it works</a>
         <a href="#why">Why us</a>
         <a href="#swap">List a swap</a>
+        <a href="instructors.html">For instructors</a>
         <a href="#faq">FAQ</a>
       </div>
       <div class="foot-col">
@@ -1260,7 +1282,7 @@
 
   // Form: sends submission to Google Sheet via Apps Script Web App.
   // PASTE YOUR DEPLOYED WEB APP URL BETWEEN THE QUOTES BELOW:
-  const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbxpe8NkaNRxaBdEIJusOfDHWBKbnKnzMoX0DwT-JoxFr2QHjseTO_t0gTlc4P3iaiH4/exec";
+  const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -1321,7 +1343,8 @@
       wantedWhen: form['wanted-when'].value,
       wantedRegion: form['wanted-region'].value,
       wantedCentre: form['wanted-centre'].value,
-      notes: form.notes.value
+      notes: form.notes.value,
+      leadType: (form['has-instructor'] && form['has-instructor'].value === 'no') ? 'wants-instructor' : 'swap'
     };
 
     fetch(SHEET_ENDPOINT, {
@@ -1609,6 +1632,20 @@
         if (form) { form.style.display = ''; form.scrollIntoView({ behavior:'smooth', block:'start' }); }
       });
     }
+  })();
+
+  // Instructor question: show consent tick when they want help; require it
+  (function(){
+    var sel = document.getElementById('has-instructor');
+    var box = document.getElementById('instructor-consent-box');
+    var tick = document.getElementById('instructor-consent');
+    if (!sel || !box || !tick) return;
+    sel.addEventListener('change', function(){
+      var wants = sel.value === 'no';
+      box.style.display = wants ? '' : 'none';
+      tick.required = wants;
+      if (!wants) tick.checked = false;
+    });
   })();
 </script>
 </body>
