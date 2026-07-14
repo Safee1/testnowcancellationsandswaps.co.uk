@@ -95,6 +95,11 @@
   .how { margin: 22px 0 0; padding: 0; list-style: none; }
   .how li { padding: 8px 0 8px 30px; position: relative; font-size: 15.5px; }
   .how li::before { content: "✓"; position: absolute; left: 0; top: 8px; color: var(--accent); font-weight: 700; }
+  .savenum {
+    background: var(--paper-warm); border-left: 4px solid var(--accent);
+    padding: 16px 20px; border-radius: 12px; font-size: 15px; margin-top: 24px; color: var(--ink-soft);
+  }
+  .savenum strong { color: var(--ink); }
 </style>
 </head>
 <body>
@@ -117,10 +122,16 @@
 
     <ul class="how">
       <li>Free to register — no subscription, no monthly fee.</li>
+      <li>Get an instant text and email the moment a learner in your regions needs an instructor.</li>
       <li>Browse available learner requests in your regions (details anonymised).</li>
       <li>Pay only when you choose to take a lead — their contact details are then released to you alone.</li>
       <li>Every learner has explicitly agreed to be contacted by an instructor.</li>
+      <li>Registered instructors get an invite to our instructors-only community group.</li>
     </ul>
+
+    <p class="savenum">
+      <strong>Save our number.</strong> Lead alerts are texted from <strong>07462&nbsp;169428</strong> — save it in your phone as <strong>TestNow</strong> so you know it's us and don't miss a lead. Leads are first come, first served.
+    </p>
 
     <div class="iform">
       <div class="field">
@@ -159,7 +170,7 @@
       <div class="imsg" id="imsg"></div>
     </div>
 
-    <p style="margin-top:26px;font-size:13.5px;color:rgba(31,41,35,.75);">We handle your data as set out in our <a href="privacy.html">Privacy Notice</a>. Registering doesn't commit you to anything — you only pay if you choose to take a lead.</p>
+    <p style="margin-top:26px;font-size:13.5px;color:rgba(31,41,35,.75);">We handle your data as set out in our <a href="privacy.html">Privacy Notice</a>. By registering you agree that we may text and email you about learner requests in the regions you cover. If you choose to join our instructors-only community group, other members of that group will be able to see your name and mobile number. Registering doesn't commit you to anything — you only pay if you choose to take a lead.</p>
   </div>
 </main>
 
@@ -185,7 +196,7 @@ document.getElementById('isubmit').addEventListener('click', function(){
   if (!/^\S+@\S+\.\S+$/.test(email)) { msg.className='imsg err'; msg.textContent='That email doesn\'t look right.'; return; }
   if (!regions) { msg.className='imsg err'; msg.textContent='Tick at least one region you cover.'; return; }
 
-  btn.disabled = true; btn.textContent = 'Registering\u2026';
+  btn.disabled = true; btn.textContent = 'Registering…';
 
   fetch(ENDPOINT, {
     method: 'POST',
@@ -197,11 +208,16 @@ document.getElementById('isubmit').addEventListener('click', function(){
     if (d.result === 'success') {
       msg.className = 'imsg ok';
       var link = 'instructor.html?tk=' + encodeURIComponent(d.token || '');
-      msg.innerHTML = "You're registered! Your personal dashboard: <a href=\"" + link + "\">open dashboard</a>.<br><strong>Save this link</strong> \u2014 it\u2019s your key to viewing and taking leads.";
-      btn.textContent = 'Registered \u2713'; btn.disabled = true;
+      var html = "You're registered! Your personal dashboard: <a href=\"" + link + "\">open dashboard</a>.<br><strong>Save this link</strong> — it’s your key to viewing and taking leads.";
+      html += "<br><br><strong>Save 07462 169428</strong> in your phone as <strong>TestNow</strong> — that’s the number your lead alerts are texted from.";
+      if (d.community) {
+        html += "<br><br><a href=\"" + d.community + "\" target=\"_blank\" rel=\"noopener\"><strong>Join the instructors-only community group</strong></a> — traffic, test-centre intel and cancellations, instructors only.";
+      }
+      msg.innerHTML = html;
+      btn.textContent = 'Registered ✓'; btn.disabled = true;
     } else if (d.result === 'duplicate') {
       msg.className = 'imsg ok';
-      msg.textContent = d.message || "Already registered \u2014 we've emailed your dashboard link to the address on file.";
+      msg.textContent = d.message || "Already registered — we've emailed your dashboard link to the address on file.";
       btn.disabled = false; btn.innerHTML = 'Register free <span aria-hidden="true">&nbsp;&rarr;</span>';
     } else {
       throw new Error(d.message || 'error');
