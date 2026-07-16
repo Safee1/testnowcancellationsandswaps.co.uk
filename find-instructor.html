@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find a driving instructor near you — TestNow</title>
+<meta name="description" content="Find a local UK driving instructor — see their area, teaching style and the car they use, and enquire for free.">
+<meta name="theme-color" content="#0A6B36">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#0A6B36; --ink-soft:#0E8C45; --paper:#F5F0E6; --paper-warm:#EBE3D2; --accent:#D6206E; --muted:#5b6b62; --max:960px; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body { font-family:'Inter Tight',sans-serif; background:var(--paper); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased; }
+  a { color:var(--accent); text-decoration:underline; }
+  .wrap { max-width:var(--max); margin:0 auto; padding:0 24px; }
+  header.nav { padding:22px 0; border-bottom:1px solid rgba(10,107,54,.15); }
+  .nav-inner { display:flex; align-items:center; justify-content:space-between; max-width:1240px; margin:0 auto; padding:0 24px; }
+  .brand { display:flex; align-items:center; gap:14px; text-decoration:none; }
+  .brand img { height:30px; }
+  .brand-tag { padding-left:14px; border-left:1.5px solid rgba(10,107,54,.25); }
+  .brand-tag small { font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); }
+  .back { font-size:14px; color:var(--ink); text-decoration:none; opacity:.8; }
+  main { padding:56px 0 100px; }
+  .eyebrow { font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
+  h1 { font-family:'Fraunces',serif; font-weight:500; font-size:clamp(32px,5.5vw,52px); line-height:1.03; letter-spacing:-.03em; margin-bottom:14px; }
+  .lede { font-size:17px; color:var(--ink-soft); margin-bottom:30px; max-width:640px; }
+  .pick { display:flex; gap:12px; flex-wrap:wrap; align-items:center; background:#fff; border:1.5px solid var(--ink); border-radius:16px; padding:18px 18px; box-shadow:5px 5px 0 var(--ink); margin-bottom:34px; }
+  .pick label { font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; }
+  .pick select { flex:1 1 220px; padding:12px 12px; font-size:16px; font-family:inherit; border:1.5px solid rgba(10,107,54,.35); border-radius:10px; background:var(--paper); color:var(--ink); }
+  .pick button { padding:12px 22px; border-radius:999px; border:none; cursor:pointer; font-family:inherit; font-size:15px; font-weight:600; background:var(--ink); color:var(--paper); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px; }
+  .card { background:#fff; border:1.5px solid rgba(10,107,54,.3); border-radius:16px; padding:20px; display:flex; flex-direction:column; }
+  .card h3 { font-family:'Fraunces',serif; font-weight:600; font-size:20px; margin-bottom:2px; }
+  .card .school { font-size:13px; color:var(--muted); margin-bottom:12px; }
+  .card ul { list-style:none; margin:0 0 16px; padding:0; }
+  .card li { font-size:14.5px; color:var(--ink-soft); padding:3px 0; }
+  .card li b { color:var(--ink); font-weight:600; }
+  .card .enq { margin-top:auto; padding:11px 18px; border-radius:999px; border:none; cursor:pointer; font-family:inherit; font-size:14.5px; font-weight:600; background:var(--accent); color:#fff; }
+  .status { font-size:15px; color:var(--muted); padding:24px 0; }
+  footer { border-top:1.5px solid var(--ink); padding:40px 0; text-align:center; font-size:13px; color:var(--muted); }
+  /* modal */
+  .modal { display:none; position:fixed; inset:0; background:rgba(10,20,15,.55); z-index:50; align-items:center; justify-content:center; padding:20px; }
+  .modal.open { display:flex; }
+  .modal-box { background:var(--paper); border:1.5px solid var(--ink); border-radius:18px; padding:24px; width:100%; max-width:440px; box-shadow:6px 6px 0 var(--ink); }
+  .modal-box h2 { font-family:'Fraunces',serif; font-size:22px; margin-bottom:6px; }
+  .modal-box p.sub { font-size:14px; color:var(--muted); margin-bottom:16px; }
+  .modal-box label { display:block; font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; margin-bottom:6px; }
+  .modal-box input, .modal-box textarea { width:100%; padding:12px 13px; font-size:16px; font-family:inherit; border:1.5px solid rgba(10,107,54,.35); border-radius:10px; background:#fff; margin-bottom:14px; }
+  .modal-box textarea { min-height:80px; resize:vertical; }
+  .modal-actions { display:flex; gap:10px; }
+  .modal-actions button { flex:1; padding:12px; border-radius:999px; border:none; cursor:pointer; font-family:inherit; font-size:15px; font-weight:600; }
+  .btn-send { background:var(--ink); color:var(--paper); }
+  .btn-cancel { background:transparent; border:1.5px solid rgba(10,107,54,.4); color:var(--ink); }
+  .consent { font-size:12px; color:var(--muted); margin-top:4px; }
+  .mmsg { display:none; margin-top:12px; padding:12px 14px; border-radius:10px; font-size:14px; }
+  .mmsg.ok { display:block; background:#e7f4ec; color:#0A6B36; border:1.5px solid #0A6B36; }
+  .mmsg.err { display:block; background:#fdeaea; color:#a01313; border:1.5px solid #a01313; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <img src="logo.jpg" alt="TestNow">
+      <span class="brand-tag"><small>Cancellations &amp; Swaps</small></span>
+    </a>
+    <a class="back" href="index.html">&larr; Back to site</a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="eyebrow">Find an instructor</div>
+    <h1>Find a driving instructor near you.</h1>
+    <p class="lede">See instructors covering your area — their teaching style and the car they use — and enquire for free. No account needed.</p>
+
+    <div class="pick">
+      <label for="region">Your region</label>
+      <select id="region">
+        <option value="">Choose your region…</option>
+        <option value="East of England">East of England</option>
+        <option value="East Midlands">East Midlands</option>
+        <option value="London">London</option>
+        <option value="North-east England">North-east England</option>
+        <option value="North-west England">North-west England</option>
+        <option value="South-east England">South-east England</option>
+        <option value="South-west England">South-west England</option>
+        <option value="West Midlands">West Midlands</option>
+        <option value="Yorkshire and the Humber">Yorkshire and the Humber</option>
+        <option value="Scotland">Scotland</option>
+        <option value="Wales">Wales</option>
+      </select>
+      <button id="search" type="button">Search</button>
+    </div>
+
+    <div id="status" class="status">Pick your region to see instructors.</div>
+    <div id="grid" class="grid"></div>
+  </div>
+</main>
+
+<!-- Enquiry modal -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h2>Enquire</h2>
+    <p class="sub" id="modal-who">Send your details to this instructor.</p>
+    <label for="l-name">Your name</label>
+    <input type="text" id="l-name">
+    <label for="l-contact">Your phone or email</label>
+    <input type="text" id="l-contact" placeholder="So they can reply">
+    <label for="l-msg">Message (optional)</label>
+    <textarea id="l-msg" placeholder="e.g. test booked for 12 Aug at Wolverhampton, need lessons + a car"></textarea>
+    <p class="consent">By sending, you agree we pass your name and contact to this instructor so they can reply.</p>
+    <div class="mmsg" id="mmsg"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="m-cancel" type="button">Cancel</button>
+      <button class="btn-send" id="m-send" type="button">Send enquiry</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  &copy; <span id="yr"></span> testnowcancellationsandswaps.co.uk &middot; Independent &amp; not affiliated with DVSA or gov.uk.
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+var ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
+
+var grid = document.getElementById('grid');
+var statusEl = document.getElementById('status');
+var currentId = "", currentName = "";
+
+function esc(t){ return String(t||"").replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+function search(){
+  var region = document.getElementById('region').value;
+  if (!region) { statusEl.textContent = "Please choose your region first."; grid.innerHTML=""; return; }
+  statusEl.textContent = "Searching…"; grid.innerHTML = "";
+  fetch(ENDPOINT + "?action=directory&region=" + encodeURIComponent(region))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var list = (d && d.instructors) || [];
+      if (!list.length) { statusEl.textContent = "No instructors listed for " + region + " yet — check back soon."; return; }
+      statusEl.textContent = list.length + " instructor" + (list.length>1?"s":"") + " covering " + region + ":";
+      grid.innerHTML = list.map(function(it){
+        var rows = "";
+        if (it.style) rows += "<li><b>Style:</b> " + esc(it.style) + "</li>";
+        if (it.car) rows += "<li><b>Car:</b> " + esc(it.car) + (it.transmission?(" (" + esc(it.transmission) + ")"):"") + "</li>";
+        else if (it.transmission) rows += "<li><b>Transmission:</b> " + esc(it.transmission) + "</li>";
+        if (it.experience) rows += "<li><b>Experience:</b> " + esc(it.experience) + "</li>";
+        if (it.regions) rows += "<li><b>Covers:</b> " + esc(it.regions) + "</li>";
+        return "<div class='card'><h3>" + esc(it.name || "Instructor") + "</h3>" +
+          (it.school ? "<div class='school'>" + esc(it.school) + "</div>" : "<div class='school'>Driving instructor</div>") +
+          "<ul>" + rows + "</ul>" +
+          "<button class='enq' data-id='" + esc(it.id) + "' data-name='" + esc(it.name||"") + "'>Enquire</button></div>";
+      }).join("");
+    })
+    .catch(function(){ statusEl.textContent = "Couldn't load instructors right now — please try again in a minute."; });
+}
+
+document.getElementById('search').addEventListener('click', search);
+document.getElementById('region').addEventListener('change', search);
+
+// open modal
+grid.addEventListener('click', function(ev){
+  var b = ev.target.closest('.enq'); if (!b) return;
+  currentId = b.getAttribute('data-id'); currentName = b.getAttribute('data-name');
+  document.getElementById('modal-who').textContent = currentName ? ("Send your details to " + currentName + ".") : "Send your details to this instructor.";
+  document.getElementById('mmsg').className = 'mmsg';
+  document.getElementById('modal').classList.add('open');
+});
+document.getElementById('m-cancel').addEventListener('click', function(){ document.getElementById('modal').classList.remove('open'); });
+
+document.getElementById('m-send').addEventListener('click', function(){
+  var btn = this, mmsg = document.getElementById('mmsg');
+  var name = document.getElementById('l-name').value.trim();
+  var contact = document.getElementById('l-contact').value.trim();
+  var message = document.getElementById('l-msg').value.trim();
+  mmsg.className = 'mmsg';
+  if (!name || !contact) { mmsg.className='mmsg err'; mmsg.textContent='Please give your name and a contact.'; return; }
+  btn.disabled = true; btn.textContent = 'Sending…';
+  fetch(ENDPOINT, {
+    method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify({ action:'instructorEnquiry', instructorId: currentId, name:name, contact:contact, message:message })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d.result === 'success') {
+      mmsg.className='mmsg ok'; mmsg.textContent="Sent! " + (currentName||"The instructor") + " has your details and will be in touch.";
+      btn.textContent='Sent ✓';
+    } else { throw new Error(d.message || 'error'); }
+  })
+  .catch(function(){ mmsg.className='mmsg err'; mmsg.textContent="Couldn't send right now — please try again."; btn.disabled=false; btn.textContent='Send enquiry'; });
+});
+</script>
+</body>
+</html>
