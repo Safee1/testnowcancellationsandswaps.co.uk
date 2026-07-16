@@ -166,6 +166,27 @@
           <label><input type="checkbox" value="Wales"> Wales</label>
         </div>
       </div>
+      <div class="field">
+        <label for="istyle">Teaching style (optional)</label>
+        <input type="text" id="istyle" placeholder="e.g. calm &amp; patient, structured, good with nervous learners">
+      </div>
+      <div class="field">
+        <label for="icar">Car you teach in (optional)</label>
+        <input type="text" id="icar" placeholder="e.g. Vauxhall Corsa">
+      </div>
+      <div class="field">
+        <label for="itrans">Transmission (optional)</label>
+        <input type="text" id="itrans" placeholder="Manual, Automatic, or Both">
+      </div>
+      <div class="field">
+        <label for="iexp">Years&rsquo; experience (optional)</label>
+        <input type="text" id="iexp" placeholder="e.g. 6 years">
+      </div>
+      <div class="field">
+        <label style="text-transform:none;letter-spacing:0;font-weight:400;display:flex;gap:8px;align-items:center;cursor:pointer;">
+          <input type="checkbox" id="idir" checked style="width:auto;"> Show me in the free public &ldquo;find an instructor&rdquo; directory
+        </label>
+      </div>
       <button class="ibtn" id="isubmit" type="button">Register free <span aria-hidden="true">&nbsp;&rarr;</span></button>
       <div class="imsg" id="imsg"></div>
     </div>
@@ -190,6 +211,11 @@ document.getElementById('isubmit').addEventListener('click', function(){
   var email = document.getElementById('iemail').value.trim();
   var phone = document.getElementById('iphone').value.trim();
   var regions = Array.prototype.slice.call(document.querySelectorAll('#iregions input:checked')).map(function(c){ return c.value; }).join(', ');
+  var style = document.getElementById('istyle').value.trim();
+  var car = document.getElementById('icar').value.trim();
+  var transmission = document.getElementById('itrans').value.trim();
+  var experience = document.getElementById('iexp').value.trim();
+  var directory = document.getElementById('idir').checked;
 
   msg.className = 'imsg';
   if (!name || !email || !phone) { msg.className='imsg err'; msg.textContent='Please fill in your name, email and mobile.'; return; }
@@ -201,7 +227,7 @@ document.getElementById('isubmit').addEventListener('click', function(){
   fetch(ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ action: 'instructorSignup', name: name, school: school, email: email, phone: phone, regions: regions })
+    body: JSON.stringify({ action: 'instructorSignup', name: name, school: school, email: email, phone: phone, regions: regions, style: style, car: car, transmission: transmission, experience: experience, directory: directory })
   })
   .then(function(r){ return r.json(); })
   .then(function(d){
@@ -210,8 +236,11 @@ document.getElementById('isubmit').addEventListener('click', function(){
       var link = 'instructor.html?tk=' + encodeURIComponent(d.token || '');
       var html = "You're registered! Your personal dashboard: <a href=\"" + link + "\">open dashboard</a>.<br><strong>Save this link</strong> — it’s your key to viewing and taking leads.";
       html += "<br><br><strong>Save 07462 169428</strong> in your phone as <strong>TestNow</strong> — that’s the number your lead alerts are texted from.";
-      if (d.community) {
-        html += "<br><br><a href=\"" + d.community + "\" target=\"_blank\" rel=\"noopener\"><strong>Join the instructors-only community group</strong></a> — traffic, test-centre intel and cancellations, instructors only.";
+      if (d.community && d.community.length) {
+        html += "<br><br><strong>Your area community group" + (d.community.length > 1 ? "s" : "") + "</strong> — instructors only (traffic, test-centre intel, cancellations):";
+        for (var ci = 0; ci < d.community.length; ci++) {
+          html += "<br><a href=\"" + d.community[ci].url + "\" target=\"_blank\" rel=\"noopener\">Join " + d.community[ci].region + " instructors</a>";
+        }
       }
       msg.innerHTML = html;
       btn.textContent = 'Registered ✓'; btn.disabled = true;
