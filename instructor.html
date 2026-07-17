@@ -115,7 +115,7 @@
     <div class="topbar" id="topbar" style="display:none;">
       <div class="who" id="who"></div>
       <div class="credits" id="credits"></div>
-      <button class="lbtn" style="width:auto;padding:10px 16px;" id="buycredits">Buy 5 credits — £200</button>
+      <button class="lbtn" style="display:none;width:auto;padding:10px 16px;" id="buycredits">Buy 5 credits — £200</button>
     </div>
 
     <div class="empty" id="paidbanner" style="display:none;background:#e7f4ec;border:1.5px solid var(--ink);">
@@ -156,7 +156,7 @@ function load() {
       document.getElementById('topbar').style.display = '';
       document.getElementById('who').textContent = d.instructor.name;
       CREDITS = d.instructor.credits;
-      document.getElementById('credits').textContent = 'Credits: ' + CREDITS;
+      document.getElementById('credits').textContent = '';
       var grid = document.getElementById('grid');
       renderMine(d.mine || []);
       if (!d.leads.length) { document.getElementById('empty').style.display = ''; return; }
@@ -167,8 +167,8 @@ function load() {
           '<div class="lrow"><span>Test date</span><strong>' + esc(l.date) + '</strong></div>' +
           '<div class="lrow"><span>Needs</span><strong>Instructor for their test</strong></div>' +
           '<div class="lrow"><span>Wants</span><strong>' + esc(l.wantedWhen || '—') + '</strong></div>' +
-          '<button class="lbtn" onclick="buyLead(\'' + esc(l.id) + '\')">Take this lead — £50</button>' +
-          (CREDITS > 0 ? '<button class="lbtn" style="background:var(--accent);margin-top:8px;" onclick="useCredit(\'' + esc(l.id) + '\')">Use 1 credit instead</button>' : '') +
+          '<button class="lbtn" onclick="useCredit(\'' + esc(l.id) + '\')">Take this lead — FREE (launch offer)</button>' +
+          '' +
           '</div>';
       }).join('');
     })
@@ -200,7 +200,7 @@ function buyLead(id) {
 }
 
 function useCredit(id) {
-  if (!confirm('Use 1 credit to take this lead? Contact details are revealed immediately and credits are non-refundable.')) return;
+  if (!confirm('Take this lead for free? The learner\'s contact details are revealed to you immediately - please only take leads you intend to follow up.')) return;
   post({ action: 'claimLead', tk: TK, leadId: id })
     .then(function(d){
       if (d.result === 'success' && d.contact) {
