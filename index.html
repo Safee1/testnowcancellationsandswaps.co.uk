@@ -1650,5 +1650,20 @@
     });
   })();
 </script>
+
+<!-- Google Ads conversion tracking - DORMANT until the two IDs below are pasted in (from Google Ads > Goals > Conversions). Fires once when the listing success panel appears. -->
+<script>
+(function(){
+  var GADS_ID='';    /* e.g. 'AW-123456789' */
+  var GADS_LABEL=''; /* e.g. 'AbCdEfGhIjkL' */
+  if(!GADS_ID) return;
+  var s=document.createElement('script'); s.async=true; s.src='https://www.googletagmanager.com/gtag/js?id='+GADS_ID; document.head.appendChild(s);
+  window.dataLayer=window.dataLayer||[]; function gtag(){dataLayer.push(arguments);} window.gtag=window.gtag||gtag;
+  gtag('js',new Date()); gtag('config',GADS_ID);
+  var fired=false, el=document.getElementById('form-success'); if(!el) return;
+  var check=function(){ if(fired) return; var vis=el.offsetParent!==null && getComputedStyle(el).display!=='none'; if(vis){ fired=true; if(GADS_LABEL) gtag('event','conversion',{send_to:GADS_ID+'/'+GADS_LABEL}); } };
+  new MutationObserver(check).observe(el,{attributes:true,attributeFilter:['class','style']}); check();
+})();
+</script>
 </body>
 </html>
