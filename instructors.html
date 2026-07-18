@@ -124,13 +124,13 @@
       <li>Free to register — no subscription, no monthly fee.</li>
       <li>Get an instant text and email the moment a learner in your regions needs an instructor.</li>
       <li>Browse available learner requests in your regions (details anonymised).</li>
-      <li>Pay only when you choose to take a lead — their contact details are then released to you alone.</li>
+      <li>Free while we launch — when a learner picks you, their details come straight to you by text and email. Take it or leave it; your diary stays yours.</li>
       <li>Every learner has explicitly agreed to be contacted by an instructor.</li>
       <li>Registered instructors get an invite to our instructors-only community group.</li>
     </ul>
 
     <p class="savenum">
-      <strong>Save our number.</strong> Lead alerts are texted from <strong>07462&nbsp;169428</strong> — save it in your phone as <strong>TestNow</strong> so you know it's us and don't miss a lead. Leads are first come, first served.
+      <strong>Save our number.</strong> Enquiry alerts are texted from <strong>07462&nbsp;169428</strong> — save it in your phone as <strong>TestNow</strong> so you know it's a real learner and not a scam text. Enquiries are first come, first served.
     </p>
 
     <div class="iform">
@@ -191,7 +191,7 @@
       <div class="imsg" id="imsg"></div>
     </div>
 
-    <p style="margin-top:26px;font-size:13.5px;color:rgba(31,41,35,.75);">We handle your data as set out in our <a href="privacy.html">Privacy Notice</a>. By registering you agree that we may text and email you about learner requests in the regions you cover. If you choose to join our instructors-only community group, other members of that group will be able to see your name and mobile number. Registering doesn't commit you to anything — you only pay if you choose to take a lead.</p>
+    <p style="margin-top:26px;font-size:13.5px;color:rgba(31,41,35,.75);">We handle your data as set out in our <a href="privacy.html">Privacy Notice</a>. By registering you agree that we may text and email you about learner requests in the regions you cover. If you choose to join our instructors-only community group, other members of that group will be able to see your name and mobile number. Registering doesn't commit you to anything.</p>
   </div>
 </main>
 
@@ -234,8 +234,8 @@ document.getElementById('isubmit').addEventListener('click', function(){
     if (d.result === 'success') {
       msg.className = 'imsg ok';
       var link = 'instructor.html?tk=' + encodeURIComponent(d.token || '');
-      var html = "You're registered! Your personal dashboard: <a href=\"" + link + "\">open dashboard</a>.<br><strong>Save this link</strong> — it’s your key to viewing and taking leads.";
-      html += "<br><br><strong>Save 07462 169428</strong> in your phone as <strong>TestNow</strong> — that’s the number your lead alerts are texted from.";
+      var html = "You're registered! Your personal dashboard: <a href=\"" + link + "\">open dashboard</a>.<br><strong>Save this link</strong> — it’s your key to viewing and responding to enquiries.";
+      html += "<br><br><strong>Save 07462 169428</strong> in your phone as <strong>TestNow</strong> — that’s the number your enquiry alerts are texted from.";
       if (d.community && d.community.length) {
         html += "<br><br><strong>Your area community group" + (d.community.length > 1 ? "s" : "") + "</strong> — instructors only (traffic, test-centre intel, cancellations):";
         for (var ci = 0; ci < d.community.length; ci++) {
