@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leave a review — TestNow</title>
+<meta name="description" content="Leave a review for your driving instructor on TestNow.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0A6B36">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#0A6B36; --ink-soft:#0E8C45; --paper:#F5F0E6; --paper-warm:#EBE3D2; --accent:#D6206E; --muted:#5b6b62; --max:640px; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body { font-family:'Inter Tight',sans-serif; background:var(--paper); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased; }
+  a { color:var(--accent); text-decoration:underline; }
+  .wrap { max-width:var(--max); margin:0 auto; padding:0 24px; }
+  header.nav { padding:22px 0; border-bottom:1px solid rgba(10,107,54,.15); }
+  .nav-inner { display:flex; align-items:center; justify-content:space-between; max-width:1240px; margin:0 auto; padding:0 24px; }
+  .brand { display:flex; align-items:center; gap:14px; text-decoration:none; }
+  .brand img { height:30px; }
+  .brand-tag { padding-left:14px; border-left:1.5px solid rgba(10,107,54,.25); }
+  .brand-tag small { font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); }
+  .back { font-size:14px; color:var(--ink); text-decoration:none; opacity:.8; }
+  main { padding:56px 0 100px; }
+  .eyebrow { font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
+  h1 { font-family:'Fraunces',serif; font-weight:500; font-size:clamp(28px,5vw,42px); line-height:1.05; letter-spacing:-.03em; margin-bottom:14px; }
+  .lede { font-size:16px; color:var(--ink-soft); margin-bottom:30px; }
+  .box { background:#fff; border:1.5px solid var(--ink); border-radius:16px; padding:26px; box-shadow:5px 5px 0 var(--ink); }
+  label { display:block; font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; margin-bottom:6px; margin-top:18px; }
+  label:first-of-type { margin-top:0; }
+  input, textarea { width:100%; padding:12px 13px; font-size:16px; font-family:inherit; border:1.5px solid rgba(10,107,54,.35); border-radius:10px; background:var(--paper); color:var(--ink); }
+  textarea { min-height:110px; resize:vertical; }
+  .charcount { font-size:12px; color:var(--muted); text-align:right; margin-top:4px; }
+  .stars { display:flex; gap:8px; font-size:36px; line-height:1; user-select:none; }
+  .stars span { cursor:pointer; color:rgba(10,107,54,.25); transition:color .1s; }
+  .stars span.on { color:var(--accent); }
+  .hint { font-size:12px; color:var(--muted); margin-top:6px; }
+  .btn { margin-top:24px; width:100%; padding:14px; border-radius:999px; border:none; cursor:pointer; font-family:inherit; font-size:16px; font-weight:600; background:var(--ink); color:var(--paper); }
+  .btn:disabled { opacity:.6; cursor:default; }
+  .msg { display:none; margin-top:16px; padding:14px 16px; border-radius:10px; font-size:14px; }
+  .msg.ok { display:block; background:#e7f4ec; color:#0A6B36; border:1.5px solid #0A6B36; }
+  .msg.err { display:block; background:#fdeaea; color:#a01313; border:1.5px solid #a01313; }
+  .status { font-size:15px; color:var(--muted); padding:24px 0; }
+  footer { border-top:1.5px solid var(--ink); padding:40px 0; text-align:center; font-size:13px; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html">
+      <img src="logo.jpg" alt="TestNow">
+      <span class="brand-tag"><small>Cancellations &amp; Swaps</small></span>
+    </a>
+    <a class="back" href="index.html">&larr; Back to site</a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <div id="loading" class="status">Loading…</div>
+
+    <div id="invalid" style="display:none;">
+      <div class="eyebrow">Review link</div>
+      <h1>This link isn't valid.</h1>
+      <p class="lede">It may have already been used, or it's expired. If you think that's wrong, get in touch and we'll sort it.</p>
+    </div>
+
+    <div id="formwrap" style="display:none;">
+      <div class="eyebrow">Leave a review</div>
+      <h1 id="heading">How did it go?</h1>
+      <p class="lede" id="sub">Your review helps other learners find a good instructor. It's checked before it goes live.</p>
+
+      <div class="box">
+        <label>Your rating</label>
+        <div class="stars" id="stars">
+          <span data-v="1">&#9733;</span><span data-v="2">&#9733;</span><span data-v="3">&#9733;</span><span data-v="4">&#9733;</span><span data-v="5">&#9733;</span>
+        </div>
+
+        <label for="r-text">Your review (optional)</label>
+        <textarea id="r-text" maxlength="400" placeholder="What was it like learning with them?"></textarea>
+        <div class="charcount"><span id="r-count">0</span>/400</div>
+
+        <label for="r-name">Your first name</label>
+        <input type="text" id="r-name" placeholder="Shown with your review">
+
+        <label for="r-contact">Your phone or email</label>
+        <input type="text" id="r-contact" placeholder="To verify it's really you">
+        <div class="hint">Never shown publicly or passed to the instructor — used only to check this is a genuine review.</div>
+
+        <button class="btn" id="submit" type="button">Submit review</button>
+        <div class="msg" id="msg"></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  &copy; <span id="yr"></span> testnowcancellationsandswaps.co.uk &middot; Independent &amp; not affiliated with DVSA or gov.uk.
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+var ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
+
+function qparam(name){
+  var m = new RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+  return m ? decodeURIComponent(m[1].replace(/\+/g,' ')) : '';
+}
+
+var token = qparam('rt');
+var instructorId = '';
+var stars = 0;
+
+var loadingEl = document.getElementById('loading');
+var invalidEl = document.getElementById('invalid');
+var formEl = document.getElementById('formwrap');
+
+if (!token) {
+  loadingEl.style.display = 'none';
+  invalidEl.style.display = 'block';
+} else {
+  fetch(ENDPOINT + "?action=reviewInfo&rt=" + encodeURIComponent(token))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      loadingEl.style.display = 'none';
+      if (!d || !d.valid) { invalidEl.style.display = 'block'; return; }
+      instructorId = d.instructorId || '';
+      document.getElementById('heading').textContent = d.instructorName ? ("How did it go with " + d.instructorName + "?") : "How did it go?";
+      formEl.style.display = 'block';
+    })
+    .catch(function(){ loadingEl.style.display = 'none'; invalidEl.style.display = 'block'; });
+}
+
+var starsEl = document.getElementById('stars');
+starsEl.addEventListener('click', function(ev){
+  var s = ev.target.closest('span'); if (!s) return;
+  stars = parseInt(s.getAttribute('data-v'), 10);
+  Array.prototype.forEach.call(starsEl.children, function(el){
+    el.classList.toggle('on', parseInt(el.getAttribute('data-v'),10) <= stars);
+  });
+});
+
+var textEl = document.getElementById('r-text');
+var countEl = document.getElementById('r-count');
+textEl.addEventListener('input', function(){ countEl.textContent = textEl.value.length; });
+
+document.getElementById('submit').addEventListener('click', function(){
+  var btn = this, msg = document.getElementById('msg');
+  msg.className = 'msg';
+  var name = document.getElementById('r-name').value.trim();
+  var contact = document.getElementById('r-contact').value.trim();
+  var text = textEl.value.trim();
+
+  if (!stars) { msg.className = 'msg err'; msg.textContent = 'Please pick a star rating.'; return; }
+  if (!name) { msg.className = 'msg err'; msg.textContent = 'Please add your first name.'; return; }
+  if (!contact) { msg.className = 'msg err'; msg.textContent = 'Please add a phone or email so we can verify it’s you.'; return; }
+
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  fetch(ENDPOINT, {
+    method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({
+      action: 'submitReview', token: token, instructorId: instructorId,
+      stars: stars, text: text, reviewerFirstName: name, reviewerContact: contact
+    })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d.result === 'success') {
+      msg.className = 'msg ok'; msg.textContent = d.message || "Thanks — your review has been submitted.";
+      btn.style.display = 'none';
+      document.getElementById('stars').style.pointerEvents = 'none';
+      textEl.disabled = true; document.getElementById('r-name').disabled = true; document.getElementById('r-contact').disabled = true;
+    } else { throw new Error(d.message || 'error'); }
+  })
+  .catch(function(err){
+    msg.className = 'msg err'; msg.textContent = (err && err.message) ? err.message : "Couldn't submit right now — please try again.";
+    btn.disabled = false; btn.textContent = 'Submit review';
+  });
+});
+</script>
+</body>
+</html>
