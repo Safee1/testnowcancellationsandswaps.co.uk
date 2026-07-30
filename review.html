@@ -113,7 +113,7 @@ function qparam(name){
   return m ? decodeURIComponent(m[1].replace(/\+/g,' ')) : '';
 }
 
-var token = qparam('rt');
+var token = qparam('tk'); // NOTE: "tk" not "rt" — "rt" is reserved by Google's script.google.com routing and breaks every request
 var instructorId = '';
 var stars = 0;
 
@@ -125,7 +125,7 @@ if (!token) {
   loadingEl.style.display = 'none';
   invalidEl.style.display = 'block';
 } else {
-  fetch(ENDPOINT + "?action=reviewInfo&rt=" + encodeURIComponent(token))
+  fetch(ENDPOINT + "?action=reviewInfo&tk=" + encodeURIComponent(token))
     .then(function(r){ return r.json(); })
     .then(function(d){
       loadingEl.style.display = 'none';
