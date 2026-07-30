@@ -34,6 +34,9 @@
   .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px; }
   .card { background:#fff; border:1.5px solid rgba(10,107,54,.3); border-radius:16px; padding:20px; display:flex; flex-direction:column; }
   .card h3 { font-family:'Fraunces',serif; font-weight:600; font-size:20px; margin-bottom:2px; }
+  .card .rating { font-size:13.5px; color:var(--ink); font-weight:600; margin-bottom:6px; }
+  .card .rating .star { color:var(--accent); }
+  .card .rating .none { font-size:12.5px; color:var(--muted); font-weight:400; }
   .card .school { font-size:13px; color:var(--muted); margin-bottom:12px; }
   .card ul { list-style:none; margin:0 0 16px; padding:0; }
   .card li { font-size:14.5px; color:var(--ink-soft); padding:3px 0; }
@@ -153,7 +156,11 @@ function search(){
         else if (it.transmission) rows += "<li><b>Transmission:</b> " + esc(it.transmission) + "</li>";
         if (it.experience) rows += "<li><b>Experience:</b> " + esc(it.experience) + "</li>";
         if (it.regions) rows += "<li><b>Covers:</b> " + esc(it.regions) + "</li>";
+        var ratingHtml = (it.reviewCount > 0)
+          ? "<div class='rating'><span class='star'>&#9733;</span> " + esc(it.rating) + " (" + esc(it.reviewCount) + ")</div>"
+          : "<div class='rating none'>No reviews yet</div>";
         return "<div class='card'><h3>" + esc(it.name || "Instructor") + "</h3>" +
+          ratingHtml +
           (it.school ? "<div class='school'>" + esc(it.school) + "</div>" : "<div class='school'>Driving instructor</div>") +
           "<ul>" + rows + "</ul>" +
           "<button class='enq' data-id='" + esc(it.id) + "' data-name='" + esc(it.name||"") + "'>Enquire</button></div>";
