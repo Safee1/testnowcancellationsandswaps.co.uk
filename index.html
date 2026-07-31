@@ -797,6 +797,21 @@
     .consent-btns .btn { flex: 1; text-align: center; }
   }
 
+  /* ===== HERO/BANNER OVERLAP FIX =====
+     The fixed, bottom cookie/consent banner (.consent) can be ~100px tall
+     once its text wraps, and on shorter viewports (or when the headline
+     wraps to 3 lines at wider widths) the hero's default vertical rhythm
+     pushes the CTA row down far enough that the banner overlaps
+     "List my test" / "How does it work?" on first load. Rather than guess
+     a viewport size, JS below measures whether the CTA row actually
+     collides with the banner and toggles this class only when it does —
+     robust across viewport sizes instead of a single hard-coded breakpoint. */
+  body.consent-overlaps-hero header.nav { padding: 12px 0; }
+  body.consent-overlaps-hero .hero { padding: 16px 0 40px; }
+  body.consent-overlaps-hero .eyebrow { margin-bottom: 14px; }
+  body.consent-overlaps-hero h1.headline { margin-bottom: 14px; }
+  body.consent-overlaps-hero .lede { margin-bottom: 18px; }
+
   /* ===== SWAP-CARD CLEANUP + BUTTON POLISH ===== */
   @media (max-width: 600px) {
     /* Turn the overlapping rotated cards into a clean vertical stack */
@@ -1580,6 +1595,25 @@
       .catch(() => {});
   }
 
+  // Measures whether the fixed consent banner actually overlaps the hero's
+  // CTA row and, if so, tightens the hero's vertical spacing so the CTAs
+  // clear it. Re-checked on resize/orientation change so it stays correct
+  // at any viewport size rather than relying on a single hard-coded breakpoint.
+  function syncHeroBannerSpacing() {
+    const banner = document.getElementById('consent');
+    const ctaRow = document.querySelector('.cta-row');
+    if (!banner || !ctaRow) return;
+    const visible = getComputedStyle(banner).display !== 'none';
+    if (!visible) {
+      document.body.classList.remove('consent-overlaps-hero');
+      return;
+    }
+    const bRect = banner.getBoundingClientRect();
+    const cRect = ctaRow.getBoundingClientRect();
+    const overlaps = bRect.top < window.innerHeight && (cRect.bottom + 12) > bRect.top;
+    document.body.classList.toggle('consent-overlaps-hero', overlaps);
+  }
+
   (function consentInit() {
     const banner = document.getElementById('consent');
     const choice = getCookie('tn_consent');
@@ -1601,14 +1635,18 @@
     if (choice === 'no') return; // declined — no detection, no banner
     // No choice yet → show banner
     banner.style.display = 'block';
+    syncHeroBannerSpacing();
+    window.addEventListener('resize', syncHeroBannerSpacing);
     document.getElementById('consent-accept').addEventListener('click', () => {
       setCookie('tn_consent', 'yes', 180);
       banner.style.display = 'none';
+      syncHeroBannerSpacing();
       detectRegion();
     });
     document.getElementById('consent-decline').addEventListener('click', () => {
       setCookie('tn_consent', 'no', 180);
       banner.style.display = 'none';
+      syncHeroBannerSpacing();
     });
   })();
 
