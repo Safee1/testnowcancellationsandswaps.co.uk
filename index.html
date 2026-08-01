@@ -668,6 +668,14 @@
     font-weight: 600;
     color: var(--ink);
   }
+  /* The two field labels phrased as full questions/notes rather than
+     short field names — all-caps + wide tracking becomes genuinely hard
+     to read at that length, so these get normal sentence case instead. */
+  label.label-sentence {
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 13px;
+  }
   input, select, textarea {
     font-family: inherit;
     font-size: 15px;
@@ -743,7 +751,7 @@
     font-weight: 400;
     font-style: italic;
   }
-  .foot-col h4 {
+  .foot-col h3 {
     font-size: 11px;
     letter-spacing: .2em;
     text-transform: uppercase;
@@ -1176,7 +1184,7 @@
         </div>
 
         <div class="field full" id="moves-box" style="display:none;">
-          <label>Centres you'll be able to swap to (from 9 June)</label>
+          <label class="label-sentence">Centres you'll be able to swap to (from 9 June)</label>
           <div class="moves-note">
             From 9 June 2026, DVSA limits swaps to your 3 nearest centres (or back to your original). These are shown so you know your options — they're set by DVSA, not us.
           </div>
@@ -1224,7 +1232,7 @@
         </div>
 
         <div class="field full">
-          <label for="has-instructor">Do you already have an instructor available for your test?</label>
+          <label for="has-instructor" class="label-sentence">Do you already have an instructor available for your test?</label>
           <select id="has-instructor" name="has-instructor" required>
             <option value="">Choose…</option>
             <option value="yes">Yes — I'm sorted</option>
@@ -1307,7 +1315,7 @@
         <p>A free, independent website helping UK learner drivers swap their practical test dates.</p>
       </div>
       <div class="foot-col">
-        <h4>Explore</h4>
+        <h3>Explore</h3>
         <a href="#how">How it works</a>
         <a href="#why">Why us</a>
         <a href="#swap">List a swap</a>
@@ -1316,13 +1324,13 @@
         <a href="#faq">FAQ</a>
       </div>
       <div class="foot-col">
-        <h4>Legal</h4>
+        <h3>Legal</h3>
         <a href="terms.html">Terms of use</a>
         <a href="privacy.html">Privacy policy</a>
         <a href="cookies.html">Cookie policy</a>
       </div>
       <div class="foot-col">
-        <h4>Contact</h4>
+        <h3>Contact</h3>
         <a href="mailto:info@testnowcancellationsandswaps.co.uk">Email us</a>
         <a href="#">Report a problem</a>
       </div>
