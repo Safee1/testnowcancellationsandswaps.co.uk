@@ -559,16 +559,21 @@
   }
   .bcard .bdate span:last-child { font-weight: 600; }
   .bcard .btag {
+    /* Deliberately NOT styled like the real CTA buttons (.btn) — this is a
+       status label on someone else's listing, not a clickable action, and
+       a solid button-weight fill here reads as a dead button on tap. */
     display: inline-block;
     margin-top: 16px;
     font-size: 11px;
     letter-spacing: .1em;
     text-transform: uppercase;
     font-weight: 600;
-    padding: 6px 12px;
+    padding: 5px 12px;
     border-radius: 999px;
-    background: var(--accent);
-    color: var(--paper);
+    background: transparent;
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    cursor: default;
   }
   .bcard .bsample {
     position: absolute;
@@ -856,7 +861,7 @@
     /* Consent banner: even slimmer on small screens, and buttons sit
        inline beside the (now short) text instead of stacking full-width,
        so the whole bar stays a thin strip rather than a panel. */
-    .consent { left: 10px; right: 10px; bottom: 10px; padding: 12px 14px; max-height: 30vh; }
+    .consent { left: 10px; right: 10px; bottom: 10px; padding: 12px 14px; max-height: 20vh; }
     .consent-inner { gap: 10px; }
     .consent p { font-size: 12.5px; }
     .consent-btns { gap: 8px; }
