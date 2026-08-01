@@ -37,10 +37,10 @@
 <style>
   :root {
     --ink: #0A6B36;
-    --ink-soft: #0D7E3E; /* darkened from #0E8C45 — was 3.8:1 on paper, now 4.5:1 (WCAG AA) */
+    --ink-soft: #037434; /* darkened again — 4.5:1 was against --paper only, but this text also sits on --paper-warm (darker), where it was still 4.04:1; now 4.63:1 on --paper-warm */
     --paper: #F5F0E6;
     --paper-warm: #EBE3D2;
-    --accent: #CF1F6B; /* darkened from #D6206E — was 4.31:1 on paper, now 4.5:1 (WCAG AA); also improves the reverse pairing (light text on this as a button background) */
+    --accent: #C3135F; /* darkened again — 4.5:1 was against --paper only, but this text also sits on --paper-warm (darker), where it was still 4.05:1; now 4.60:1 on --paper-warm. Also improves the reverse pairing (light text on this as a button background) */
     --accent-soft: #F192BD; /* lightened from #E8478F — was failing even large-text 3:1 against --ink, now 3:1 on --ink (this token is only ever used as large emphasis text on --ink backgrounds) */
     --rule: #0A6B36;
     --muted: #58685F; /* darkened from #5b6b62 — was 4.42:1 on paper-warm, now 4.63:1 (WCAG AA, with margin) */
@@ -274,7 +274,7 @@
   .swap-card.b { bottom: 0; right: 0; transform: rotate(2deg); background: var(--ink); color: var(--paper); border-color: var(--ink); box-shadow: 6px 6px 0 var(--accent); }
   .swap-illo:hover .swap-card.a { transform: rotate(-5deg) translate(-6px, -6px); }
   .swap-illo:hover .swap-card.b { transform: rotate(4deg) translate(6px, 6px); }
-  .swap-card h3 {
+  .swap-card .card-name {
     font-family: 'Fraunces', serif;
     font-size: 17px;
     margin-bottom: 14px;
@@ -818,7 +818,7 @@
     .swap-illo { height: 360px; max-width: 320px; }
     .swap-card { width: 220px; padding: 18px; box-shadow: 4px 4px 0 var(--ink); }
     .swap-card.b { box-shadow: 4px 4px 0 var(--accent); }
-    .swap-card h3 { font-size: 15px; }
+    .swap-card .card-name { font-size: 15px; }
     .swap-arrow { width: 52px; height: 52px; font-size: 22px; }
 
     /* Marquee a touch smaller */
@@ -901,7 +901,7 @@
     }
     .swap-card.a { margin: 0; }
     .swap-card.b { box-shadow: 4px 4px 0 var(--accent); }
-    .swap-card h3 { font-size: 15px; margin-bottom: 12px; }
+    .swap-card .card-name { font-size: 15px; margin-bottom: 12px; }
     .swap-card .row { font-size: 13px; padding: 6px 0; }
     .swap-card .stamp { margin-top: 12px; }
 
@@ -931,7 +931,7 @@
       margin-left: 0;
       border-left: none;        /* drop the divider when stacked */
     }
-    .brand .brand-tag small { font-size: 9.5px; letter-spacing: .12em; }
+    .brand .brand-tag small { font-size: 11px; letter-spacing: .12em; }
     nav.links { flex-shrink: 0; }                      /* keep the button intact */
     nav.links .btn { padding: 10px 15px; font-size: 13px; }
     .logo-img { height: 24px; }
@@ -1033,7 +1033,7 @@
 
     <div class="swap-illo reveal" aria-hidden="true">
       <div class="swap-card a">
-        <h3>Sarah · Manchester</h3>
+        <p class="card-name">Sarah · Manchester</p>
         <div class="row"><span>Test centre</span><strong>West Didsbury</strong></div>
         <div class="row"><span>Date</span><strong>14 Aug 2026</strong></div>
         <div class="row"><span>Wants</span><strong>Anything sooner</strong></div>
@@ -1041,7 +1041,7 @@
       </div>
       <div class="swap-arrow"><span>⇄</span></div>
       <div class="swap-card b">
-        <h3>James · Manchester</h3>
+        <p class="card-name">James · Manchester</p>
         <div class="row"><span>Test centre</span><strong>Cheetham Hill</strong></div>
         <div class="row"><span>Date</span><strong>05 Jun 2026</strong></div>
         <div class="row"><span>Wants</span><strong>August or later</strong></div>
