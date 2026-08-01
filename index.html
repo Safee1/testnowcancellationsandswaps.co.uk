@@ -1092,6 +1092,10 @@
     </div>
 
     <form class="form-wrap reveal" id="swap-form" onsubmit="handleSubmit(event)">
+      <div style="position:absolute;left:-9999px;top:-9999px;opacity:0;height:0;width:0;overflow:hidden;" aria-hidden="true">
+        <label for="website">Leave this field blank</label>
+        <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
       <div class="form-grid">
         <div class="field">
           <label for="name">Name</label>
@@ -1307,6 +1311,7 @@
   // Form: sends submission to Google Sheet via Apps Script Web App.
   // PASTE YOUR DEPLOYED WEB APP URL BETWEEN THE QUOTES BELOW:
   const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
+  const PAGE_LOADED_AT = Date.now(); // bot guard: real humans never submit within ~2s of page load
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -1368,7 +1373,9 @@
       wantedRegion: form['wanted-region'].value,
       wantedCentre: form['wanted-centre'].value,
       notes: form.notes.value,
-      leadType: (form['has-instructor'] && form['has-instructor'].value === 'no') ? 'wants-instructor' : 'swap'
+      leadType: (form['has-instructor'] && form['has-instructor'].value === 'no') ? 'wants-instructor' : 'swap',
+      website: form.website ? form.website.value : '', // honeypot — real users never see/fill this
+      formLoadedAt: PAGE_LOADED_AT
     };
 
     fetch(SHEET_ENDPOINT, {
