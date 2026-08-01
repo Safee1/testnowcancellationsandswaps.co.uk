@@ -684,6 +684,25 @@
     box-shadow: 0 0 0 3px rgba(215,85,59,.15);
   }
   textarea { resize: vertical; min-height: 90px; }
+
+  /* Inline field errors — replaces a native browser alert() for the
+     one exercisable error state (past test date), which used to fire
+     as an OS-styled popup on the field carrying the most anxiety. */
+  .field-error {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--accent);
+    margin: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .field-error::before { content: '⚠'; flex-shrink: 0; }
+  .field.has-error input,
+  .field.has-error select {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(207,31,107,.12);
+  }
   .form-submit { margin-top: 28px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
   .form-submit small { color: var(--muted); font-size: 13px; }
 
@@ -1166,7 +1185,8 @@
 
         <div class="field">
           <label for="date">Your current test date</label>
-          <input id="date" name="date" type="date" required>
+          <input id="date" name="date" type="date" required aria-describedby="date-error">
+          <p class="field-error" id="date-error" role="alert" hidden>That date's already passed — enter your actual upcoming test date.</p>
         </div>
         <div class="field">
           <label for="time">Your current test time</label>
@@ -1347,6 +1367,18 @@
   const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
   const PAGE_LOADED_AT = Date.now(); // bot guard: real humans never submit within ~2s of page load
 
+  function setDateError(show) {
+    const field = document.getElementById('date').closest('.field');
+    const errEl = document.getElementById('date-error');
+    field.classList.toggle('has-error', show);
+    errEl.hidden = !show;
+    document.getElementById('date').setAttribute('aria-invalid', show ? 'true' : 'false');
+  }
+  // Clear the error the moment the user changes either field, so it
+  // never sits there stale once they've acted on it.
+  document.getElementById('date').addEventListener('input', () => setDateError(false));
+  document.getElementById('time').addEventListener('input', () => setDateError(false));
+
   function handleSubmit(e) {
     e.preventDefault();
     const form = e.target;
@@ -1360,10 +1392,13 @@
       const chosen = new Date(dateVal + 'T' + (timeVal || '23:59'));
       now.setSeconds(0, 0);
       if (chosen < now) {
-        alert("That test date and time is in the past. Please enter your upcoming test date (today or later).");
+        setDateError(true);
+        form.date.focus();
+        form.date.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
     }
+    setDateError(false);
 
     // --- Check if this phone already exists, then proceed ---
     btn.disabled = true;
