@@ -467,21 +467,26 @@
   .promise-list strong { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600; display: block; margin-bottom: 4px; }
   .promise-list span { font-size: 14px; opacity: .75; }
 
-  /* Consent banner */
+  /* Consent banner — kept deliberately slim: on small screens this sits at
+     the very bottom of the viewport and must never eat enough height to
+     cover a real CTA above it (cards, buttons). Short copy + tight padding
+     + a max-height safety valve, rather than a full-height panel. */
   .consent {
     position: fixed;
-    bottom: 20px; left: 20px; right: 20px;
-    max-width: 720px;
+    bottom: 14px; left: 14px; right: 14px;
+    max-width: 640px;
+    max-height: 25vh;
+    overflow: auto;
     margin: 0 auto;
     background: var(--ink);
     color: var(--paper);
-    border-radius: 16px;
-    padding: 20px 24px;
+    border-radius: 14px;
+    padding: 14px 18px;
     z-index: 200;
     box-shadow: 0 10px 40px rgba(0,0,0,.25);
   }
-  .consent-inner { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: space-between; }
-  .consent p { font-size: 13.5px; line-height: 1.5; flex: 1; min-width: 240px; margin: 0; }
+  .consent-inner { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: space-between; }
+  .consent p { font-size: 13px; line-height: 1.45; flex: 1; min-width: 220px; margin: 0; }
   .consent a { color: var(--accent-soft); text-decoration: underline; }
   .consent-btns { display: flex; gap: 10px; }
   .consent .btn { padding: 10px 18px; font-size: 13px; }
@@ -633,6 +638,29 @@
   @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
   .field { display: flex; flex-direction: column; gap: 8px; }
   .field.full { grid-column: 1 / -1; }
+
+  /* Form step groups — the 12 fields read as three chunks (you / your
+     current test / what you want instead) instead of one flat list,
+     matching the page's own "list your test" step language above. */
+  .form-step-head {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding-top: 22px;
+    margin-top: 4px;
+    border-top: 1.5px solid rgba(20,20,15,.12);
+  }
+  .form-step-head:first-child { padding-top: 0; margin-top: 0; border-top: none; }
+  .form-step-num {
+    font-family: 'Fraunces', serif;
+    font-size: 12.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .form-step-num strong { color: var(--accent); font-weight: 600; margin-right: 6px; }
   label {
     font-size: 12px;
     letter-spacing: .12em;
@@ -797,11 +825,14 @@
     footer { padding: 56px 0 32px; margin-top: 56px; }
     .foot-bottom { flex-direction: column; align-items: flex-start; }
 
-    /* Consent banner sits tighter to the screen edges */
-    .consent { left: 12px; right: 12px; bottom: 12px; padding: 16px 18px; }
-    .consent-inner { gap: 14px; }
-    .consent-btns { width: 100%; }
-    .consent-btns .btn { flex: 1; text-align: center; }
+    /* Consent banner: even slimmer on small screens, and buttons sit
+       inline beside the (now short) text instead of stacking full-width,
+       so the whole bar stays a thin strip rather than a panel. */
+    .consent { left: 10px; right: 10px; bottom: 10px; padding: 12px 14px; max-height: 30vh; }
+    .consent-inner { gap: 10px; }
+    .consent p { font-size: 12.5px; }
+    .consent-btns { gap: 8px; }
+    .consent-btns .btn { padding: 8px 14px; font-size: 12.5px; }
   }
 
   /* ===== HERO/BANNER OVERLAP FIX =====
@@ -1097,19 +1128,21 @@
         <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
       </div>
       <div class="form-grid">
+        <div class="form-step-head"><span class="form-step-num"><strong>01</strong>About you</span></div>
         <div class="field">
           <label for="name">Name</label>
-          <input id="name" name="name" type="text" required placeholder="e.g. Aisha">
+          <input id="name" name="name" type="text" required placeholder="e.g. Aisha" autocomplete="name">
         </div>
         <div class="field">
           <label for="email">Email</label>
-          <input id="email" name="email" type="email" required placeholder="you@example.com">
+          <input id="email" name="email" type="email" required placeholder="you@example.com" autocomplete="email">
         </div>
         <div class="field">
           <label for="phone">Phone number</label>
-          <input id="phone" name="phone" type="tel" required placeholder="07xxx xxxxxx" inputmode="tel">
+          <input id="phone" name="phone" type="tel" required placeholder="07xxx xxxxxx" inputmode="tel" autocomplete="tel">
         </div>
 
+        <div class="form-step-head"><span class="form-step-num"><strong>02</strong>Your current test</span></div>
         <div class="field">
           <label for="region">Your region</label>
           <select id="region" name="region" required>
@@ -1140,6 +1173,7 @@
           <input id="time" name="time" type="time" step="60" required>
         </div>
 
+        <div class="form-step-head"><span class="form-step-num"><strong>03</strong>What you want instead</span></div>
         <div class="field">
           <label for="wanted-when">When you'd like instead</label>
           <select id="wanted-when" name="wanted-when" required>
@@ -1284,7 +1318,7 @@
 <div class="consent" id="consent" role="dialog" aria-label="Cookie and location notice" style="display:none;">
   <div class="consent-inner">
     <p>
-      We use a cookie to remember your choices and detect your rough region (from your IP address) so we can show tests near you first. We don't track you or sell your data. See our <a href="privacy.html">privacy notice</a>.
+      One cookie, to remember your choice and show nearby tests first. No tracking, no selling data. <a href="privacy.html">Privacy notice</a>.
     </p>
     <div class="consent-btns">
       <button class="btn btn-ghost" id="consent-decline">No thanks</button>
