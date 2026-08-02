@@ -1549,13 +1549,24 @@
       formLoadedAt: PAGE_LOADED_AT
     };
 
+    // No mode:'no-cors' here on purpose — confirmed live (real browser fetch,
+    // not curl) that this endpoint returns proper CORS headers, so the real
+    // JSON response IS readable. Without this, a backend-side failure
+    // (exception, quota, bad write) still resolves the fetch promise as
+    // "success" from the browser's point of view — the .catch() below was
+    // already correctly written, it just could never fire except on a total
+    // network outage. This was flagged from a real submission risk: the user
+    // sees "Submitted ✓" while the lead silently never reaches the sheet.
     fetch(SHEET_ENDPOINT, {
       method: 'POST',
-      mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(data)
     })
-    .then(() => {
+    .then(r => r.json())
+    .then(json => {
+      if (json.result !== 'success' && json.result !== 'updated') {
+        throw new Error(json.message || 'Unknown error');
+      }
       // Fires once, only after the listing has actually been submitted
       // (this callback only runs once the fetch to the backend completes) —
       // never on page load, never on button click alone.
@@ -1749,16 +1760,20 @@
     }
     enquirySubmitBtn.disabled = true;
     enquirySubmitBtn.textContent = 'Sending…';
+    // No mode:'no-cors' — same fix applied to the main listing form and for
+    // the same reason: without it, a real backend failure would still show
+    // "Request sent!" to the visitor.
     fetch(SHEET_ENDPOINT, {
       method: 'POST',
-      mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({
         action: 'enquire', listingId: ENQUIRY_LISTING_ID,
         name: name, email: email, phone: phone, message: message,
         website: honeypot, formLoadedAt: PAGE_LOADED_AT
       })
-    }).then(function () {
+    }).then(function (r) { return r.json(); })
+      .then(function (json) {
+      if (json.result !== 'success') throw new Error(json.message || 'Unknown error');
       enquiryPanel.style.display = 'none';
       enquirySent.style.display = 'block';
       enquirySent.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1766,8 +1781,8 @@
       document.getElementById('enq-email').value = '';
       document.getElementById('enq-phone').value = '';
       document.getElementById('enq-message').value = '';
-    }).catch(function () {
-      enquiryError.textContent = 'Something went wrong sending your request — please try again.';
+    }).catch(function (err) {
+      enquiryError.textContent = (err && err.message && err.message !== 'Unknown error') ? err.message : 'Something went wrong sending your request — please try again.';
       enquiryError.hidden = false;
     }).finally(function () {
       enquirySubmitBtn.disabled = false;

@@ -129,25 +129,21 @@
     }
   }
 
-  // POST is fire-and-forget here (mode:'no-cors', same pattern every other
-  // mutating action in this codebase already uses — Apps Script Web Apps
-  // don't return readable CORS on POST). We learn the real outcome by
-  // re-fetching enquiryInfo (a GET, which IS readable) straight after.
+  // No mode:'no-cors' — confirmed live that this endpoint returns proper
+  // CORS headers, so the real response is readable. Reads enquiryDecide's
+  // own result directly rather than inferring it from a second fetch.
   function submitDecision() {
     var btn = document.getElementById('confirmBtn');
     if (btn) { btn.disabled = true; btn.textContent = 'Please wait…'; }
     fetch(SHEET_ENDPOINT, {
       method: 'POST',
-      mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({ action: 'enquiryDecide', enquiryId: ID, token: TK, decision: DECISION })
     })
-      .then(function () {
-        return fetch(SHEET_ENDPOINT + '?action=enquiryInfo&id=' + encodeURIComponent(ID) + '&tk=' + encodeURIComponent(TK));
-      })
       .then(function (r) { return r.json(); })
       .then(function (json) {
-        if (json.result !== 'success' || !json.valid) return renderFinal(DECISION === 'accept' ? 'accepted' : 'declined');
+        if (json.result !== 'success') return renderError(json.message || 'Something went wrong.');
+        if (json.already) return renderFinal(json.status);
         renderFinal(json.status);
       })
       .catch(function () { renderError('Could not reach TestNow — check your connection and try again.'); });
