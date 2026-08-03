@@ -1571,8 +1571,12 @@
   // region's centres while the region field itself read blank, and the
   // "centres you can swap to" box stayed open showing the old centre.
   function resetDependentFields() {
-    fillCentreSelect(document.getElementById('centre'), '', 'Pick a region first');
-    fillCentreSelect(document.getElementById('wanted-centre'), '', 'Pick your region first');
+    // In degraded mode these are plain text inputs, not selects — running the
+    // select logic over them would disable the very fields the visitor needs.
+    if (!CENTRES_DEGRADED) {
+      fillCentreSelect(document.getElementById('centre'), '', 'Pick a region first');
+      fillCentreSelect(document.getElementById('wanted-centre'), '', 'Pick your region first');
+    }
     document.getElementById('moves-box').style.display = 'none';
     document.getElementById('moves-chips').innerHTML = '';
     var box = document.getElementById('instructor-consent-box');
@@ -1724,9 +1728,66 @@
         wr.innerHTML = '<option value="Same" selected>Same as my region</option>' +
           regions.map(r => '<option>' + r + '</option>').join('');
       })
-      .catch(() => {
-        regionSel.innerHTML = '<option value="">Could not load — type centre in notes</option>';
-      });
+      .catch(() => { degradeCentreFields(); });
+  }
+
+  // Every page load fetches the full centre list from the same Apps Script
+  // web app that everything else on this site runs through. If that call
+  // fails — outage, a 500, or the shared daily quota running out — the
+  // region and centre dropdowns end up with no selectable option. They are
+  // `required`, so the visitor could fill in every other field, press
+  // Submit, and get nothing but a browser tooltip pointing at a dropdown
+  // reading "Could not load". The old copy told them to "type centre in
+  // notes", which they could not do either: the form never gets far enough
+  // to reach the notes field. An ad click died there with no explanation.
+  //
+  // So instead: swap the four dropdowns for plain text inputs and say what
+  // happened. The backend stores these as strings anyway, so a typed centre
+  // name lands in the sheet perfectly well — meaning if the read failed but
+  // writes still work (the read is a 55KB response on every page load, the
+  // write is one small POST), the lead is still captured instead of lost.
+  let CENTRES_DEGRADED = false;
+
+  function degradeCentreFields() {
+    if (CENTRES_DEGRADED) return;
+    CENTRES_DEGRADED = true;
+
+    function toTextInput(id, placeholder) {
+      const old = document.getElementById(id);
+      if (!old || old.tagName === 'INPUT') return;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.id = old.id;
+      input.name = old.name;
+      input.placeholder = placeholder;
+      if (old.hasAttribute('required')) input.required = true;
+      old.parentNode.replaceChild(input, old);
+    }
+
+    toTextInput('region', 'e.g. West Midlands');
+    toTextInput('centre', 'e.g. Wednesbury');
+    toTextInput('wanted-region', 'e.g. West Midlands, or leave blank');
+    toTextInput('wanted-centre', 'e.g. Wolverhampton');
+
+    // "Preferred region" is the only one of the four that is not required,
+    // so it must not inherit a stale "Same" value that now means nothing.
+    const wr = document.getElementById('wanted-region');
+    if (wr) wr.value = '';
+
+    const box = document.getElementById('moves-box');
+    if (box) box.style.display = 'none';
+
+    if (!document.getElementById('centres-degraded-note')) {
+      const note = document.createElement('p');
+      note.id = 'centres-degraded-note';
+      note.className = 'field-error';
+      note.style.gridColumn = '1 / -1';
+      note.setAttribute('role', 'status');
+      note.textContent = "We couldn't load the test-centre list just now, so please type your region and centre instead. Your listing will still reach us.";
+      const grid = document.querySelector('#swap-form .form-grid');
+      const anchor = document.getElementById('region');
+      if (grid && anchor) grid.insertBefore(note, anchor.closest('.field'));
+    }
   }
 
   // Refills the preferred-centre dropdown based on whatever the effective region is
