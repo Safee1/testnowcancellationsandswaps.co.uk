@@ -1,13 +1,40 @@
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18364427323"></script>
+<!-- Google Consent Mode v2 — must run BEFORE gtag.js loads, hence the
+     reordering. Starts DENIED so no advertising cookie is written unless the
+     visitor accepted on the homepage banner. This page carries no banner of
+     its own, so a direct landing here simply stays denied — which is the
+     correct default, and costs nothing today because this page fires no
+     conversion event yet. When one is added, the gate is already in place. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
+
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'wait_for_update': 500
+  });
+
+  (function () {
+    var m = document.cookie.match('(^|;)\\s*tn_consent_v2\\s*=\\s*([^;]+)');
+    if (m && m.pop() === 'yes') {
+      gtag('consent', 'update', {
+        'ad_storage': 'granted',
+        'ad_user_data': 'granted',
+        'ad_personalization': 'granted',
+        'analytics_storage': 'granted'
+      });
+    }
+  })();
+
   gtag('js', new Date());
   gtag('config', 'AW-18364427323');
 </script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18364427323"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>For Driving Instructors — TestNow</title>

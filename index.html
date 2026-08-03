@@ -1,13 +1,46 @@
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18364427323"></script>
+<!-- Google Consent Mode v2.
+     This inline block MUST run BEFORE gtag.js loads, which is why the async
+     script tag now sits underneath it rather than above. Everything starts
+     DENIED, so no advertising cookie is written until the visitor actually
+     accepts. Previously gtag.js loaded first and unconditionally, which set
+     _gcl_au and a doubleclick.net test_cookie on page load — while the
+     banner told the visitor "No tracking". -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
+
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'ad_user_data': 'denied',
+    'ad_personalization': 'denied',
+    'analytics_storage': 'denied',
+    'wait_for_update': 500
+  });
+
+  // Re-apply a previous acceptance on later visits. Deliberately a NEW cookie
+  // name: anyone who accepted the old banner agreed to wording that said
+  // "No tracking, no selling data", which is not consent to advertising
+  // cookies. Those visitors get asked again under the honest wording rather
+  // than having the old tick silently reused.
+  (function () {
+    var m = document.cookie.match('(^|;)\\s*tn_consent_v2\\s*=\\s*([^;]+)');
+    if (m && m.pop() === 'yes') {
+      gtag('consent', 'update', {
+        'ad_storage': 'granted',
+        'ad_user_data': 'granted',
+        'ad_personalization': 'granted',
+        'analytics_storage': 'granted'
+      });
+    }
+  })();
+
   gtag('js', new Date());
   gtag('config', 'AW-18364427323');
 </script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18364427323"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Test Now — Free UK Driving Test Swaps</title>
@@ -1440,7 +1473,7 @@
 <div class="consent" id="consent" role="dialog" aria-label="Cookie and location notice" style="display:none;">
   <div class="consent-inner">
     <p>
-      One cookie, to remember your choice and show nearby tests first. No tracking, no selling data. <a href="privacy.html">Privacy notice</a>.
+      We use cookies to show nearby tests first and to measure how well our ads work. We never sell your data. <a href="privacy.html">Privacy notice</a>.
     </p>
     <div class="consent-btns">
       <button class="btn btn-ghost" id="consent-decline">No thanks</button>
@@ -1927,9 +1960,22 @@
     document.body.classList.toggle('consent-overlaps-hero', overlaps);
   }
 
+  // Grant/deny the Google Consent Mode signals set to 'denied' by default in
+  // the head. Until this fires with 'granted', gtag writes no ad cookies.
+  function setAdConsent(granted) {
+    if (typeof gtag !== 'function') return;
+    var v = granted ? 'granted' : 'denied';
+    gtag('consent', 'update', {
+      'ad_storage': v,
+      'ad_user_data': v,
+      'ad_personalization': v,
+      'analytics_storage': v
+    });
+  }
+
   (function consentInit() {
     const banner = document.getElementById('consent');
-    const choice = getCookie('tn_consent');
+    const choice = getCookie('tn_consent_v2');
     if (choice === 'yes') {
       // Already consented — use remembered region if present, else detect
       const saved = getCookie('tn_region');
@@ -1951,13 +1997,15 @@
     syncHeroBannerSpacing();
     window.addEventListener('resize', syncHeroBannerSpacing);
     document.getElementById('consent-accept').addEventListener('click', () => {
-      setCookie('tn_consent', 'yes', 180);
+      setCookie('tn_consent_v2', 'yes', 180);
+      setAdConsent(true);
       banner.style.display = 'none';
       syncHeroBannerSpacing();
       detectRegion();
     });
     document.getElementById('consent-decline').addEventListener('click', () => {
-      setCookie('tn_consent', 'no', 180);
+      setCookie('tn_consent_v2', 'no', 180);
+      setAdConsent(false);
       banner.style.display = 'none';
       syncHeroBannerSpacing();
     });
