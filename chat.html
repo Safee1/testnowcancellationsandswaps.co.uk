@@ -161,11 +161,11 @@
   <div class="modal-card">
     <h3>How did the swap go?</h3>
     <p>This records the outcome and closes the chat for both of you.</p>
-    <button class="outcome-btn good" data-msg="✅ Swap completed — we did it!">✅ Swap completed</button>
-    <button class="outcome-btn bad" data-msg="❌ DVSA refused or cancelled the swap.">❌ DVSA refused / cancelled it</button>
-    <button class="outcome-btn bad" data-msg="📵 The other learner didn't answer the phone, so it couldn't complete.">📵 No answer on the phone</button>
-    <button class="outcome-btn bad" data-msg="🔐 A security check failed at DVSA, so it couldn't complete.">🔐 Security check failed</button>
-    <button class="outcome-btn bad" data-msg="📅 Our tests weren't eligible (date/time/centre or type), so DVSA couldn't swap.">📅 Not eligible (date/time/centre)</button>
+    <button class="outcome-btn good" data-msg="✅ Swap completed — we did it!" data-outcome="completed">✅ Swap completed</button>
+    <button class="outcome-btn bad" data-msg="❌ DVSA refused or cancelled the swap." data-outcome="dvsa_refused">❌ DVSA refused / cancelled it</button>
+    <button class="outcome-btn bad" data-msg="📵 The other learner didn't answer the phone, so it couldn't complete." data-outcome="no_answer">📵 No answer on the phone</button>
+    <button class="outcome-btn bad" data-msg="🔐 A security check failed at DVSA, so it couldn't complete." data-outcome="security_failed">🔐 Security check failed</button>
+    <button class="outcome-btn bad" data-msg="📅 Our tests weren't eligible (date/time/centre or type), so DVSA couldn't swap." data-outcome="not_eligible">📅 Not eligible (date/time/centre)</button>
     <button class="modal-cancel" id="modalCancel">← Keep chatting</button>
   </div>
 </div>
@@ -319,13 +319,23 @@
   }
 
   // ---------- send ----------
+  // No mode:'no-cors' here — same reason as the listing form and enquiry
+  // fixes elsewhere on this site: without it, a real backend failure
+  // (session closed, invalid token, sheet error) would still clear the
+  // input and look like the message sent, when it silently never arrived.
+  function showLocalError(text) { const div = document.createElement('div'); div.className = 'sys'; div.textContent = text; stream.appendChild(div); scrollDown(); }
   function sendMessage() {
     const text = input.value.trim();
     if (!text || SESSION_STATUS !== 'open') return;
     input.value = ''; input.style.height = 'auto'; sendBtn.disabled = true;
-    postRaw(text).finally(() => { sendBtn.disabled = false; input.focus(); });
+    postRaw(text).then(ok => {
+      if (!ok) { input.value = text; showLocalError('⚠ That message didn\'t send — please try again.'); }
+    }).finally(() => { sendBtn.disabled = false; input.focus(); });
   }
-  function postRaw(text) { return fetch(SHEET_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatSend', sid: SID, tk: TK, text: text }) }); }
+  function postRaw(text) {
+    return fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatSend', sid: SID, tk: TK, text: text }) })
+      .then(r => r.json()).then(j => j.result === 'success').catch(() => false);
+  }
 
   // ================= GUIDED FLOW =================
   function gcard(html, ok, extra) { const c = document.createElement('div'); c.className = 'guide' + (ok ? ' ok' : '') + (extra ? ' ' + extra : ''); c.innerHTML = html; stream.appendChild(c); scrollDown(); return c; }
@@ -588,8 +598,14 @@
       b.onclick = function () {
         if (SESSION_STATUS !== 'open') { modal.classList.remove('show'); return; }
         const msg = b.getAttribute('data-msg');
+        const outcome = b.getAttribute('data-outcome') || '';
         postRaw('🏁 Outcome: ' + msg);
-        setTimeout(function () { fetch(SHEET_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK }) }); }, 350);
+        setTimeout(function () {
+          fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, outcome: outcome }) })
+            .then(r => r.json()).then(j => {
+              if (j.result !== 'success') showLocalError('⚠ Could not close the chat — please tap Finish again.');
+            }).catch(() => showLocalError('⚠ Could not close the chat — please tap Finish again.'));
+        }, 350);
         modal.classList.remove('show');
       };
     });
