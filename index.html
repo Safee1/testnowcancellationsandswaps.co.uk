@@ -646,8 +646,12 @@
   details {
     border-top: 1px solid var(--ink);
     padding: 28px 0;
-    cursor: pointer;
   }
+  /* cursor:pointer belongs on the summary, not the whole <details> — it
+     inherits, so the answer text was showing a hand cursor too, implying
+     the paragraph was clickable when only the question is. Same reasoning
+     as .btag above: don't give a non-action the affordance of an action. */
+  summary { cursor: pointer; }
   details:last-of-type { border-bottom: 1px solid var(--ink); }
   summary {
     font-family: 'Fraunces', serif;
