@@ -17,7 +17,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root { --ink:#0A6B36; --ink-soft:#0E8C45; --paper:#F5F0E6; --paper-warm:#EBE3D2; --accent:#D6206E; --muted:#5b6b62; --max:960px; }
+  /* Contrast-checked tokens, kept in step with index.html — the earlier
+     values (--ink-soft #0E8C45, --accent #D6206E, --muted #5b6b62) fail
+     WCAG AA as body text on --paper/--paper-warm and were fixed site-wide
+     on the homepage; this page had been left on the old set. */
+  :root { --ink:#0A6B36; --ink-soft:#037434; --paper:#F5F0E6; --paper-warm:#EBE3D2; --accent:#C3135F; --muted:#58685F; --max:960px; }
   * { box-sizing:border-box; margin:0; padding:0; }
   html { scroll-behavior:smooth; }
   body { font-family:'Inter Tight',sans-serif; background:var(--paper); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased; }
@@ -113,16 +117,20 @@
 </main>
 
 <!-- Enquiry modal -->
-<div class="modal" id="modal">
-  <div class="modal-box">
-    <h2>Enquire</h2>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-box" id="modal-box">
+    <h2 id="modal-title">Enquire</h2>
     <p class="sub" id="modal-who">Send your details to this instructor.</p>
+    <div style="position:absolute;left:-9999px;top:-9999px;opacity:0;height:0;width:0;overflow:hidden;" aria-hidden="true">
+      <label for="l-website">Leave this field blank</label>
+      <input id="l-website" name="website" type="text" tabindex="-1" autocomplete="off">
+    </div>
     <label for="l-name">Your name</label>
-    <input type="text" id="l-name">
+    <input type="text" id="l-name" autocomplete="name">
     <label for="l-contact">Your phone or email</label>
-    <input type="text" id="l-contact" placeholder="So they can reply">
+    <input type="text" id="l-contact" placeholder="So they can reply" inputmode="email" autocomplete="email">
     <label for="l-msg">Message (optional)</label>
-    <textarea id="l-msg" placeholder="e.g. test booked for 12 Aug at Wolverhampton, need lessons + a car"></textarea>
+    <textarea id="l-msg" maxlength="500" placeholder="e.g. test booked for 12 Aug at Wolverhampton, need lessons + a car"></textarea>
     <p class="consent">By sending, you agree we pass your name and contact to this instructor so they can reply.</p>
     <div class="mmsg" id="mmsg"></div>
     <div class="modal-actions">
@@ -139,6 +147,7 @@
 <script>
 document.getElementById('yr').textContent = new Date().getFullYear();
 var ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
+var PAGE_LOADED_AT = Date.now(); // bot guard, same convention as the listing form on index.html
 
 var grid = document.getElementById('grid');
 var statusEl = document.getElementById('status');
@@ -180,26 +189,55 @@ document.getElementById('search').addEventListener('click', search);
 document.getElementById('region').addEventListener('change', search);
 
 // open modal
+// The modal is a single reused element, so every piece of per-enquiry state
+// has to be cleared on open — previously the send button stayed disabled and
+// reading "Sent ✓" after the first enquiry, which made it impossible to
+// enquire with a second instructor without reloading the page.
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+
+function resetModal(){
+  var send = document.getElementById('m-send');
+  send.disabled = false;
+  send.textContent = 'Send enquiry';
+  var msg = document.getElementById('mmsg');
+  msg.className = 'mmsg';
+  msg.textContent = '';
+  document.getElementById('l-name').value = '';
+  document.getElementById('l-contact').value = '';
+  document.getElementById('l-msg').value = '';
+}
+
 grid.addEventListener('click', function(ev){
   var b = ev.target.closest('.enq'); if (!b) return;
   currentId = b.getAttribute('data-id'); currentName = b.getAttribute('data-name');
   document.getElementById('modal-who').textContent = currentName ? ("Send your details to " + currentName + ".") : "Send your details to this instructor.";
-  document.getElementById('mmsg').className = 'mmsg';
+  resetModal();
   document.getElementById('modal').classList.add('open');
+  document.getElementById('l-name').focus();
 });
-document.getElementById('m-cancel').addEventListener('click', function(){ document.getElementById('modal').classList.remove('open'); });
+document.getElementById('m-cancel').addEventListener('click', closeModal);
+// Escape and a click on the dark backdrop both close it — without these the
+// only way out on mobile was the Cancel button.
+document.getElementById('modal').addEventListener('click', function(ev){
+  if (ev.target === this) closeModal();
+});
+document.addEventListener('keydown', function(ev){
+  if (ev.key === 'Escape' && document.getElementById('modal').classList.contains('open')) closeModal();
+});
 
 document.getElementById('m-send').addEventListener('click', function(){
   var btn = this, mmsg = document.getElementById('mmsg');
   var name = document.getElementById('l-name').value.trim();
   var contact = document.getElementById('l-contact').value.trim();
   var message = document.getElementById('l-msg').value.trim();
+  var honeypot = document.getElementById('l-website').value;
   mmsg.className = 'mmsg';
   if (!name || !contact) { mmsg.className='mmsg err'; mmsg.textContent='Please give your name and a contact.'; return; }
   btn.disabled = true; btn.textContent = 'Sending…';
   fetch(ENDPOINT, {
     method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body: JSON.stringify({ action:'instructorEnquiry', instructorId: currentId, name:name, contact:contact, message:message })
+    body: JSON.stringify({ action:'instructorEnquiry', instructorId: currentId, name:name, contact:contact, message:message,
+      website: honeypot, formLoadedAt: PAGE_LOADED_AT })
   })
   .then(function(r){ return r.json(); })
   .then(function(d){

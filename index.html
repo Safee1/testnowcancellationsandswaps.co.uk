@@ -1426,7 +1426,7 @@
       <div class="foot-col">
         <h3>Contact</h3>
         <a href="mailto:info@testnowcancellationsandswaps.co.uk">Email us</a>
-        <a href="#">Report a problem</a>
+        <a href="mailto:info@testnowcancellationsandswaps.co.uk?subject=Report%20a%20problem">Report a problem</a>
       </div>
     </div>
     <div class="foot-bottom">
@@ -1528,6 +1528,23 @@
       });
   }
 
+  // form.reset() only restores fields the browser knows about — it cannot
+  // undo the option lists we build in JS. Without this, "List another test"
+  // left the test-centre dropdown enabled and still full of the *previous*
+  // region's centres while the region field itself read blank, and the
+  // "centres you can swap to" box stayed open showing the old centre.
+  function resetDependentFields() {
+    fillCentreSelect(document.getElementById('centre'), '', 'Pick a region first');
+    fillCentreSelect(document.getElementById('wanted-centre'), '', 'Pick your region first');
+    document.getElementById('moves-box').style.display = 'none';
+    document.getElementById('moves-chips').innerHTML = '';
+    var box = document.getElementById('instructor-consent-box');
+    var tick = document.getElementById('instructor-consent');
+    if (box) box.style.display = 'none';
+    if (tick) { tick.checked = false; tick.required = false; }
+    setDateError(false);
+  }
+
   function sendListing(form, btn) {
     btn.disabled = true;
     btn.textContent = 'Sending…';
@@ -1545,6 +1562,15 @@
       wantedCentre: form['wanted-centre'].value,
       notes: form.notes.value,
       leadType: (form['has-instructor'] && form['has-instructor'].value === 'no') ? 'wants-instructor' : 'swap',
+      hasInstructor: form['has-instructor'] ? form['has-instructor'].value : '',
+      // The learner ticks this to agree an instructor may contact them, but
+      // it was never included in the payload — so the consent they gave was
+      // never recorded anywhere. Sent explicitly now; the Apps Script side
+      // needs a matching column to actually store it.
+      instructorConsent: (function () {
+        var t = document.getElementById('instructor-consent');
+        return (t && t.checked) ? 'yes' : 'no';
+      })(),
       website: form.website ? form.website.value : '', // honeypot — real users never see/fill this
       formLoadedAt: PAGE_LOADED_AT
     };
@@ -1585,6 +1611,7 @@
         }
         // Reset the button state underneath (for when they list another)
         form.reset();
+        resetDependentFields();
         btn.disabled = false;
         btn.innerHTML = 'Submit my listing <span aria-hidden="true">→</span>';
         btn.style.background = '';
@@ -1687,6 +1714,15 @@
 
   // ---- Live board: fetch dummy/real listings (non-identifying fields only) ----
   let BOARD = [];
+  // Board rows come back from the sheet and are injected as HTML (including
+  // into data-* attributes), so they get escaped first — quotes included,
+  // or a stray quote in a centre name would break out of the attribute.
+  // Every other page on the site already had an esc(); this one didn't.
+  function esc(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
   function fmtDate(d) {
     if (!d) return '';
     // Accept YYYY-MM-DD or anything Date can parse
@@ -1707,12 +1743,12 @@
     count.textContent = rows.length + (rows.length === 1 ? ' test available' : ' tests available');
     grid.innerHTML = rows.map(r =>
       '<div class="bcard">' +
-        '<div class="bregion">' + (r.region || '') + '</div>' +
-        '<div class="bcentre">' + (r.centre || '') + '</div>' +
-        '<div class="bdate"><span>Date</span><span>' + fmtDate(r.date) + '</span></div>' +
-        (r.time ? '<div class="bdate"><span>Time</span><span>' + r.time + '</span></div>' : '') +
+        '<div class="bregion">' + esc(r.region) + '</div>' +
+        '<div class="bcentre">' + esc(r.centre) + '</div>' +
+        '<div class="bdate"><span>Date</span><span>' + esc(fmtDate(r.date)) + '</span></div>' +
+        (r.time ? '<div class="bdate"><span>Time</span><span>' + esc(r.time) + '</span></div>' : '') +
         '<span class="btag">Swap ASAP</span>' +
-        (r.id ? '<button type="button" class="brequest" data-id="' + r.id + '" data-centre="' + (r.centre || '') + '" data-region="' + (r.region || '') + '" data-date="' + fmtDate(r.date) + '">Request this swap</button>' : '') +
+        (r.id ? '<button type="button" class="brequest" data-id="' + esc(r.id) + '" data-centre="' + esc(r.centre) + '" data-region="' + esc(r.region) + '" data-date="' + esc(fmtDate(r.date)) + '">Request this swap</button>' : '') +
       '</div>'
     ).join('');
   }

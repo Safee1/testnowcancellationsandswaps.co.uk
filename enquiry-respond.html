@@ -61,6 +61,11 @@
   const card = document.getElementById('card');
 
   function render(html) { card.innerHTML = html; }
+  function esc(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
 
   function renderInvalid() {
     render(
@@ -75,7 +80,7 @@
     render(
       '<div class="state-icon">⚠️</div>' +
       '<h1>Something went wrong</h1>' +
-      '<p>' + (msg || 'Please try again in a moment.') + '</p>' +
+      '<p>' + esc(msg || 'Please try again in a moment.') + '</p>' +
       '<a class="btn btn-decline" href="index.html">Back to TestNow</a>'
     );
   }
@@ -98,7 +103,7 @@
     var isAccept = DECISION === 'accept';
     render(
       '<h1>' + (isAccept ? 'Accept this swap request?' : 'Decline this swap request?') + '</h1>' +
-      (centre ? '<p class="detail">' + centre + '</p>' : '') +
+      (centre ? '<p class="detail">' + esc(centre) + '</p>' : '') +
       '<p>' + (isAccept
         ? 'Nothing has happened yet — you\'re just confirming. If you accept, we\'ll open a private chat between you both and share the next steps. Your contact details stay private until then, exactly as always.'
         : 'Nothing has happened yet — you\'re just confirming. Declining costs you nothing: your listing stays up and we\'ll keep matching you automatically in the background too.') +
