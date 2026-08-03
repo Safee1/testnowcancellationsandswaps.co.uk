@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18364427323"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-18364427323');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Test Now — Free UK Driving Test Swaps</title>
@@ -30,13 +37,13 @@
 <style>
   :root {
     --ink: #0A6B36;
-    --ink-soft: #0E8C45;
+    --ink-soft: #037434; /* darkened again — 4.5:1 was against --paper only, but this text also sits on --paper-warm (darker), where it was still 4.04:1; now 4.63:1 on --paper-warm */
     --paper: #F5F0E6;
     --paper-warm: #EBE3D2;
-    --accent: #D6206E;
-    --accent-soft: #E8478F;
+    --accent: #C3135F; /* darkened again — 4.5:1 was against --paper only, but this text also sits on --paper-warm (darker), where it was still 4.05:1; now 4.60:1 on --paper-warm. Also improves the reverse pairing (light text on this as a button background) */
+    --accent-soft: #F192BD; /* lightened from #E8478F — was failing even large-text 3:1 against --ink, now 3:1 on --ink (this token is only ever used as large emphasis text on --ink backgrounds) */
     --rule: #0A6B36;
-    --muted: #5b6b62;
+    --muted: #58685F; /* darkened from #5b6b62 — was 4.42:1 on paper-warm, now 4.63:1 (WCAG AA, with margin) */
     --max: 1240px;
     --radius: 18px;
   }
@@ -196,7 +203,7 @@
   h1.headline {
     font-family: 'Fraunces', serif;
     font-weight: 500;
-    font-size: clamp(48px, 7vw, 88px);
+    font-size: clamp(48px, 8vw, 112px);
     line-height: .95;
     letter-spacing: -0.035em;
     max-width: 14ch;
@@ -231,18 +238,6 @@
   }
   .cta-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
   .cta-note { font-size: 13px; color: var(--muted); }
-
-  /* Short viewports (common laptop screens, e.g. 1280x720): the hero's
-     vw-scaled headline runs tall enough that the fixed-bottom consent
-     banner lands on top of the CTA row on first load. Compress the hero
-     rhythm so the buttons clear the banner without touching layout on
-     normal-height screens. */
-  @media (max-height: 760px) {
-    .hero { padding: 40px 0 56px; }
-    .eyebrow { margin-bottom: 16px; }
-    h1.headline { font-size: clamp(40px, 6vw, 64px); margin-bottom: 18px; }
-    .lede { font-size: 17px; margin-bottom: 24px; }
-  }
 
   /* Hero visual: stylised swap card */
   .hero-grid {
@@ -279,7 +274,7 @@
   .swap-card.b { bottom: 0; right: 0; transform: rotate(2deg); background: var(--ink); color: var(--paper); border-color: var(--ink); box-shadow: 6px 6px 0 var(--accent); }
   .swap-illo:hover .swap-card.a { transform: rotate(-5deg) translate(-6px, -6px); }
   .swap-illo:hover .swap-card.b { transform: rotate(4deg) translate(6px, 6px); }
-  .swap-card h3 {
+  .swap-card .card-name {
     font-family: 'Fraunces', serif;
     font-size: 17px;
     margin-bottom: 14px;
@@ -472,38 +467,31 @@
   .promise-list strong { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600; display: block; margin-bottom: 4px; }
   .promise-list span { font-size: 14px; opacity: .75; }
 
-  /* Consent banner */
+  /* Consent banner — kept deliberately slim: on small screens this sits at
+     the very bottom of the viewport and must never eat enough height to
+     cover a real CTA above it (cards, buttons). Short copy + tight padding
+     + a max-height safety valve, rather than a full-height panel. */
   .consent {
     position: fixed;
-    bottom: 20px; left: 20px; right: 20px;
-    max-width: 720px;
+    bottom: 14px; left: 14px; right: 14px;
+    max-width: 640px;
+    max-height: 25vh;
+    overflow: auto;
     margin: 0 auto;
     background: var(--ink);
     color: var(--paper);
-    border-radius: 16px;
-    padding: 20px 24px;
+    border-radius: 14px;
+    padding: 14px 18px;
     z-index: 200;
     box-shadow: 0 10px 40px rgba(0,0,0,.25);
   }
-  .consent-inner { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: space-between; }
-  .consent p { font-size: 13.5px; line-height: 1.5; flex: 1; min-width: 240px; margin: 0; }
-  .consent a { color: var(--accent-soft); text-decoration: underline; }
+  .consent-inner { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: space-between; }
+  .consent p { font-size: 13px; line-height: 1.45; flex: 1; min-width: 220px; margin: 0; }
+  .consent a { color: var(--paper); text-decoration: underline; } /* was --accent-soft, 1.81:1 on this dark background — badly failing even large-text AA; --paper here is 5.83:1 */
   .consent-btns { display: flex; gap: 10px; }
   .consent .btn { padding: 10px 18px; font-size: 13px; }
   .consent .btn-ghost { color: var(--paper); border-color: var(--paper); }
   .consent .btn-ghost:hover { background: var(--paper); color: var(--ink); }
-
-  /* JS-applied fallback for whatever viewport/content combo still puts the
-     banner over the CTA row after the hero-sizing fix above — shrinks it
-     to a slim corner toast instead of a full-width bar. */
-  .consent.consent--compact {
-    left: auto; right: 16px; bottom: 16px; max-width: 340px;
-    padding: 14px 16px;
-  }
-  .consent--compact .consent-inner { flex-direction: column; align-items: stretch; gap: 10px; }
-  .consent--compact p { font-size: 12px; min-width: 0; }
-  .consent--compact .consent-btns { width: 100%; }
-  .consent--compact .consent-btns .btn { flex: 1; text-align: center; padding: 8px 14px; }
 
   /* Live board */
   .board-tools {
@@ -571,17 +559,40 @@
   }
   .bcard .bdate span:last-child { font-weight: 600; }
   .bcard .btag {
+    /* Deliberately NOT styled like the real CTA buttons (.btn) — this is a
+       status label on someone else's listing, not a clickable action, and
+       a solid button-weight fill here reads as a dead button on tap. */
     display: inline-block;
     margin-top: 16px;
     font-size: 11px;
     letter-spacing: .1em;
     text-transform: uppercase;
     font-weight: 600;
-    padding: 6px 12px;
+    padding: 5px 12px;
     border-radius: 999px;
-    background: var(--accent);
-    color: var(--paper);
+    background: transparent;
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    cursor: default;
   }
+  .bcard .brequest {
+    /* This one IS a real action, unlike .btag above — same solid-fill
+       weight as the site's other real CTA buttons, so it reads correctly
+       as clickable. */
+    display: block;
+    width: 100%;
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: none;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .bcard .brequest:hover { background: var(--ink-soft); }
   .bcard .bsample {
     position: absolute;
     top: 12px; right: 12px;
@@ -650,12 +661,43 @@
   @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
   .field { display: flex; flex-direction: column; gap: 8px; }
   .field.full { grid-column: 1 / -1; }
+
+  /* Form step groups — the 12 fields read as three chunks (you / your
+     current test / what you want instead) instead of one flat list,
+     matching the page's own "list your test" step language above. */
+  .form-step-head {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding-top: 22px;
+    margin-top: 4px;
+    border-top: 1.5px solid rgba(20,20,15,.12);
+  }
+  .form-step-head:first-child { padding-top: 0; margin-top: 0; border-top: none; }
+  .form-step-num {
+    font-family: 'Fraunces', serif;
+    font-size: 12.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .form-step-num strong { color: var(--accent); font-weight: 600; margin-right: 6px; }
   label {
     font-size: 12px;
     letter-spacing: .12em;
     text-transform: uppercase;
     font-weight: 600;
     color: var(--ink);
+  }
+  /* The two field labels phrased as full questions/notes rather than
+     short field names — all-caps + wide tracking becomes genuinely hard
+     to read at that length, so these get normal sentence case instead. */
+  label.label-sentence {
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 13px;
   }
   input, select, textarea {
     font-family: inherit;
@@ -673,6 +715,26 @@
     box-shadow: 0 0 0 3px rgba(215,85,59,.15);
   }
   textarea { resize: vertical; min-height: 90px; }
+
+  /* Inline field errors — replaces a native browser alert() for the
+     one exercisable error state (past test date), which used to fire
+     as an OS-styled popup on the field carrying the most anxiety. */
+  .field-error {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--accent);
+    margin: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .field-error[hidden] { display: none; }
+  .field-error::before { content: '⚠'; flex-shrink: 0; }
+  .field.has-error input,
+  .field.has-error select {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(207,31,107,.12);
+  }
   .form-submit { margin-top: 28px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
   .form-submit small { color: var(--muted); font-size: 13px; }
 
@@ -713,7 +775,7 @@
     font-weight: 400;
     font-style: italic;
   }
-  .foot-col h4 {
+  .foot-col h3 {
     font-size: 11px;
     letter-spacing: .2em;
     text-transform: uppercase;
@@ -779,7 +841,7 @@
     .swap-illo { height: 360px; max-width: 320px; }
     .swap-card { width: 220px; padding: 18px; box-shadow: 4px 4px 0 var(--ink); }
     .swap-card.b { box-shadow: 4px 4px 0 var(--accent); }
-    .swap-card h3 { font-size: 15px; }
+    .swap-card .card-name { font-size: 15px; }
     .swap-arrow { width: 52px; height: 52px; font-size: 22px; }
 
     /* Marquee a touch smaller */
@@ -814,12 +876,30 @@
     footer { padding: 56px 0 32px; margin-top: 56px; }
     .foot-bottom { flex-direction: column; align-items: flex-start; }
 
-    /* Consent banner sits tighter to the screen edges */
-    .consent { left: 12px; right: 12px; bottom: 12px; padding: 16px 18px; }
-    .consent-inner { gap: 14px; }
-    .consent-btns { width: 100%; }
-    .consent-btns .btn { flex: 1; text-align: center; }
+    /* Consent banner: even slimmer on small screens, and buttons sit
+       inline beside the (now short) text instead of stacking full-width,
+       so the whole bar stays a thin strip rather than a panel. */
+    .consent { left: 10px; right: 10px; bottom: 10px; padding: 12px 14px; max-height: 20vh; }
+    .consent-inner { gap: 10px; }
+    .consent p { font-size: 12.5px; }
+    .consent-btns { gap: 8px; }
+    .consent-btns .btn { padding: 8px 14px; font-size: 12.5px; }
   }
+
+  /* ===== HERO/BANNER OVERLAP FIX =====
+     The fixed, bottom cookie/consent banner (.consent) can be ~100px tall
+     once its text wraps, and on shorter viewports (or when the headline
+     wraps to 3 lines at wider widths) the hero's default vertical rhythm
+     pushes the CTA row down far enough that the banner overlaps
+     "List my test" / "How does it work?" on first load. Rather than guess
+     a viewport size, JS below measures whether the CTA row actually
+     collides with the banner and toggles this class only when it does —
+     robust across viewport sizes instead of a single hard-coded breakpoint. */
+  body.consent-overlaps-hero header.nav { padding: 12px 0; }
+  body.consent-overlaps-hero .hero { padding: 16px 0 40px; }
+  body.consent-overlaps-hero .eyebrow { margin-bottom: 14px; }
+  body.consent-overlaps-hero h1.headline { margin-bottom: 14px; }
+  body.consent-overlaps-hero .lede { margin-bottom: 18px; }
 
   /* ===== SWAP-CARD CLEANUP + BUTTON POLISH ===== */
   @media (max-width: 600px) {
@@ -844,7 +924,7 @@
     }
     .swap-card.a { margin: 0; }
     .swap-card.b { box-shadow: 4px 4px 0 var(--accent); }
-    .swap-card h3 { font-size: 15px; margin-bottom: 12px; }
+    .swap-card .card-name { font-size: 15px; margin-bottom: 12px; }
     .swap-card .row { font-size: 13px; padding: 6px 0; }
     .swap-card .stamp { margin-top: 12px; }
 
@@ -874,7 +954,7 @@
       margin-left: 0;
       border-left: none;        /* drop the divider when stacked */
     }
-    .brand .brand-tag small { font-size: 9.5px; letter-spacing: .12em; }
+    .brand .brand-tag small { font-size: 11px; letter-spacing: .12em; }
     nav.links { flex-shrink: 0; }                      /* keep the button intact */
     nav.links .btn { padding: 10px 15px; font-size: 13px; }
     .logo-img { height: 24px; }
@@ -929,6 +1009,36 @@
     .form-success .again { width: 100%; }
   }
 
+  /* Board "Request this swap" mini-form — reuses .field/.form-success
+     conventions from the main form instead of inventing a new pattern. */
+  .enquiry-panel {
+    position: relative;
+    max-width: 460px;
+    margin: 28px auto 0;
+    background: #fff;
+    border: 1.5px solid rgba(10,107,54,.2);
+    border-radius: 18px;
+    padding: 26px 24px;
+    text-align: left;
+  }
+  .enquiry-panel h3 { font-family: 'Fraunces', serif; font-size: 19px; margin-bottom: 6px; }
+  .enquiry-panel .field { margin-bottom: 14px; }
+  .enquiry-panel .field label { font-size: 13px; font-weight: 600; margin-bottom: 5px; display: block; }
+  .enquiry-panel .field input, .enquiry-panel .field textarea {
+    width: 100%; border: 1.5px solid rgba(10,107,54,.25); border-radius: 10px;
+    padding: 10px 12px; font-family: inherit; font-size: 15px; background: var(--paper); color: var(--ink);
+  }
+  .enquiry-panel .field textarea { resize: vertical; }
+  .enquiry-panel .field input:focus, .enquiry-panel .field textarea:focus { outline: none; border-color: var(--ink); }
+  .enquiry-target { font-weight: 600; color: var(--ink-soft); font-size: 13.5px; margin-bottom: 4px; }
+  .enquiry-sub { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+  .enquiry-close { position: absolute; top: 14px; right: 14px; background: none; border: none; color: var(--muted); font-size: 16px; cursor: pointer; padding: 4px; }
+  .enquiry-submit { width: 100%; }
+  .enquiry-error { color: var(--accent); font-size: 13px; font-weight: 600; margin-top: 10px; }
+  .enquiry-sent { max-width: 460px; padding: 32px 24px; margin: 28px auto 0; }
+  .enquiry-sent h3 { font-size: 22px; }
+  .enquiry-sent p { font-size: 14.5px; }
+
   /* Instructor consent tick */
   .consent-box { background: var(--paper-warm); border-radius: 12px; padding: 14px 16px; }
   .consent-label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; font-size: 14px; line-height: 1.45; text-transform: none; letter-spacing: 0; }
@@ -976,7 +1086,7 @@
 
     <div class="swap-illo reveal" aria-hidden="true">
       <div class="swap-card a">
-        <h3>Sarah · Manchester</h3>
+        <p class="card-name">Sarah · Manchester</p>
         <div class="row"><span>Test centre</span><strong>West Didsbury</strong></div>
         <div class="row"><span>Date</span><strong>14 Aug 2026</strong></div>
         <div class="row"><span>Wants</span><strong>Anything sooner</strong></div>
@@ -984,7 +1094,7 @@
       </div>
       <div class="swap-arrow"><span>⇄</span></div>
       <div class="swap-card b">
-        <h3>James · Manchester</h3>
+        <p class="card-name">James · Manchester</p>
         <div class="row"><span>Test centre</span><strong>Cheetham Hill</strong></div>
         <div class="row"><span>Date</span><strong>05 Jun 2026</strong></div>
         <div class="row"><span>Wants</span><strong>August or later</strong></div>
@@ -1018,7 +1128,43 @@
     <div class="board-grid" id="board-grid">
       <div class="board-loading">Loading the latest listings…</div>
     </div>
-    <p class="board-foot reveal">See one that suits you? <a href="#swap">List your own test</a> and we'll match you up — free.</p>
+    <p class="board-foot reveal">See one that suits you? Tap <strong>Request this swap</strong> on it — or <a href="#swap">list your own test</a> and we'll match you up automatically too.</p>
+
+    <div class="enquiry-panel" id="enquiry-panel" style="display:none;">
+      <button type="button" class="enquiry-close" id="enquiry-close" aria-label="Cancel">✕</button>
+      <p class="enquiry-target" id="enquiry-target"></p>
+      <h3>Request this swap</h3>
+      <p class="enquiry-sub">We'll email the other learner — nothing happens until they accept. Your details stay private until then.</p>
+      <div style="position:absolute;left:-9999px;top:-9999px;opacity:0;height:0;width:0;overflow:hidden;" aria-hidden="true">
+        <label for="enq-website">Leave this field blank</label>
+        <input id="enq-website" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="enq-name">Name</label>
+        <input id="enq-name" type="text" required placeholder="e.g. Aisha" autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="enq-email">Email</label>
+        <input id="enq-email" type="email" required placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="enq-phone">Phone number</label>
+        <input id="enq-phone" type="tel" required placeholder="07xxx xxxxxx" inputmode="tel" autocomplete="tel">
+      </div>
+      <div class="field">
+        <label for="enq-message">Message (optional)</label>
+        <textarea id="enq-message" rows="2" maxlength="400" placeholder="Anything they should know?"></textarea>
+      </div>
+      <button type="button" class="btn btn-primary enquiry-submit" id="enquiry-submit">Send request</button>
+      <p class="enquiry-error" id="enquiry-error" role="alert" hidden></p>
+    </div>
+
+    <div class="enquiry-panel enquiry-sent form-success" id="enquiry-sent" style="display:none;">
+      <div class="tick">✓</div>
+      <h3>Request sent!</h3>
+      <p>We've emailed them — if they accept, you'll both get a private chat link. If they don't respond, you can try another listing, or just wait: we're still matching everyone automatically in the background too.</p>
+      <button type="button" class="again" id="enquiry-sent-close">Close</button>
+    </div>
   </div>
 </section>
 
@@ -1038,7 +1184,7 @@
       <div class="step reveal">
         <div class="step-num">ii.</div>
         <h3>We find a match</h3>
-        <p>When another learner posts a test that fits what you want, and yours fits what they want, we connect you both.</p>
+        <p>When another learner posts a test that fits what you want, and yours fits what they want, we connect you both automatically. Or browse the board above and request a specific listing directly — the other learner decides whether to accept.</p>
       </div>
       <div class="step reveal">
         <div class="step-num">iii.</div>
@@ -1094,20 +1240,26 @@
     </div>
 
     <form class="form-wrap reveal" id="swap-form" onsubmit="handleSubmit(event)">
+      <div style="position:absolute;left:-9999px;top:-9999px;opacity:0;height:0;width:0;overflow:hidden;" aria-hidden="true">
+        <label for="website">Leave this field blank</label>
+        <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
       <div class="form-grid">
+        <div class="form-step-head"><span class="form-step-num"><strong>01</strong>About you</span></div>
         <div class="field">
           <label for="name">Name</label>
-          <input id="name" name="name" type="text" required placeholder="e.g. Aisha">
+          <input id="name" name="name" type="text" required placeholder="e.g. Aisha" autocomplete="name">
         </div>
         <div class="field">
           <label for="email">Email</label>
-          <input id="email" name="email" type="email" required placeholder="you@example.com">
+          <input id="email" name="email" type="email" required placeholder="you@example.com" autocomplete="email">
         </div>
         <div class="field">
           <label for="phone">Phone number</label>
-          <input id="phone" name="phone" type="tel" required placeholder="07xxx xxxxxx" inputmode="tel">
+          <input id="phone" name="phone" type="tel" required placeholder="07xxx xxxxxx" inputmode="tel" autocomplete="tel">
         </div>
 
+        <div class="form-step-head"><span class="form-step-num"><strong>02</strong>Your current test</span></div>
         <div class="field">
           <label for="region">Your region</label>
           <select id="region" name="region" required>
@@ -1122,7 +1274,7 @@
         </div>
 
         <div class="field full" id="moves-box" style="display:none;">
-          <label>Centres you'll be able to swap to (from 9 June)</label>
+          <label class="label-sentence">Centres you'll be able to swap to (from 9 June)</label>
           <div class="moves-note">
             From 9 June 2026, DVSA limits swaps to your 3 nearest centres (or back to your original). These are shown so you know your options — they're set by DVSA, not us.
           </div>
@@ -1131,13 +1283,15 @@
 
         <div class="field">
           <label for="date">Your current test date</label>
-          <input id="date" name="date" type="date" required>
+          <input id="date" name="date" type="date" required aria-describedby="date-error">
+          <p class="field-error" id="date-error" role="alert" hidden>That date's already passed — enter your actual upcoming test date.</p>
         </div>
         <div class="field">
           <label for="time">Your current test time</label>
           <input id="time" name="time" type="time" step="60" required>
         </div>
 
+        <div class="form-step-head"><span class="form-step-num"><strong>03</strong>What you want instead</span></div>
         <div class="field">
           <label for="wanted-when">When you'd like instead</label>
           <select id="wanted-when" name="wanted-when" required>
@@ -1168,7 +1322,7 @@
         </div>
 
         <div class="field full">
-          <label for="has-instructor">Do you already have an instructor available for your test?</label>
+          <label for="has-instructor" class="label-sentence">Do you already have an instructor available for your test?</label>
           <select id="has-instructor" name="has-instructor" required>
             <option value="">Choose…</option>
             <option value="yes">Yes — I'm sorted</option>
@@ -1220,6 +1374,10 @@
         <p>Honest answer: it depends. Popular centres in big cities (London, Manchester, Birmingham) often match within days. Smaller or rural centres can take a few weeks. The more flexible you are about dates, the faster it goes.</p>
       </details>
       <details>
+        <summary>Can I request a specific match instead of waiting?</summary>
+        <p>Yes. Browse the live board and tap "Request this swap" on any listing that suits you. We'll email that learner directly — they can accept or decline, no pressure either way. If they don't respond, you're free to try someone else, or just sit tight: we're still matching everyone automatically in the background too.</p>
+      </details>
+      <details>
         <summary>Will my details be public?</summary>
         <p>No. Your name, email, and date are visible only to you and to a potential match — and only after both of you confirm you're interested. We never publish a list of names or post anything to social media.</p>
       </details>
@@ -1251,7 +1409,7 @@
         <p>A free, independent website helping UK learner drivers swap their practical test dates.</p>
       </div>
       <div class="foot-col">
-        <h4>Explore</h4>
+        <h3>Explore</h3>
         <a href="#how">How it works</a>
         <a href="#why">Why us</a>
         <a href="#swap">List a swap</a>
@@ -1260,13 +1418,13 @@
         <a href="#faq">FAQ</a>
       </div>
       <div class="foot-col">
-        <h4>Legal</h4>
+        <h3>Legal</h3>
         <a href="terms.html">Terms of use</a>
         <a href="privacy.html">Privacy policy</a>
         <a href="cookies.html">Cookie policy</a>
       </div>
       <div class="foot-col">
-        <h4>Contact</h4>
+        <h3>Contact</h3>
         <a href="mailto:info@testnowcancellationsandswaps.co.uk">Email us</a>
         <a href="#">Report a problem</a>
       </div>
@@ -1282,7 +1440,7 @@
 <div class="consent" id="consent" role="dialog" aria-label="Cookie and location notice" style="display:none;">
   <div class="consent-inner">
     <p>
-      We use a cookie to remember your choices and detect your rough region (from your IP address) so we can show tests near you first. We don't track you or sell your data. See our <a href="privacy.html">privacy notice</a>.
+      One cookie, to remember your choice and show nearby tests first. No tracking, no selling data. <a href="privacy.html">Privacy notice</a>.
     </p>
     <div class="consent-btns">
       <button class="btn btn-ghost" id="consent-decline">No thanks</button>
@@ -1309,6 +1467,19 @@
   // Form: sends submission to Google Sheet via Apps Script Web App.
   // PASTE YOUR DEPLOYED WEB APP URL BETWEEN THE QUOTES BELOW:
   const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
+  const PAGE_LOADED_AT = Date.now(); // bot guard: real humans never submit within ~2s of page load
+
+  function setDateError(show) {
+    const field = document.getElementById('date').closest('.field');
+    const errEl = document.getElementById('date-error');
+    field.classList.toggle('has-error', show);
+    errEl.hidden = !show;
+    document.getElementById('date').setAttribute('aria-invalid', show ? 'true' : 'false');
+  }
+  // Clear the error the moment the user changes either field, so it
+  // never sits there stale once they've acted on it.
+  document.getElementById('date').addEventListener('input', () => setDateError(false));
+  document.getElementById('time').addEventListener('input', () => setDateError(false));
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -1323,10 +1494,13 @@
       const chosen = new Date(dateVal + 'T' + (timeVal || '23:59'));
       now.setSeconds(0, 0);
       if (chosen < now) {
-        alert("That test date and time is in the past. Please enter your upcoming test date (today or later).");
+        setDateError(true);
+        form.date.focus();
+        form.date.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
     }
+    setDateError(false);
 
     // --- Check if this phone already exists, then proceed ---
     btn.disabled = true;
@@ -1370,16 +1544,35 @@
       wantedRegion: form['wanted-region'].value,
       wantedCentre: form['wanted-centre'].value,
       notes: form.notes.value,
-      leadType: (form['has-instructor'] && form['has-instructor'].value === 'no') ? 'wants-instructor' : 'swap'
+      leadType: (form['has-instructor'] && form['has-instructor'].value === 'no') ? 'wants-instructor' : 'swap',
+      website: form.website ? form.website.value : '', // honeypot — real users never see/fill this
+      formLoadedAt: PAGE_LOADED_AT
     };
 
+    // No mode:'no-cors' here on purpose — confirmed live (real browser fetch,
+    // not curl) that this endpoint returns proper CORS headers, so the real
+    // JSON response IS readable. Without this, a backend-side failure
+    // (exception, quota, bad write) still resolves the fetch promise as
+    // "success" from the browser's point of view — the .catch() below was
+    // already correctly written, it just could never fire except on a total
+    // network outage. This was flagged from a real submission risk: the user
+    // sees "Submitted ✓" while the lead silently never reaches the sheet.
     fetch(SHEET_ENDPOINT, {
       method: 'POST',
-      mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(data)
     })
-    .then(() => {
+    .then(r => r.json())
+    .then(json => {
+      if (json.result !== 'success' && json.result !== 'updated') {
+        throw new Error(json.message || 'Unknown error');
+      }
+      // Fires once, only after the listing has actually been submitted
+      // (this callback only runs once the fetch to the backend completes) —
+      // never on page load, never on button click alone.
+      if (typeof gtag === 'function') {
+        gtag('event', 'conversion', {'send_to': 'AW-18364427323/1EBdCKOIjdocELvY67RE'});
+      }
       btn.textContent = 'Submitted ✓';
       btn.style.background = 'var(--accent)';
       setTimeout(() => {
@@ -1519,9 +1712,84 @@
         '<div class="bdate"><span>Date</span><span>' + fmtDate(r.date) + '</span></div>' +
         (r.time ? '<div class="bdate"><span>Time</span><span>' + r.time + '</span></div>' : '') +
         '<span class="btag">Swap ASAP</span>' +
+        (r.id ? '<button type="button" class="brequest" data-id="' + r.id + '" data-centre="' + (r.centre || '') + '" data-region="' + (r.region || '') + '" data-date="' + fmtDate(r.date) + '">Request this swap</button>' : '') +
       '</div>'
     ).join('');
   }
+
+  // ---- Click-to-enquire: request a specific board listing directly ----
+  const enquiryPanel = document.getElementById('enquiry-panel');
+  const enquirySent = document.getElementById('enquiry-sent');
+  const enquiryTarget = document.getElementById('enquiry-target');
+  const enquiryError = document.getElementById('enquiry-error');
+  const enquirySubmitBtn = document.getElementById('enquiry-submit');
+  let ENQUIRY_LISTING_ID = '';
+
+  function openEnquiryPanel(btn) {
+    ENQUIRY_LISTING_ID = btn.dataset.id || '';
+    if (!ENQUIRY_LISTING_ID) return;
+    enquiryTarget.textContent = [btn.dataset.centre, btn.dataset.region].filter(Boolean).join(', ') + (btn.dataset.date ? ' — ' + btn.dataset.date : '');
+    enquiryError.hidden = true;
+    enquirySent.style.display = 'none';
+    enquiryPanel.style.display = 'block';
+    enquiryPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function closeEnquiryPanel() {
+    enquiryPanel.style.display = 'none';
+    enquirySent.style.display = 'none';
+  }
+
+  document.getElementById('board-grid').addEventListener('click', function (e) {
+    const btn = e.target.closest('.brequest');
+    if (btn) openEnquiryPanel(btn);
+  });
+  document.getElementById('enquiry-close').addEventListener('click', closeEnquiryPanel);
+  document.getElementById('enquiry-sent-close').addEventListener('click', closeEnquiryPanel);
+
+  enquirySubmitBtn.addEventListener('click', function () {
+    const name = document.getElementById('enq-name').value.trim();
+    const email = document.getElementById('enq-email').value.trim();
+    const phone = document.getElementById('enq-phone').value.trim();
+    const message = document.getElementById('enq-message').value.trim();
+    const honeypot = document.getElementById('enq-website').value;
+    if (!name || !email || !phone) {
+      enquiryError.textContent = 'Please fill in your name, email and phone.';
+      enquiryError.hidden = false;
+      return;
+    }
+    enquirySubmitBtn.disabled = true;
+    enquirySubmitBtn.textContent = 'Sending…';
+    // No mode:'no-cors' — same fix applied to the main listing form and for
+    // the same reason: without it, a real backend failure would still show
+    // "Request sent!" to the visitor.
+    fetch(SHEET_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'enquire', listingId: ENQUIRY_LISTING_ID,
+        name: name, email: email, phone: phone, message: message,
+        website: honeypot, formLoadedAt: PAGE_LOADED_AT
+      })
+    }).then(function (r) { return r.json(); })
+      .then(function (json) {
+      if (json.result !== 'success') throw new Error(json.message || 'Unknown error');
+      enquiryPanel.style.display = 'none';
+      enquirySent.style.display = 'block';
+      enquirySent.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('enq-name').value = '';
+      document.getElementById('enq-email').value = '';
+      document.getElementById('enq-phone').value = '';
+      document.getElementById('enq-message').value = '';
+    }).catch(function (err) {
+      enquiryError.textContent = (err && err.message && err.message !== 'Unknown error') ? err.message : 'Something went wrong sending your request — please try again.';
+      enquiryError.hidden = false;
+    }).finally(function () {
+      enquirySubmitBtn.disabled = false;
+      enquirySubmitBtn.textContent = 'Send request';
+    });
+  });
+
   let DETECTED_REGION = ''; // set after consent + IP lookup
 
   function sortBoardByRegion() {
@@ -1604,6 +1872,25 @@
       .catch(() => {});
   }
 
+  // Measures whether the fixed consent banner actually overlaps the hero's
+  // CTA row and, if so, tightens the hero's vertical spacing so the CTAs
+  // clear it. Re-checked on resize/orientation change so it stays correct
+  // at any viewport size rather than relying on a single hard-coded breakpoint.
+  function syncHeroBannerSpacing() {
+    const banner = document.getElementById('consent');
+    const ctaRow = document.querySelector('.cta-row');
+    if (!banner || !ctaRow) return;
+    const visible = getComputedStyle(banner).display !== 'none';
+    if (!visible) {
+      document.body.classList.remove('consent-overlaps-hero');
+      return;
+    }
+    const bRect = banner.getBoundingClientRect();
+    const cRect = ctaRow.getBoundingClientRect();
+    const overlaps = bRect.top < window.innerHeight && (cRect.bottom + 12) > bRect.top;
+    document.body.classList.toggle('consent-overlaps-hero', overlaps);
+  }
+
   (function consentInit() {
     const banner = document.getElementById('consent');
     const choice = getCookie('tn_consent');
@@ -1625,27 +1912,18 @@
     if (choice === 'no') return; // declined — no detection, no banner
     // No choice yet → show banner
     banner.style.display = 'block';
-    // Safety net: on viewports where the hero content still reaches the
-    // banner's zone (varies with font scaling + window size), shrink the
-    // banner rather than let it sit on top of the CTA buttons.
-    const avoidCtaOverlap = () => {
-      if (banner.style.display === 'none') return;
-      const cta = document.querySelector('.cta-row');
-      if (!cta) return;
-      const b = banner.getBoundingClientRect(), c = cta.getBoundingClientRect();
-      const overlaps = c.bottom > b.top && c.top < b.bottom && c.right > b.left && c.left < b.right;
-      banner.classList.toggle('consent--compact', overlaps);
-    };
-    avoidCtaOverlap();
-    window.addEventListener('resize', avoidCtaOverlap);
+    syncHeroBannerSpacing();
+    window.addEventListener('resize', syncHeroBannerSpacing);
     document.getElementById('consent-accept').addEventListener('click', () => {
       setCookie('tn_consent', 'yes', 180);
       banner.style.display = 'none';
+      syncHeroBannerSpacing();
       detectRegion();
     });
     document.getElementById('consent-decline').addEventListener('click', () => {
       setCookie('tn_consent', 'no', 180);
       banner.style.display = 'none';
+      syncHeroBannerSpacing();
     });
   })();
 
@@ -1688,19 +1966,5 @@
   })();
 </script>
 
-<!-- Google Ads conversion tracking - DORMANT until the two IDs below are pasted in (from Google Ads > Goals > Conversions). Fires once when the listing success panel appears. -->
-<script>
-(function(){
-  var GADS_ID='';    /* e.g. 'AW-123456789' */
-  var GADS_LABEL=''; /* e.g. 'AbCdEfGhIjkL' */
-  if(!GADS_ID) return;
-  var s=document.createElement('script'); s.async=true; s.src='https://www.googletagmanager.com/gtag/js?id='+GADS_ID; document.head.appendChild(s);
-  window.dataLayer=window.dataLayer||[]; function gtag(){dataLayer.push(arguments);} window.gtag=window.gtag||gtag;
-  gtag('js',new Date()); gtag('config',GADS_ID);
-  var fired=false, el=document.getElementById('form-success'); if(!el) return;
-  var check=function(){ if(fired) return; var vis=el.offsetParent!==null && getComputedStyle(el).display!=='none'; if(vis){ fired=true; if(GADS_LABEL) gtag('event','conversion',{send_to:GADS_ID+'/'+GADS_LABEL}); } };
-  new MutationObserver(check).observe(el,{attributes:true,attributeFilter:['class','style']}); check();
-})();
-</script>
 </body>
 </html>
