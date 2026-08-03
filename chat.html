@@ -354,7 +354,15 @@
     if (!myTime) return stepTime();
     if (!myCentre) return stepCentre();
     if (!myType) return stepType();
-    if (!slotSent) { slotSent = true; postRaw(SIG_SLOT + [myDate, myTime, myCentre, myType].join('|')); renderProgress(); }
+    if (!slotSent) {
+      slotSent = true;
+      // slotSent/myRef/myDone are rebuilt from real server messages on
+      // every poll (see handleIncoming above), so a failed send here
+      // self-heals on refresh — this just makes a silent desync visible
+      // in the meantime instead of leaving both learners guessing.
+      postRaw(SIG_SLOT + [myDate, myTime, myCentre, myType].join('|')).then(ok => { if (!ok) showLocalError('⚠ That didn\'t send — refresh the page and try that step again.'); });
+      renderProgress();
+    }
     if (myChangesLeft === null) return stepChanges();
     if (myInstructorOk === null) return stepInstructor();
     return finishSetup();
@@ -373,7 +381,8 @@
       if (/[a-zA-Z]/.test(v) || v.length === 16) { err.textContent = 'That looks like a driving licence number. Enter your 8-digit booking reference instead.'; return; }
       if (!/^[0-9]{8}$/.test(v)) { err.textContent = 'Your booking reference is 8 digits, numbers only. Please check it.'; return; }
       myRef = v; awaiting = false; inp.disabled = true; btn.disabled = true;
-      postRaw(SIG_REF + v); renderProgress(); nextStep();
+      postRaw(SIG_REF + v).then(ok => { if (!ok) showLocalError('⚠ That didn\'t send — refresh the page and try that step again.'); });
+      renderProgress(); nextStep();
     };
     wrap.appendChild(inp); wrap.appendChild(btn); c.appendChild(wrap); c.appendChild(err); scrollDown(); inp.focus();
   }
@@ -464,7 +473,11 @@
   }
 
   function finishSetup() {
-    if (!doneSent) { doneSent = true; myDone = true; postRaw(SIG_DONE); renderProgress(); }
+    if (!doneSent) {
+      doneSent = true; myDone = true;
+      postRaw(SIG_DONE).then(ok => { if (!ok) showLocalError('⚠ That didn\'t send — refresh the page and try again.'); });
+      renderProgress();
+    }
     if (!prepShown) {
       prepShown = true;
       gcard('<div class="g-text">✅ <b>Nice — that\'s your part done!</b> While you wait for the other learner, get these ready for the call:<ul style="margin:8px 0 0 18px;line-height:1.6;"><li>Your driving licence number</li><li>Your booking reference</li><li>The payment card you booked with (DVSA never asks for the full number or security code)</li><li>Details of any tests you\'ve taken before</li><li>The other learner\'s booking reference (I\'ll show it when it\'s time)</li></ul></div>', true);
