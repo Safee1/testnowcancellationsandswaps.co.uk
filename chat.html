@@ -240,9 +240,49 @@
     }).catch(() => {});
   }
 
+  // ---------- poll scheduling ----------
+  // This whole backend is one Apps Script web app on a consumer account, which
+  // has a hard *daily* script-runtime quota shared by every endpoint. The chat
+  // used to poll messages every 2s and presence every 8s unconditionally, for
+  // as long as the tab existed — ~2,250 requests an hour per open tab, whether
+  // or not anyone was looking at it. Two learners leaving the chat open in a
+  // background tab could burn the day's quota between them, and when that
+  // quota goes it takes the listing form, the board and the centres dropdown
+  // with it, because they all run through the same script.
+  //
+  // So: stop entirely while the tab is hidden, and slow down while nothing is
+  // happening. Any real activity (a message arriving, sending one, or coming
+  // back to the tab) snaps it straight back to the fast interval, so an active
+  // conversation feels exactly as live as it did before.
+  const POLL_FAST = 2000, POLL_SLOW = 15000, PING_SLOW = 30000;
+  const IDLE_POLLS_BEFORE_BACKOFF = 15;   // ~30s of silence at the fast rate
+  let idleStreak = 0, pollTimer = null, pingTimer = null;
+
+  function pollDelay() { return idleStreak >= IDLE_POLLS_BEFORE_BACKOFF ? POLL_SLOW : POLL_FAST; }
+  function pingDelay() { return idleStreak >= IDLE_POLLS_BEFORE_BACKOFF ? PING_SLOW : PING_EVERY; }
+
+  function schedule(which) {
+    if (!POLLING || document.hidden) return;   // hidden tab: schedule nothing
+    if (which === 'poll') { clearTimeout(pollTimer); pollTimer = setTimeout(pollMessages, pollDelay()); }
+    else { clearTimeout(pingTimer); pingTimer = setTimeout(pingLoop, pingDelay()); }
+  }
+
+  // Anything that means "this conversation is live again"
+  function wakePolling() {
+    idleStreak = 0;
+    if (!POLLING || document.hidden) return;
+    clearTimeout(pollTimer); clearTimeout(pingTimer);
+    pollMessages(); pingLoop();
+  }
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) { clearTimeout(pollTimer); clearTimeout(pingTimer); }
+    else wakePolling();   // catch up immediately on return, then resume fast
+  });
+
   // ---------- presence ----------
   function pingLoop() {
-    if (!POLLING) return;
+    if (!POLLING || document.hidden) return;
     fetch(SHEET_ENDPOINT + '?action=chatPing&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK))
       .then(r => r.json())
       .then(d => {
@@ -252,21 +292,22 @@
           otherDot.className = 'dot' + (otherOnline ? ' on' : '');
           renderActionBar();
         }
-      }).catch(() => {}).finally(() => { if (POLLING) setTimeout(pingLoop, PING_EVERY); });
+      }).catch(() => {}).finally(() => { schedule('ping'); });
   }
 
   // ---------- message poll ----------
   function pollMessages() {
-    if (!POLLING) return;
+    if (!POLLING || document.hidden) return;
     fetch(SHEET_ENDPOINT + '?action=chatMessages&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK) + '&since=' + LAST_INDEX)
       .then(r => r.json())
       .then(d => {
         if (d.result === 'success' && Array.isArray(d.messages)) {
+          if (d.messages.length) idleStreak = 0; else idleStreak++;
           d.messages.forEach(m => { handleIncoming(m); LAST_INDEX = Math.max(LAST_INDEX, m.idx + 1); });
           if (d.status && d.status !== 'open' && SESSION_STATUS === 'open') { SESSION_STATUS = d.status; setClosedUI(); }
-        }
+        } else { idleStreak++; }
         if (!firstPollDone) { firstPollDone = true; if (!flowStarted) { flowStarted = true; flowKickoff(); } }
-      }).catch(() => {}).finally(() => { if (POLLING) setTimeout(pollMessages, 2000); });
+      }).catch(() => { idleStreak++; }).finally(() => { schedule('poll'); });
   }
 
   function handleIncoming(m) {
@@ -298,10 +339,13 @@
 
   function renderMessage(m) {
     const div = document.createElement('div');
-    if (m.sender === 'MOD') { div.className = 'msg mod'; div.innerHTML = '<div class="who">TestNow Moderator</div>' + escapeHtml(m.text) + '<div class="when">' + m.ts + '</div>'; }
+    // m.ts is backend-supplied and was the one field going into innerHTML raw
+    // while everything around it was escaped — escaped now for consistency.
+    const ts = escapeHtml(m.ts);
+    if (m.sender === 'MOD') { div.className = 'msg mod'; div.innerHTML = '<div class="who">TestNow Moderator</div>' + escapeHtml(m.text) + '<div class="when">' + ts + '</div>'; }
     else if (m.sender === 'SYSTEM') { div.className = 'sys'; div.textContent = m.text; }
-    else if (m.sender === YOU_ARE) { div.className = 'msg me'; div.innerHTML = escapeHtml(m.text) + '<div class="when">' + m.ts + '</div>'; }
-    else { div.className = 'msg them'; div.innerHTML = '<div class="who">' + escapeHtml(OTHER_HANDLE) + '</div>' + escapeHtml(m.text) + '<div class="when">' + m.ts + '</div>'; }
+    else if (m.sender === YOU_ARE) { div.className = 'msg me'; div.innerHTML = escapeHtml(m.text) + '<div class="when">' + ts + '</div>'; }
+    else { div.className = 'msg them'; div.innerHTML = '<div class="who">' + escapeHtml(OTHER_HANDLE) + '</div>' + escapeHtml(m.text) + '<div class="when">' + ts + '</div>'; }
     stream.appendChild(div); scrollDown();
   }
   function scrollDown() { stream.scrollTop = stream.scrollHeight; }
@@ -334,7 +378,12 @@
   }
   function postRaw(text) {
     return fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatSend', sid: SID, tk: TK, text: text }) })
-      .then(r => r.json()).then(j => j.result === 'success').catch(() => false);
+      .then(r => r.json()).then(j => {
+        // Sending means the conversation is active — drop any idle backoff so
+        // the other learner's reply still lands within the fast interval.
+        if (j.result === 'success') wakePolling();
+        return j.result === 'success';
+      }).catch(() => false);
   }
 
   // ================= GUIDED FLOW =================
@@ -667,7 +716,8 @@
     abInner.innerHTML = '<div class="ab-grey">This chat is closed.</div>';
     const chipsEl = document.getElementById('chips'); if (chipsEl) chipsEl.style.display = 'none';
     const banner = document.createElement('div'); banner.className = 'closed-banner'; banner.textContent = 'This chat has been closed.';
-    composer.parentNode.replaceChild(banner, composer); POLLING = false;
+    composer.parentNode.replaceChild(banner, composer);
+    POLLING = false; clearTimeout(pollTimer); clearTimeout(pingTimer);
   }
 
   setInterval(() => { if (SESSION_STATUS === 'open') renderActionBar(); }, 5000);
