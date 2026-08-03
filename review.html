@@ -42,8 +42,11 @@
   textarea { min-height:110px; resize:vertical; }
   .charcount { font-size:12px; color:var(--muted); text-align:right; margin-top:4px; }
   .stars { display:flex; gap:8px; font-size:36px; line-height:1; user-select:none; }
-  .stars span { cursor:pointer; color:rgba(10,107,54,.25); transition:color .1s; }
+  .stars span { cursor:pointer; color:rgba(10,107,54,.25); transition:color .1s; border-radius:6px; }
   .stars span.on { color:var(--accent); }
+  /* Keyboard users have to be able to SEE which star they're on, or the
+     arrow-key support below is invisible and therefore useless. */
+  .stars span:focus-visible { outline:3px solid var(--ink); outline-offset:3px; }
   .hint { font-size:12px; color:var(--muted); margin-top:6px; }
   .btn { margin-top:24px; width:100%; padding:14px; border-radius:999px; border:none; cursor:pointer; font-family:inherit; font-size:16px; font-weight:600; background:var(--ink); color:var(--paper); }
   .btn:disabled { opacity:.6; cursor:default; }
@@ -83,9 +86,12 @@
       <p class="lede" id="sub">Your review helps other learners find a good instructor. It's checked before it goes live.</p>
 
       <div class="box">
-        <label>Your rating</label>
-        <div class="stars" id="stars">
-          <span data-v="1">&#9733;</span><span data-v="2">&#9733;</span><span data-v="3">&#9733;</span><span data-v="4">&#9733;</span><span data-v="5">&#9733;</span>
+        <label id="stars-label">Your rating</label>
+        <!-- A real radio group, not decorative spans. Submission is blocked
+             without a rating, so when these were click-only <span>s a keyboard
+             or screen-reader user could not leave a review at all. -->
+        <div class="stars" id="stars" role="radiogroup" aria-labelledby="stars-label">
+          <span role="radio" data-v="1" tabindex="0"  aria-checked="false" aria-label="1 star out of 5">&#9733;</span><span role="radio" data-v="2" tabindex="-1" aria-checked="false" aria-label="2 stars out of 5">&#9733;</span><span role="radio" data-v="3" tabindex="-1" aria-checked="false" aria-label="3 stars out of 5">&#9733;</span><span role="radio" data-v="4" tabindex="-1" aria-checked="false" aria-label="4 stars out of 5">&#9733;</span><span role="radio" data-v="5" tabindex="-1" aria-checked="false" aria-label="5 stars out of 5">&#9733;</span>
         </div>
 
         <label for="r-text">Your review (optional)</label>
@@ -145,12 +151,43 @@ if (!token) {
 }
 
 var starsEl = document.getElementById('stars');
-starsEl.addEventListener('click', function(ev){
-  var s = ev.target.closest('span'); if (!s) return;
-  stars = parseInt(s.getAttribute('data-v'), 10);
-  Array.prototype.forEach.call(starsEl.children, function(el){
-    el.classList.toggle('on', parseInt(el.getAttribute('data-v'),10) <= stars);
+var starEls = Array.prototype.slice.call(starsEl.querySelectorAll('[role=radio]'));
+
+// Roving tabindex: the group is one tab stop, arrows move within it — the
+// standard radiogroup pattern, so it behaves the way a screen-reader user
+// already expects rather than needing five separate tab presses.
+function selectStar(v, moveFocus) {
+  stars = v;
+  starEls.forEach(function (el) {
+    var n = parseInt(el.getAttribute('data-v'), 10);
+    el.classList.toggle('on', n <= v);          // fill up to the chosen star
+    el.setAttribute('aria-checked', n === v ? 'true' : 'false');
+    el.tabIndex = (n === v) ? 0 : -1;
   });
+  if (moveFocus) {
+    var target = starEls[v - 1];
+    if (target) target.focus();
+  }
+}
+
+starsEl.addEventListener('click', function (ev) {
+  var s = ev.target.closest('[role=radio]'); if (!s) return;
+  selectStar(parseInt(s.getAttribute('data-v'), 10), false);
+});
+
+starsEl.addEventListener('keydown', function (ev) {
+  var current = stars || 0;
+  var next = null;
+  switch (ev.key) {
+    case 'ArrowRight': case 'ArrowUp':   next = current >= 5 ? 1 : current + 1; break;
+    case 'ArrowLeft':  case 'ArrowDown': next = current <= 1 ? 5 : current - 1; break;
+    case 'Home': next = 1; break;
+    case 'End':  next = 5; break;
+    case ' ': case 'Enter': next = current || 1; break;
+    default: return;
+  }
+  ev.preventDefault();          // stop Space scrolling the page
+  selectStar(next, true);
 });
 
 var textEl = document.getElementById('r-text');
