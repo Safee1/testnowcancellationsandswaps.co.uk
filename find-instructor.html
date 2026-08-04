@@ -271,6 +271,7 @@ document.getElementById('m-send').addEventListener('click', function(){
     if (d.result === 'success') {
       mmsg.className='mmsg ok'; mmsg.textContent="Sent! " + (currentName||"The instructor") + " has your details and will be in touch.";
       btn.textContent='Sent ✓';
+         if (typeof gtag === 'function') { gtag('event', 'conversion', {'send_to': 'AW-18364427323/tYxfCLCdyNscELvY67RE'}); }
     } else { throw new Error(d.message || 'error'); }
   })
   .catch(function(){ mmsg.className='mmsg err'; mmsg.textContent="Couldn't send right now — please try again."; btn.disabled=false; btn.textContent='Send enquiry'; });

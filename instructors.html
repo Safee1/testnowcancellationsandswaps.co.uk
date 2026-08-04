@@ -284,6 +284,7 @@ document.getElementById('isubmit').addEventListener('click', function(){
     } else if (d.result === 'duplicate') {
       msg.className = 'imsg ok';
       msg.textContent = d.message || "Already registered — we've emailed your dashboard link to the address on file.";
+         if (typeof gtag === 'function') { gtag('event', 'conversion', {'send_to': 'AW-18364427323/1sVKCLOdyNscELvY67RE'}); }
       btn.disabled = false; btn.innerHTML = 'Register free <span aria-hidden="true">&nbsp;&rarr;</span>';
     } else {
       throw new Error(d.message || 'error');
