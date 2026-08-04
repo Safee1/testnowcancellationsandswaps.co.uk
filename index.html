@@ -767,6 +767,28 @@
   }
   .field-error[hidden] { display: none; }
   .field-error::before { content: '⚠'; flex-shrink: 0; }
+
+  /* Email typo hint — a suggestion, never a block. Deliberately styled as a
+     quiet prompt rather than an error: the address might genuinely be right,
+     and this sits on a lead form running under paid ads, so it must never
+     look like something has gone wrong. */
+  .field-typo {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .field-typo[hidden] { display: none; }
+  .field-typo button {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+  }
   .field.has-error input,
   .field.has-error select {
     border-color: var(--accent);
@@ -1289,7 +1311,8 @@
         </div>
         <div class="field">
           <label for="email">Email</label>
-          <input id="email" name="email" type="email" required placeholder="you@example.com" autocomplete="email">
+          <input id="email" name="email" type="email" required placeholder="you@example.com" autocomplete="email" aria-describedby="email-typo">
+          <p class="field-typo" id="email-typo" role="status" hidden></p>
         </div>
         <div class="field">
           <label for="phone">Phone number</label>
@@ -1517,6 +1540,75 @@
   // never sits there stale once they've acted on it.
   document.getElementById('date').addEventListener('input', () => setDateError(false));
   document.getElementById('time').addEventListener('input', () => setDateError(false));
+
+  // ---- Email typo guard ----
+  // A mistyped address is a lead that can never be contacted, and nobody ever
+  // finds out — the learner assumes we ghosted them. This catches the common
+  // slips only, and is a SUGGESTION, never a block: it must never stop a
+  // genuine address (someone really can be at a domain we don't recognise),
+  // and it must never add a step to a form running under paid ads.
+  const EMAIL_DOMAINS = [
+    'gmail.com', 'googlemail.com', 'hotmail.com', 'hotmail.co.uk', 'outlook.com',
+    'live.co.uk', 'live.com', 'yahoo.com', 'yahoo.co.uk', 'icloud.com',
+    'btinternet.com', 'sky.com', 'aol.com', 'me.com', 'msn.com'
+  ];
+
+  // Levenshtein, capped — we only care about 1–2 character slips.
+  function editDistance(a, b) {
+    if (Math.abs(a.length - b.length) > 2) return 99;
+    const prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 1; i <= a.length; i++) {
+      let last = prev[0];
+      prev[0] = i;
+      for (let j = 1; j <= b.length; j++) {
+        const tmp = prev[j];
+        prev[j] = Math.min(
+          prev[j] + 1,
+          prev[j - 1] + 1,
+          last + (a[i - 1] === b[j - 1] ? 0 : 1)
+        );
+        last = tmp;
+      }
+    }
+    return prev[b.length];
+  }
+
+  function suggestEmailDomain(value) {
+    const at = String(value || '').lastIndexOf('@');
+    if (at < 1) return '';
+    const domain = value.slice(at + 1).toLowerCase().trim();
+    if (!domain || EMAIL_DOMAINS.indexOf(domain) !== -1) return '';   // already valid, say nothing
+    let best = '', bestD = 99;
+    EMAIL_DOMAINS.forEach(function (d) {
+      const dist = editDistance(domain, d);
+      if (dist < bestD) { bestD = dist; best = d; }
+    });
+    // 1–2 edits away from a very common domain is almost always a typo.
+    // Anything further is probably a real domain we simply don't list.
+    return bestD > 0 && bestD <= 2 ? value.slice(0, at + 1) + best : '';
+  }
+
+  (function wireEmailTypoGuard() {
+    const input = document.getElementById('email');
+    const hint = document.getElementById('email-typo');
+    if (!input || !hint) return;
+
+    function clear() { hint.hidden = true; hint.textContent = ''; }
+
+    input.addEventListener('blur', function () {
+      const suggestion = suggestEmailDomain(input.value);
+      if (!suggestion) return clear();
+      hint.hidden = false;
+      hint.textContent = 'Did you mean ';
+      const btn = document.createElement('button');
+      btn.type = 'button';                 // never submits the form
+      btn.textContent = suggestion;
+      btn.addEventListener('click', function () { input.value = suggestion; clear(); input.focus(); });
+      hint.appendChild(btn);
+      hint.appendChild(document.createTextNode('?'));
+    });
+    input.addEventListener('input', clear);
+  })();
 
   function handleSubmit(e) {
     e.preventDefault();
