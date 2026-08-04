@@ -281,10 +281,14 @@ document.getElementById('isubmit').addEventListener('click', function(){
       }
       msg.innerHTML = html;
       btn.textContent = 'Registered ✓'; btn.disabled = true;
+      // Fires on a genuine NEW registration only. This was originally placed
+      // in the 'duplicate' branch below, which meant the conversion fired
+      // ONLY when someone was already registered and never for a real signup
+      // — so Ads would have been optimising towards duplicate submissions.
+      if (typeof gtag === 'function') { gtag('event', 'conversion', {'send_to': 'AW-18364427323/1sVKCLOdyNscELvY67RE'}); }
     } else if (d.result === 'duplicate') {
       msg.className = 'imsg ok';
       msg.textContent = d.message || "Already registered — we've emailed your dashboard link to the address on file.";
-         if (typeof gtag === 'function') { gtag('event', 'conversion', {'send_to': 'AW-18364427323/1sVKCLOdyNscELvY67RE'}); }
       btn.disabled = false; btn.innerHTML = 'Register free <span aria-hidden="true">&nbsp;&rarr;</span>';
     } else {
       throw new Error(d.message || 'error');
