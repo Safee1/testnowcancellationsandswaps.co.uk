@@ -19,18 +19,6 @@
     'wait_for_update': 500
   });
 
-  (function () {
-    var m = document.cookie.match('(^|;)\\s*tn_consent_v2\\s*=\\s*([^;]+)');
-    if (m && m.pop() === 'yes') {
-      gtag('consent', 'update', {
-        'ad_storage': 'granted',
-        'ad_user_data': 'granted',
-        'ad_personalization': 'granted',
-        'analytics_storage': 'granted'
-      });
-    }
-  })();
-
   gtag('js', new Date());
   gtag('config', 'AW-18364427323');
 </script>
@@ -137,6 +125,23 @@
     padding: 16px 20px; border-radius: 12px; font-size: 15px; margin-top: 24px; color: var(--ink-soft);
   }
   .savenum strong { color: var(--ink); }
+
+  /* Cookie/ad-consent banner — this page previously had NO banner of its
+     own, only the read-and-reapply logic for a prior homepage visit. A
+     visitor landing here directly (an ad click, a bookmark, a shared link)
+     never got asked, so ad_storage stayed 'denied' for the whole visit and
+     the signup conversion could never be recorded. */
+  .cookiebar { position: fixed; left: 14px; right: 14px; bottom: 14px; max-width: 640px; margin: 0 auto;
+    background: var(--ink); color: var(--paper); border-radius: 14px; padding: 14px 18px; z-index: 200;
+    box-shadow: 0 10px 40px rgba(0,0,0,.25); display: none; }
+  .cookiebar-inner { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: space-between; }
+  .cookiebar p { font-size: 13px; line-height: 1.45; flex: 1; min-width: 220px; margin: 0; }
+  .cookiebar a { color: var(--paper); text-decoration: underline; }
+  .cookiebar-btns { display: flex; gap: 10px; }
+  .cookiebar-btns button { padding: 10px 18px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; }
+  .cb-accept { background: var(--paper); color: var(--ink); }
+  .cb-decline { background: transparent; color: var(--paper); border: 1.5px solid var(--paper); }
+  @media (max-width: 600px) { .cookiebar { left: 10px; right: 10px; bottom: 10px; padding: 12px 14px; } .cookiebar p { font-size: 12.5px; } }
 </style>
 </head>
 <body>
@@ -232,6 +237,17 @@
   </div>
 </main>
 
+<!-- COOKIE / AD CONSENT BANNER -->
+<div class="cookiebar" id="cookiebar" role="dialog" aria-label="Cookie notice">
+  <div class="cookiebar-inner">
+    <p>We use cookies to measure how well our ads work. We never sell your data. <a href="privacy.html">Privacy notice</a>.</p>
+    <div class="cookiebar-btns">
+      <button type="button" class="cb-decline" id="cb-decline">No thanks</button>
+      <button type="button" class="cb-accept" id="cb-accept">Allow</button>
+    </div>
+  </div>
+</div>
+
 <footer>
   &copy; <span id="yr"></span> testnowcancellationsandswaps.co.uk &middot; Independent &amp; not affiliated with DVSA or gov.uk.
 </footer>
@@ -300,6 +316,39 @@ document.getElementById('isubmit').addEventListener('click', function(){
     btn.disabled = false; btn.innerHTML = 'Register free <span aria-hidden="true">&nbsp;&rarr;</span>';
   });
 });
+
+// ---- Cookie/ad consent ----
+function getCookie(name) {
+  var m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+  return m ? m.pop() : '';
+}
+function setCookie(name, val, days) {
+  var d = new Date();
+  d.setTime(d.getTime() + days * 864e5);
+  document.cookie = name + '=' + val + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
+}
+function setAdConsent(granted) {
+  if (typeof gtag !== 'function') return;
+  var v = granted ? 'granted' : 'denied';
+  gtag('consent', 'update', { 'ad_storage': v, 'ad_user_data': v, 'ad_personalization': v, 'analytics_storage': v });
+}
+(function consentInit() {
+  var bar = document.getElementById('cookiebar');
+  var choice = getCookie('tn_consent_v2');
+  if (choice === 'yes') { setAdConsent(true); return; }
+  if (choice === 'no') { return; }
+  bar.style.display = 'block';
+  document.getElementById('cb-accept').addEventListener('click', function () {
+    setCookie('tn_consent_v2', 'yes', 180);
+    setAdConsent(true);
+    bar.style.display = 'none';
+  });
+  document.getElementById('cb-decline').addEventListener('click', function () {
+    setCookie('tn_consent_v2', 'no', 180);
+    setAdConsent(false);
+    bar.style.display = 'none';
+  });
+})();
 </script>
 </body>
 </html>

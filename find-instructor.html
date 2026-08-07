@@ -19,18 +19,6 @@
     'wait_for_update': 500
   });
 
-  (function () {
-    var m = document.cookie.match('(^|;)\\s*tn_consent_v2\\s*=\\s*([^;]+)');
-    if (m && m.pop() === 'yes') {
-      gtag('consent', 'update', {
-        'ad_storage': 'granted',
-        'ad_user_data': 'granted',
-        'ad_personalization': 'granted',
-        'analytics_storage': 'granted'
-      });
-    }
-  })();
-
   gtag('js', new Date());
   gtag('config', 'AW-18364427323');
 </script>
@@ -83,7 +71,9 @@
   .status { font-size:15px; color:var(--muted); padding:24px 0; }
   footer { border-top:1.5px solid var(--ink); padding:40px 0; text-align:center; font-size:13px; color:var(--muted); }
   /* modal */
-  .modal { display:none; position:fixed; inset:0; background:rgba(10,20,15,.55); z-index:50; align-items:center; justify-content:center; padding:20px; }
+  /* z-index 250: must sit above .cookiebar (200) — an open enquiry dialog
+     is a more immediate action than the passive cookie notice underneath it. */
+  .modal { display:none; position:fixed; inset:0; background:rgba(10,20,15,.55); z-index:250; align-items:center; justify-content:center; padding:20px; }
   .modal.open { display:flex; }
   .modal-box { background:var(--paper); border:1.5px solid var(--ink); border-radius:18px; padding:24px; width:100%; max-width:440px; box-shadow:6px 6px 0 var(--ink); }
   .modal-box h2 { font-family:'Fraunces',serif; font-size:22px; margin-bottom:6px; }
@@ -99,6 +89,25 @@
   .mmsg { display:none; margin-top:12px; padding:12px 14px; border-radius:10px; font-size:14px; }
   .mmsg.ok { display:block; background:#e7f4ec; color:#0A6B36; border:1.5px solid #0A6B36; }
   .mmsg.err { display:block; background:#fdeaea; color:#a01313; border:1.5px solid #a01313; }
+
+  /* Cookie/ad-consent banner — this page previously had NO banner of its own,
+     only the read-and-reapply logic for a prior homepage visit. A visitor
+     landing here directly (an ad click, a bookmark, a shared link) never
+     got asked, so ad_storage stayed 'denied' for the whole visit and the
+     enquiry conversion could never be recorded — confirmed live: the
+     Instructor Enquiry Ads action showed zero conversions ever despite the
+     browser-side gtag call firing correctly on every send. */
+  .cookiebar { position:fixed; left:14px; right:14px; bottom:14px; max-width:640px; margin:0 auto;
+    background:var(--ink); color:var(--paper); border-radius:14px; padding:14px 18px; z-index:200;
+    box-shadow:0 10px 40px rgba(0,0,0,.25); display:none; }
+  .cookiebar-inner { display:flex; align-items:center; gap:16px; flex-wrap:wrap; justify-content:space-between; }
+  .cookiebar p { font-size:13px; line-height:1.45; flex:1; min-width:220px; margin:0; }
+  .cookiebar a { color:var(--paper); text-decoration:underline; }
+  .cookiebar-btns { display:flex; gap:10px; }
+  .cookiebar-btns button { padding:10px 18px; border-radius:999px; border:none; cursor:pointer; font-family:inherit; font-size:13px; font-weight:600; }
+  .cb-accept { background:var(--paper); color:var(--ink); }
+  .cb-decline { background:transparent; color:var(--paper); border:1.5px solid var(--paper); }
+  @media (max-width:600px) { .cookiebar { left:10px; right:10px; bottom:10px; padding:12px 14px; } .cookiebar p { font-size:12.5px; } }
 </style>
 </head>
 <body>
@@ -163,6 +172,17 @@
     <div class="modal-actions">
       <button class="btn-cancel" id="m-cancel" type="button">Cancel</button>
       <button class="btn-send" id="m-send" type="button">Send enquiry</button>
+    </div>
+  </div>
+</div>
+
+<!-- COOKIE / AD CONSENT BANNER -->
+<div class="cookiebar" id="cookiebar" role="dialog" aria-label="Cookie notice">
+  <div class="cookiebar-inner">
+    <p>We use cookies to measure how well our ads work. We never sell your data. <a href="privacy.html">Privacy notice</a>.</p>
+    <div class="cookiebar-btns">
+      <button type="button" class="cb-decline" id="cb-decline">No thanks</button>
+      <button type="button" class="cb-accept" id="cb-accept">Allow</button>
     </div>
   </div>
 </div>
@@ -276,6 +296,42 @@ document.getElementById('m-send').addEventListener('click', function(){
   })
   .catch(function(){ mmsg.className='mmsg err'; mmsg.textContent="Couldn't send right now — please try again."; btn.disabled=false; btn.textContent='Send enquiry'; });
 });
+
+// ---- Cookie/ad consent ----
+// Grants/denies the Consent Mode signals set to 'denied' by default in the
+// head. Until this fires with 'granted', gtag writes no ad cookies and the
+// enquiry conversion below is not attributable.
+function getCookie(name) {
+  var m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+  return m ? m.pop() : '';
+}
+function setCookie(name, val, days) {
+  var d = new Date();
+  d.setTime(d.getTime() + days * 864e5);
+  document.cookie = name + '=' + val + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
+}
+function setAdConsent(granted) {
+  if (typeof gtag !== 'function') return;
+  var v = granted ? 'granted' : 'denied';
+  gtag('consent', 'update', { 'ad_storage': v, 'ad_user_data': v, 'ad_personalization': v, 'analytics_storage': v });
+}
+(function consentInit() {
+  var bar = document.getElementById('cookiebar');
+  var choice = getCookie('tn_consent_v2');
+  if (choice === 'yes') { setAdConsent(true); return; }
+  if (choice === 'no') { return; } // declined — stays denied, no banner
+  bar.style.display = 'block';
+  document.getElementById('cb-accept').addEventListener('click', function () {
+    setCookie('tn_consent_v2', 'yes', 180);
+    setAdConsent(true);
+    bar.style.display = 'none';
+  });
+  document.getElementById('cb-decline').addEventListener('click', function () {
+    setCookie('tn_consent_v2', 'no', 180);
+    setAdConsent(false);
+    bar.style.display = 'none';
+  });
+})();
 </script>
 </body>
 </html>
