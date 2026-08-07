@@ -225,7 +225,7 @@
         renderProgress();
         if (SESSION_STATUS === 'open') buildChips();
         if (SESSION_STATUS !== 'open') setClosedUI();
-        pollMessages(); pingLoop();
+        pollMessages(true); pingLoop(true);   // forced — see the note on pollMessages
       })
       .catch(() => { metaText.textContent = 'Could not open chat.'; composer.style.display = 'none'; completeBtn.style.display = 'none'; abInner.innerHTML = ''; });
   }
@@ -281,8 +281,22 @@
   });
 
   // ---------- presence ----------
-  function pingLoop() {
-    if (!POLLING || document.hidden) return;
+  // `force` bypasses the hidden-tab gate below — used ONLY for the very first
+  // call right after a session loads (see initSession). Without it, a page
+  // that reads document.hidden===true at that exact moment — a link opened
+  // in a background tab, or any automated/background viewer — never fires
+  // its first fetch AND never schedules a next one (schedule() only runs
+  // from inside the fetch's own .finally(), which this bail skips entirely).
+  // The chat then sits permanently inert: no messages ever render, and a
+  // status change (e.g. the other side clicking Finish) never reaches the
+  // UI, because setClosedUI() is only ever invoked from a poll response.
+  // Recovery would need a genuine visibilitychange event, which never fires
+  // in a context that was never legitimately focused to begin with. A single
+  // forced fetch on load costs nothing against the quota concern this
+  // hidden-tab gating exists for — that was about stopping a 2s/8s loop
+  // running forever in the background, not a one-off initial read.
+  function pingLoop(force) {
+    if (!POLLING || (document.hidden && !force)) return;
     fetch(SHEET_ENDPOINT + '?action=chatPing&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK))
       .then(r => r.json())
       .then(d => {
@@ -296,8 +310,8 @@
   }
 
   // ---------- message poll ----------
-  function pollMessages() {
-    if (!POLLING || document.hidden) return;
+  function pollMessages(force) {
+    if (!POLLING || (document.hidden && !force)) return;
     fetch(SHEET_ENDPOINT + '?action=chatMessages&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK) + '&since=' + LAST_INDEX)
       .then(r => r.json())
       .then(d => {
