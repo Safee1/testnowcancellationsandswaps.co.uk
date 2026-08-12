@@ -35,7 +35,7 @@
 </script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18364427323"></script>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Test Now — Free UK Driving Test Swaps</title>
 <meta name="description" content="Swap your DVSA practical driving test date with another learner. Free, anonymous, no fees. Skip the months-long DVSA wait.">
 <meta name="theme-color" content="#0A6B36">
@@ -135,7 +135,7 @@
   }
   .brand small {
     font-family: 'Inter Tight', sans-serif;
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: .15em;
     text-transform: uppercase;
     color: var(--muted);
@@ -156,7 +156,7 @@
   }
   .brand-tag small {
     font-family: 'Inter Tight', sans-serif;
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: .15em;
     text-transform: uppercase;
     color: var(--muted);
@@ -319,7 +319,7 @@
   .swap-card .stamp {
     display: inline-block;
     margin-top: 14px;
-    font-size: 10px;
+    font-size: 12px;
     letter-spacing: .2em;
     padding: 4px 10px;
     border: 1px solid currentColor;
@@ -499,9 +499,10 @@
      + a max-height safety valve, rather than a full-height panel. */
   .consent {
     position: fixed;
-    bottom: 14px; left: 14px; right: 14px;
+    bottom: calc(14px + env(safe-area-inset-bottom)); left: 14px; right: 14px;
     max-width: 640px;
     max-height: 25vh;
+    max-height: 25dvh;
     overflow: auto;
     margin: 0 auto;
     background: var(--ink);
@@ -512,10 +513,10 @@
     box-shadow: 0 10px 40px rgba(0,0,0,.25);
   }
   .consent-inner { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: space-between; }
-  .consent p { font-size: 13px; line-height: 1.45; flex: 1; min-width: 220px; margin: 0; }
+  .consent p { font-size: 13px; line-height: 1.45; flex: 1; min-width: 0; margin: 0; }
   .consent a { color: var(--paper); text-decoration: underline; } /* was --accent-soft, 1.81:1 on this dark background — badly failing even large-text AA; --paper here is 5.83:1 */
   .consent-btns { display: flex; gap: 10px; }
-  .consent .btn { padding: 10px 18px; font-size: 13px; }
+  .consent .btn { padding: 10px 18px; font-size: 13px; min-height: 44px; }
   .consent .btn-ghost { color: var(--paper); border-color: var(--paper); }
   .consent .btn-ghost:hover { background: var(--paper); color: var(--ink); }
 
@@ -530,7 +531,7 @@
   }
   .board-tools select {
     font-family: inherit;
-    font-size: 14px;
+    font-size: 16px;
     padding: 10px 16px;
     border: 1.5px solid var(--ink);
     border-radius: 999px;
@@ -559,10 +560,11 @@
     transition: transform .25s ease, box-shadow .25s ease;
     position: relative;
     overflow: hidden;
+    overflow-wrap: anywhere;
   }
   .bcard:hover { transform: translateY(-3px); box-shadow: 4px 4px 0 var(--ink); }
   .bcard .bregion {
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: .14em;
     text-transform: uppercase;
     color: var(--muted);
@@ -590,7 +592,7 @@
        a solid button-weight fill here reads as a dead button on tap. */
     display: inline-block;
     margin-top: 16px;
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: .1em;
     text-transform: uppercase;
     font-weight: 600;
@@ -622,7 +624,7 @@
   .bcard .bsample {
     position: absolute;
     top: 12px; right: 12px;
-    font-size: 9px;
+    font-size: 12px;
     letter-spacing: .12em;
     text-transform: uppercase;
     color: var(--muted);
@@ -731,7 +733,7 @@
   }
   input, select, textarea {
     font-family: inherit;
-    font-size: 15px;
+    font-size: 16px;
     padding: 14px 16px;
     border: 1.5px solid var(--ink);
     background: var(--paper);
@@ -826,7 +828,7 @@
     font-style: italic;
   }
   .foot-col h3 {
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: .2em;
     text-transform: uppercase;
     margin-bottom: 18px;
@@ -881,7 +883,7 @@
     /* Headline + lede sized for small screens */
     h1.headline { font-size: 40px; line-height: 1.0; margin-bottom: 22px; max-width: 100%; }
     .lede { font-size: 17px; margin-bottom: 28px; }
-    .eyebrow { margin-bottom: 22px; font-size: 11px; }
+    .eyebrow { margin-bottom: 22px; font-size: 12px; }
 
     /* CTAs go full-width and stack neatly */
     .cta-row { gap: 10px; }
@@ -929,7 +931,7 @@
     /* Consent banner: even slimmer on small screens, and buttons sit
        inline beside the (now short) text instead of stacking full-width,
        so the whole bar stays a thin strip rather than a panel. */
-    .consent { left: 10px; right: 10px; bottom: 10px; padding: 12px 14px; max-height: 20vh; }
+    .consent { left: 10px; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); padding: 12px 14px; max-height: 20vh; max-height: 20dvh; }
     .consent-inner { gap: 10px; }
     .consent p { font-size: 12.5px; }
     .consent-btns { gap: 8px; }
@@ -1004,7 +1006,7 @@
       margin-left: 0;
       border-left: none;        /* drop the divider when stacked */
     }
-    .brand .brand-tag small { font-size: 11px; letter-spacing: .12em; }
+    .brand .brand-tag small { font-size: 12px; letter-spacing: .12em; }
     nav.links { flex-shrink: 0; }                      /* keep the button intact */
     nav.links .btn { padding: 10px 15px; font-size: 13px; }
     .logo-img { height: 24px; }
@@ -1076,13 +1078,18 @@
   .enquiry-panel .field label { font-size: 13px; font-weight: 600; margin-bottom: 5px; display: block; }
   .enquiry-panel .field input, .enquiry-panel .field textarea {
     width: 100%; border: 1.5px solid rgba(10,107,54,.25); border-radius: 10px;
-    padding: 10px 12px; font-family: inherit; font-size: 15px; background: var(--paper); color: var(--ink);
+    padding: 10px 12px; font-family: inherit; font-size: 16px; background: var(--paper); color: var(--ink);
   }
   .enquiry-panel .field textarea { resize: vertical; }
   .enquiry-panel .field input:focus, .enquiry-panel .field textarea:focus { outline: none; border-color: var(--ink); }
   .enquiry-target { font-weight: 600; color: var(--ink-soft); font-size: 13.5px; margin-bottom: 4px; }
+
+  /* Footer stacks to one column on narrow phones */
+  @media (max-width: 500px) {
+    .foot-grid { grid-template-columns: 1fr; }
+  }
   .enquiry-sub { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
-  .enquiry-close { position: absolute; top: 14px; right: 14px; background: none; border: none; color: var(--muted); font-size: 16px; cursor: pointer; padding: 4px; }
+  .enquiry-close { position: absolute; top: 6px; right: 6px; background: none; border: none; color: var(--muted); font-size: 16px; cursor: pointer; padding: 12px; }
   .enquiry-submit { width: 100%; }
   .enquiry-error { color: var(--accent); font-size: 13px; font-weight: 600; margin-top: 10px; }
   .enquiry-sent { max-width: 460px; padding: 32px 24px; margin: 28px auto 0; }
