@@ -33,7 +33,7 @@
 </script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18364427323"></script>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Instructor Dashboard — TestNow</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#0A6B36">
@@ -62,6 +62,7 @@
     color: var(--ink);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
   body::before {
     content: '';
@@ -80,9 +81,9 @@
   .brand img { height: 30px; }
   .brand-tag { padding-left: 14px; border-left: 1.5px solid rgba(10,107,54,.25); }
   .brand-tag small {
-    font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted);
+    font-size: 12px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted);
   }
-  .back { font-size: 14px; color: var(--ink); text-decoration: none; opacity: .8; }
+  .back { font-size: 14px; color: var(--ink); text-decoration: none; opacity: .8; display: inline-block; padding: 11px 0; }
   .back:hover { opacity: 1; color: var(--accent); }
 
   main { padding: 70px 0 100px; }
@@ -112,14 +113,14 @@
 <style>
   .lead-grid { display: grid; grid-template-columns: 1fr; gap: 14px; margin-top: 22px; }
   @media (min-width: 700px) { .lead-grid { grid-template-columns: 1fr 1fr; } }
-  .lcard { background: #fff; border: 1.5px solid var(--ink); border-radius: 16px; padding: 20px; box-shadow: 4px 4px 0 var(--ink); }
-  .lcard .lregion { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 6px; }
+  .lcard { background: #fff; border: 1.5px solid var(--ink); border-radius: 16px; padding: 20px; box-shadow: 4px 4px 0 var(--ink); overflow-wrap: anywhere; }
+  .lcard .lregion { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 6px; }
   .lcard .lcentre { font-family: 'Fraunces', serif; font-size: 21px; font-weight: 600; color: var(--ink); margin-bottom: 10px; }
   .lcard .lrow { display: flex; justify-content: space-between; font-size: 14px; padding: 5px 0; border-bottom: 1px dashed rgba(10,107,54,.25); }
   .lcard .lrow:last-of-type { border-bottom: none; }
   .lcard .lrow span { color: rgba(31,41,35,.7); }
   .lcard .lrow strong { color: var(--ink); }
-  .lbtn { display: inline-flex; align-items: center; justify-content: center; width: 100%; margin-top: 14px; padding: 12px 18px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; font-size: 14.5px; font-weight: 600; background: var(--ink); color: var(--paper); }
+  .lbtn { display: inline-flex; align-items: center; justify-content: center; width: 100%; margin-top: 14px; padding: 12px 18px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; font-size: 14.5px; font-weight: 600; background: var(--ink); color: var(--paper); min-height: 44px; }
   .lbtn:disabled { opacity: .55; cursor: default; }
   .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--paper-warm); border-radius: 14px; padding: 14px 18px; margin-top: 20px; flex-wrap: wrap; }
   .topbar .who { font-weight: 600; color: var(--ink); }
@@ -127,6 +128,13 @@
   .empty, .error { margin-top: 24px; padding: 18px 20px; border-radius: 14px; font-size: 15px; background: var(--paper-warm); }
   .error { background: #fdeaea; color: #a01313; }
   .masknote { font-size: 13px; color: rgba(31,41,35,.65); margin-top: 8px; }
+
+  @media (max-width: 600px) {
+    main { padding: 48px 0 72px; }
+    .wrap { padding: 0 20px; }
+    .nav-inner { padding: 0 20px; }
+    .topbar { padding: 12px 14px; }
+  }
 </style>
 </head>
 <body>

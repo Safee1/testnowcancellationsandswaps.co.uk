@@ -20,7 +20,7 @@
 </script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18364427323"></script>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>For Driving Instructors — TestNow</title>
 <meta name="description" content="Get matched with UK learners who need an instructor for their upcoming driving test.">
 <meta name="theme-color" content="#0A6B36">
@@ -49,6 +49,7 @@
     color: var(--ink);
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
   body::before {
     content: '';
@@ -67,9 +68,9 @@
   .brand img { height: 30px; }
   .brand-tag { padding-left: 14px; border-left: 1.5px solid rgba(10,107,54,.25); }
   .brand-tag small {
-    font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted);
+    font-size: 12px; letter-spacing: .15em; text-transform: uppercase; color: var(--muted);
   }
-  .back { font-size: 14px; color: var(--ink); text-decoration: none; opacity: .8; }
+  .back { font-size: 14px; color: var(--ink); text-decoration: none; opacity: .8; display: inline-block; padding: 11px 0; }
   .back:hover { opacity: 1; color: var(--accent); }
 
   main { padding: 70px 0 100px; }
@@ -107,7 +108,7 @@
   }
   .iform input:focus { outline: none; border-color: var(--ink); }
   .regions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
-  .regions label { display: flex; gap: 8px; align-items: center; text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 14px; cursor: pointer; margin: 0; }
+  .regions label { display: flex; gap: 8px; align-items: center; text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 14px; cursor: pointer; margin: 0; padding: 8px 0; }
   .regions input { width: auto; }
   .ibtn { display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 14px 22px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 600; background: var(--ink); color: var(--paper); }
   .ibtn:disabled { opacity: .6; cursor: default; }
@@ -126,17 +127,25 @@
   /* Cookie/ad-consent banner — this page needs its own because visitors can
      land here directly (ad click, bookmark, shared link) without ever seeing
      the homepage banner. */
-  .cookiebar { position: fixed; left: 14px; right: 14px; bottom: 14px; max-width: 640px; margin: 0 auto;
+  .cookiebar { position: fixed; left: 14px; right: 14px; bottom: calc(14px + env(safe-area-inset-bottom)); max-width: 640px; margin: 0 auto;
     background: var(--ink); color: var(--paper); border-radius: 14px; padding: 14px 18px; z-index: 200;
     box-shadow: 0 10px 40px rgba(0,0,0,.25); display: none; }
   .cookiebar-inner { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: space-between; }
   .cookiebar p { font-size: 13px; line-height: 1.45; flex: 1; min-width: 220px; margin: 0; }
   .cookiebar a { color: var(--paper); text-decoration: underline; }
   .cookiebar-btns { display: flex; gap: 10px; }
-  .cookiebar-btns button { padding: 10px 18px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; }
+  .cookiebar-btns button { padding: 10px 18px; border-radius: 999px; border: none; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; min-height: 44px; }
   .cb-accept { background: var(--paper); color: var(--ink); }
   .cb-decline { background: transparent; color: var(--paper); border: 1.5px solid var(--paper); }
-  @media (max-width: 600px) { .cookiebar { left: 10px; right: 10px; bottom: 10px; padding: 12px 14px; } .cookiebar p { font-size: 12.5px; } }
+  @media (max-width: 600px) { .cookiebar { left: 10px; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); padding: 12px 14px; } .cookiebar p { font-size: 12.5px; } }
+
+  @media (max-width: 600px) {
+    main { padding: 48px 0 72px; }
+    .wrap { padding: 0 20px; }
+    .nav-inner { padding: 0 20px; }
+    .iform { padding: 22px 16px; }
+    .regions { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>

@@ -20,7 +20,7 @@
 </script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18364427323"></script>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Find a driving instructor near you — TestNow</title>
 <meta name="description" content="Find a local UK driving instructor — see their area, teaching style and the car they use, and enquire for free.">
 <meta name="theme-color" content="#0A6B36">
@@ -34,7 +34,7 @@
   :root { --ink:#0A6B36; --ink-soft:#037434; --paper:#F5F0E6; --paper-warm:#EBE3D2; --accent:#C3135F; --muted:#58685F; --max:960px; }
   * { box-sizing:border-box; margin:0; padding:0; }
   html { scroll-behavior:smooth; }
-  body { font-family:'Inter Tight',sans-serif; background:var(--paper); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased; }
+  body { font-family:'Inter Tight',sans-serif; background:var(--paper); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
   a { color:var(--accent); text-decoration:underline; }
   .wrap { max-width:var(--max); margin:0 auto; padding:0 24px; }
   header.nav { padding:22px 0; border-bottom:1px solid rgba(10,107,54,.15); }
@@ -42,8 +42,8 @@
   .brand { display:flex; align-items:center; gap:14px; text-decoration:none; }
   .brand img { height:30px; }
   .brand-tag { padding-left:14px; border-left:1.5px solid rgba(10,107,54,.25); }
-  .brand-tag small { font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); }
-  .back { font-size:14px; color:var(--ink); text-decoration:none; opacity:.8; }
+  .brand-tag small { font-size:12px; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); }
+  .back { font-size:14px; color:var(--ink); text-decoration:none; opacity:.8; display:inline-block; padding:11px 0; }
   main { padding:56px 0 100px; }
   .eyebrow { font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
   h1 { font-family:'Fraunces',serif; font-weight:500; font-size:clamp(32px,5.5vw,52px); line-height:1.03; letter-spacing:-.03em; margin-bottom:14px; }
@@ -51,9 +51,9 @@
   .pick { display:flex; gap:12px; flex-wrap:wrap; align-items:center; background:#fff; border:1.5px solid var(--ink); border-radius:16px; padding:18px 18px; box-shadow:5px 5px 0 var(--ink); margin-bottom:34px; }
   .pick label { font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; }
   .pick select { flex:1 1 220px; padding:12px 12px; font-size:16px; font-family:inherit; border:1.5px solid rgba(10,107,54,.35); border-radius:10px; background:var(--paper); color:var(--ink); }
-  .pick button { padding:12px 22px; border-radius:999px; border:none; cursor:pointer; font-family:inherit; font-size:15px; font-weight:600; background:var(--ink); color:var(--paper); }
+  .pick button { padding:12px 22px; border-radius:999px; border:none; cursor:pointer; font-family:inherit; font-size:15px; font-weight:600; background:var(--ink); color:var(--paper); min-height:44px; }
   .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px; }
-  .card { background:#fff; border:1.5px solid rgba(10,107,54,.3); border-radius:16px; padding:20px; display:flex; flex-direction:column; }
+  .card { background:#fff; border:1.5px solid rgba(10,107,54,.3); border-radius:16px; padding:20px; display:flex; flex-direction:column; overflow-wrap:anywhere; }
   .card h3 { font-family:'Fraunces',serif; font-weight:600; font-size:20px; margin-bottom:2px; }
   .card .rating { font-size:13.5px; color:var(--ink); font-weight:600; margin-bottom:6px; }
   .card .rating .star { color:var(--accent); }
@@ -62,7 +62,7 @@
   .card ul { list-style:none; margin:0 0 16px; padding:0; }
   .card li { font-size:14.5px; color:var(--ink-soft); padding:3px 0; }
   .card li b { color:var(--ink); font-weight:600; }
-  .card .enq { margin-top:auto; padding:11px 18px; border-radius:999px; border:none; cursor:pointer; font-family:inherit; font-size:14.5px; font-weight:600; background:var(--accent); color:#fff; }
+  .card .enq { margin-top:auto; padding:11px 18px; border-radius:999px; border:none; cursor:pointer; font-family:inherit; font-size:14.5px; font-weight:600; background:var(--accent); color:#fff; min-height:44px; }
   .status { font-size:15px; color:var(--muted); padding:24px 0; }
   footer { border-top:1.5px solid var(--ink); padding:40px 0; text-align:center; font-size:13px; color:var(--muted); }
   /* modal */
@@ -70,14 +70,14 @@
      is a more immediate action than the passive cookie notice underneath it. */
   .modal { display:none; position:fixed; inset:0; background:rgba(10,20,15,.55); z-index:250; align-items:center; justify-content:center; padding:20px; }
   .modal.open { display:flex; }
-  .modal-box { background:var(--paper); border:1.5px solid var(--ink); border-radius:18px; padding:24px; width:100%; max-width:440px; box-shadow:6px 6px 0 var(--ink); }
+  .modal-box { background:var(--paper); border:1.5px solid var(--ink); border-radius:18px; padding:24px; width:100%; max-width:440px; box-shadow:6px 6px 0 var(--ink); max-height:90vh; max-height:90dvh; overflow-y:auto; }
   .modal-box h2 { font-family:'Fraunces',serif; font-size:22px; margin-bottom:6px; }
   .modal-box p.sub { font-size:14px; color:var(--muted); margin-bottom:16px; }
   .modal-box label { display:block; font-size:12px; letter-spacing:.08em; text-transform:uppercase; font-weight:600; margin-bottom:6px; }
   .modal-box input, .modal-box textarea { width:100%; padding:12px 13px; font-size:16px; font-family:inherit; border:1.5px solid rgba(10,107,54,.35); border-radius:10px; background:#fff; margin-bottom:14px; }
   .modal-box textarea { min-height:80px; resize:vertical; }
   .modal-actions { display:flex; gap:10px; }
-  .modal-actions button { flex:1; padding:12px; border-radius:999px; border:none; cursor:pointer; font-family:inherit; font-size:15px; font-weight:600; }
+  .modal-actions button { flex:1; padding:12px; border-radius:999px; border:none; cursor:pointer; font-family:inherit; font-size:15px; font-weight:600; min-height:44px; }
   .btn-send { background:var(--ink); color:var(--paper); }
   .btn-cancel { background:transparent; border:1.5px solid rgba(10,107,54,.4); color:var(--ink); }
   .consent { font-size:12px; color:var(--muted); margin-top:4px; }
@@ -88,17 +88,26 @@
   /* Cookie/ad-consent banner — this page needs its own because visitors can
      land here directly (ad click, bookmark, shared link) without ever seeing
      the homepage banner. */
-  .cookiebar { position:fixed; left:14px; right:14px; bottom:14px; max-width:640px; margin:0 auto;
+  .cookiebar { position:fixed; left:14px; right:14px; bottom:calc(14px + env(safe-area-inset-bottom)); max-width:640px; margin:0 auto;
     background:var(--ink); color:var(--paper); border-radius:14px; padding:14px 18px; z-index:200;
     box-shadow:0 10px 40px rgba(0,0,0,.25); display:none; }
   .cookiebar-inner { display:flex; align-items:center; gap:16px; flex-wrap:wrap; justify-content:space-between; }
   .cookiebar p { font-size:13px; line-height:1.45; flex:1; min-width:220px; margin:0; }
   .cookiebar a { color:var(--paper); text-decoration:underline; }
   .cookiebar-btns { display:flex; gap:10px; }
-  .cookiebar-btns button { padding:10px 18px; border-radius:999px; border:none; cursor:pointer; font-family:inherit; font-size:13px; font-weight:600; }
+  .cookiebar-btns button { padding:10px 18px; border-radius:999px; border:none; cursor:pointer; font-family:inherit; font-size:13px; font-weight:600; min-height:44px; }
   .cb-accept { background:var(--paper); color:var(--ink); }
   .cb-decline { background:transparent; color:var(--paper); border:1.5px solid var(--paper); }
-  @media (max-width:600px) { .cookiebar { left:10px; right:10px; bottom:10px; padding:12px 14px; } .cookiebar p { font-size:12.5px; } }
+  @media (max-width:600px) { .cookiebar { left:10px; right:10px; bottom:calc(10px + env(safe-area-inset-bottom)); padding:12px 14px; } .cookiebar p { font-size:12.5px; } }
+
+  @media (max-width:600px) {
+    main { padding:40px 0 72px; }
+    .wrap { padding:0 18px; }
+    .nav-inner { padding:0 18px; }
+    .pick { padding:16px 14px; }
+    .modal { padding:14px; }
+    .modal-box { padding:20px 16px; }
+  }
 </style>
 </head>
 <body>
