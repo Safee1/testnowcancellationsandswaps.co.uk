@@ -9,7 +9,7 @@
   gtag('config', 'AW-18364427323');
 </script>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Leave a review — TestNow</title>
 <meta name="description" content="Leave a review for your driving instructor on TestNow.">
 <meta name="robots" content="noindex">
@@ -22,7 +22,7 @@
   :root { --ink:#0A6B36; --ink-soft:#0E8C45; --paper:#F5F0E6; --paper-warm:#EBE3D2; --accent:#D6206E; --muted:#5b6b62; --max:640px; }
   * { box-sizing:border-box; margin:0; padding:0; }
   html { scroll-behavior:smooth; }
-  body { font-family:'Inter Tight',sans-serif; background:var(--paper); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased; }
+  body { font-family:'Inter Tight',sans-serif; background:var(--paper); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
   a { color:var(--accent); text-decoration:underline; }
   .wrap { max-width:var(--max); margin:0 auto; padding:0 24px; }
   header.nav { padding:22px 0; border-bottom:1px solid rgba(10,107,54,.15); }
@@ -30,8 +30,8 @@
   .brand { display:flex; align-items:center; gap:14px; text-decoration:none; }
   .brand img { height:30px; }
   .brand-tag { padding-left:14px; border-left:1.5px solid rgba(10,107,54,.25); }
-  .brand-tag small { font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); }
-  .back { font-size:14px; color:var(--ink); text-decoration:none; opacity:.8; }
+  .brand-tag small { font-size:12px; letter-spacing:.15em; text-transform:uppercase; color:var(--muted); }
+  .back { font-size:14px; color:var(--ink); text-decoration:none; opacity:.8; display:inline-block; padding:11px 0; }
   main { padding:56px 0 100px; }
   .eyebrow { font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
   h1 { font-family:'Fraunces',serif; font-weight:500; font-size:clamp(28px,5vw,42px); line-height:1.05; letter-spacing:-.03em; margin-bottom:14px; }
@@ -43,7 +43,7 @@
   textarea { min-height:110px; resize:vertical; }
   .charcount { font-size:12px; color:var(--muted); text-align:right; margin-top:4px; }
   .stars { display:flex; gap:8px; font-size:36px; line-height:1; user-select:none; }
-  .stars span { cursor:pointer; color:rgba(10,107,54,.25); transition:color .1s; border-radius:6px; }
+  .stars span { cursor:pointer; color:rgba(10,107,54,.25); transition:color .1s; border-radius:6px; padding:4px; }
   .stars span.on { color:var(--accent); }
   /* Keyboard users have to be able to SEE which star they're on, or the
      arrow-key support below is invisible and therefore useless. */
@@ -56,6 +56,13 @@
   .msg.err { display:block; background:#fdeaea; color:#a01313; border:1.5px solid #a01313; }
   .status { font-size:15px; color:var(--muted); padding:24px 0; }
   footer { border-top:1.5px solid var(--ink); padding:40px 0; text-align:center; font-size:13px; color:var(--muted); }
+
+  @media (max-width:600px) {
+    main { padding:36px 0 64px; }
+    .wrap { padding:0 18px; }
+    .box { padding:20px 16px; }
+    .stars { gap:10px; }
+  }
 </style>
 </head>
 <body>

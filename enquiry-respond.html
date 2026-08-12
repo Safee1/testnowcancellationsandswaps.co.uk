@@ -2,7 +2,7 @@
 <html lang="en-GB">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Respond to a swap request — TestNow</title>
 <meta name="theme-color" content="#0A6B36">
 <link rel="icon" type="image/jpeg" href="logo.jpg">
@@ -17,7 +17,7 @@
   }
   * { box-sizing:border-box; margin:0; padding:0; }
   html, body { height:100%; }
-  body { font-family:'Inter Tight',sans-serif; background:var(--paper); color:var(--ink); display:flex; flex-direction:column; min-height:100%; -webkit-font-smoothing:antialiased; }
+  body { font-family:'Inter Tight',sans-serif; background:var(--paper); color:var(--ink); display:flex; flex-direction:column; min-height:100%; min-height:100vh; min-height:100dvh; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
 
   header.bar { background:var(--ink); color:var(--paper); padding:14px 18px; display:flex; align-items:center; gap:11px; flex-shrink:0; }
   header.bar img { height:32px; width:auto; border-radius:8px; background:var(--paper); padding:3px; display:block; }
@@ -26,18 +26,23 @@
   main { flex:1; display:flex; align-items:center; justify-content:center; padding:24px 16px; }
   .card { background:#fff; border:1.5px solid rgba(10,107,54,.2); border-radius:18px; padding:28px 24px; max-width:420px; width:100%; text-align:center; }
   .card h1 { font-family:'Fraunces',serif; font-size:21px; margin-bottom:10px; line-height:1.25; }
-  .card p { font-size:14.5px; line-height:1.55; color:var(--muted); margin-bottom:8px; }
+  .card p { font-size:14.5px; line-height:1.55; color:var(--muted); margin-bottom:8px; overflow-wrap:anywhere; }
   .card p.detail { color:var(--ink); font-weight:600; background:var(--paper-warm); border-radius:10px; padding:10px 12px; margin:14px 0; }
 
   .btn { display:inline-block; width:100%; border:none; border-radius:12px; padding:14px 18px; font-family:inherit; font-weight:600; font-size:15.5px; cursor:pointer; margin-top:6px; text-decoration:none; }
   .btn-accept { background:var(--ink); color:var(--paper); }
   .btn-decline { background:var(--paper-warm); color:var(--accent); border:1.5px solid var(--accent); }
   .btn:disabled { opacity:.5; cursor:not-allowed; }
-  .btn-cancel { background:none; color:var(--muted); font-size:13.5px; margin-top:12px; padding:6px; }
+  .btn-cancel { background:none; color:var(--muted); font-size:13.5px; margin-top:12px; padding:6px; min-height:44px; }
 
   .state-icon { font-size:34px; margin-bottom:6px; }
   .footnote { font-size:12px; color:var(--muted); margin-top:18px; line-height:1.5; }
   .footnote a { color:var(--ink-soft); }
+
+  @media (max-width:600px) {
+    main { padding:16px 12px calc(16px + env(safe-area-inset-bottom)); }
+    .card { padding:22px 16px; }
+  }
 </style>
 </head>
 <body>
