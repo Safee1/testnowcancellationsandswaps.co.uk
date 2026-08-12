@@ -135,9 +135,8 @@
     }
   }
 
-  // No mode:'no-cors' — confirmed live that this endpoint returns proper
-  // CORS headers, so the real response is readable. Reads enquiryDecide's
-  // own result directly rather than inferring it from a second fetch.
+  // No mode:'no-cors' — the endpoint returns CORS headers, so enquiryDecide's
+  // own JSON result is read directly.
   function submitDecision() {
     var btn = document.getElementById('confirmBtn');
     if (btn) { btn.disabled = true; btn.textContent = 'Please wait…'; }

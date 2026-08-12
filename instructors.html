@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
-<!-- Google Consent Mode v2 — must run BEFORE gtag.js loads, hence the
-     reordering. Starts DENIED so no advertising cookie is written unless the
-     visitor accepted on the homepage banner. This page carries no banner of
-     its own, so a direct landing here simply stays denied — which is the
-     correct default, and costs nothing today because this page fires no
-     conversion event yet. When one is added, the gate is already in place. -->
+<!-- Google Consent Mode v2 — must run BEFORE gtag.js loads. Starts DENIED;
+     granted only if the visitor accepts here or accepted previously. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -127,11 +123,9 @@
   }
   .savenum strong { color: var(--ink); }
 
-  /* Cookie/ad-consent banner — this page previously had NO banner of its
-     own, only the read-and-reapply logic for a prior homepage visit. A
-     visitor landing here directly (an ad click, a bookmark, a shared link)
-     never got asked, so ad_storage stayed 'denied' for the whole visit and
-     the signup conversion could never be recorded. */
+  /* Cookie/ad-consent banner — this page needs its own because visitors can
+     land here directly (ad click, bookmark, shared link) without ever seeing
+     the homepage banner. */
   .cookiebar { position: fixed; left: 14px; right: 14px; bottom: 14px; max-width: 640px; margin: 0 auto;
     background: var(--ink); color: var(--paper); border-radius: 14px; padding: 14px 18px; z-index: 200;
     box-shadow: 0 10px 40px rgba(0,0,0,.25); display: none; }
@@ -298,10 +292,8 @@ document.getElementById('isubmit').addEventListener('click', function(){
       }
       msg.innerHTML = html;
       btn.textContent = 'Registered ✓'; btn.disabled = true;
-      // Fires on a genuine NEW registration only. This was originally placed
-      // in the 'duplicate' branch below, which meant the conversion fired
-      // ONLY when someone was already registered and never for a real signup
-      // — so Ads would have been optimising towards duplicate submissions.
+      // Fires on a genuine NEW registration only — never in the 'duplicate'
+      // branch below.
       if (typeof gtag === 'function') { gtag('event', 'conversion', {'send_to': 'AW-18364427323/1sVKCLOdyNscELvY67RE'}); }
     } else if (d.result === 'duplicate') {
       msg.className = 'imsg ok';

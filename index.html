@@ -1,13 +1,9 @@
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
-<!-- Google Consent Mode v2.
-     This inline block MUST run BEFORE gtag.js loads, which is why the async
-     script tag now sits underneath it rather than above. Everything starts
-     DENIED, so no advertising cookie is written until the visitor actually
-     accepts. Previously gtag.js loaded first and unconditionally, which set
-     _gcl_au and a doubleclick.net test_cookie on page load — while the
-     banner told the visitor "No tracking". -->
+<!-- Google Consent Mode v2 — this inline block must run BEFORE gtag.js
+     loads. Everything starts DENIED, so no advertising cookie is written
+     until the visitor actually accepts. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -20,11 +16,8 @@
     'wait_for_update': 500
   });
 
-  // Re-apply a previous acceptance on later visits. Deliberately a NEW cookie
-  // name: anyone who accepted the old banner agreed to wording that said
-  // "No tracking, no selling data", which is not consent to advertising
-  // cookies. Those visitors get asked again under the honest wording rather
-  // than having the old tick silently reused.
+  // Re-apply a previous acceptance on later visits. The v2 cookie name is
+  // deliberate — do not fall back to reading the old consent cookie.
   (function () {
     var m = document.cookie.match('(^|;)\\s*tn_consent_v2\\s*=\\s*([^;]+)');
     if (m && m.pop() === 'yes') {
@@ -753,9 +746,7 @@
   }
   textarea { resize: vertical; min-height: 90px; }
 
-  /* Inline field errors — replaces a native browser alert() for the
-     one exercisable error state (past test date), which used to fire
-     as an OS-styled popup on the field carrying the most anxiety. */
+  /* Inline field errors (currently the past-test-date check). */
   .field-error {
     font-size: 13px;
     line-height: 1.4;
@@ -1697,10 +1688,8 @@
       notes: form.notes.value,
       leadType: (form['has-instructor'] && form['has-instructor'].value === 'no') ? 'wants-instructor' : 'swap',
       hasInstructor: form['has-instructor'] ? form['has-instructor'].value : '',
-      // The learner ticks this to agree an instructor may contact them, but
-      // it was never included in the payload — so the consent they gave was
-      // never recorded anywhere. Sent explicitly now; the Apps Script side
-      // needs a matching column to actually store it.
+      // Consent tick allowing an instructor to contact the learner; stored
+      // in its own column on the Apps Script side.
       instructorConsent: (function () {
         var t = document.getElementById('instructor-consent');
         return (t && t.checked) ? 'yes' : 'no';
@@ -1709,14 +1698,9 @@
       formLoadedAt: PAGE_LOADED_AT
     };
 
-    // No mode:'no-cors' here on purpose — confirmed live (real browser fetch,
-    // not curl) that this endpoint returns proper CORS headers, so the real
-    // JSON response IS readable. Without this, a backend-side failure
-    // (exception, quota, bad write) still resolves the fetch promise as
-    // "success" from the browser's point of view — the .catch() below was
-    // already correctly written, it just could never fire except on a total
-    // network outage. This was flagged from a real submission risk: the user
-    // sees "Submitted ✓" while the lead silently never reaches the sheet.
+    // No mode:'no-cors' on purpose — the endpoint returns CORS headers, so
+    // the real JSON response is readable and a backend-side failure reaches
+    // the .catch() below instead of looking like success.
     fetch(SHEET_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },

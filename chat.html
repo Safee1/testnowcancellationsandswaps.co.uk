@@ -243,19 +243,10 @@
   }
 
   // ---------- poll scheduling ----------
-  // This whole backend is one Apps Script web app on a consumer account, which
-  // has a hard *daily* script-runtime quota shared by every endpoint. The chat
-  // used to poll messages every 2s and presence every 8s unconditionally, for
-  // as long as the tab existed — ~2,250 requests an hour per open tab, whether
-  // or not anyone was looking at it. Two learners leaving the chat open in a
-  // background tab could burn the day's quota between them, and when that
-  // quota goes it takes the listing form, the board and the centres dropdown
-  // with it, because they all run through the same script.
-  //
-  // So: stop entirely while the tab is hidden, and slow down while nothing is
-  // happening. Any real activity (a message arriving, sending one, or coming
-  // back to the tab) snaps it straight back to the fast interval, so an active
-  // conversation feels exactly as live as it did before.
+  // The backend shares one daily runtime quota across every endpoint, so the
+  // chat must not poll unattended: stop entirely while the tab is hidden,
+  // back off while nothing is happening, and snap back to the fast interval
+  // on any real activity (a message in or out, or returning to the tab).
   const POLL_FAST = 2000, POLL_SLOW = 15000, PING_SLOW = 30000;
   const IDLE_POLLS_BEFORE_BACKOFF = 15;   // ~30s of silence at the fast rate
   let idleStreak = 0, pollTimer = null, pingTimer = null;
@@ -284,19 +275,9 @@
 
   // ---------- presence ----------
   // `force` bypasses the hidden-tab gate below — used ONLY for the very first
-  // call right after a session loads (see initSession). Without it, a page
-  // that reads document.hidden===true at that exact moment — a link opened
-  // in a background tab, or any automated/background viewer — never fires
-  // its first fetch AND never schedules a next one (schedule() only runs
-  // from inside the fetch's own .finally(), which this bail skips entirely).
-  // The chat then sits permanently inert: no messages ever render, and a
-  // status change (e.g. the other side clicking Finish) never reaches the
-  // UI, because setClosedUI() is only ever invoked from a poll response.
-  // Recovery would need a genuine visibilitychange event, which never fires
-  // in a context that was never legitimately focused to begin with. A single
-  // forced fetch on load costs nothing against the quota concern this
-  // hidden-tab gating exists for — that was about stopping a 2s/8s loop
-  // running forever in the background, not a one-off initial read.
+  // call right after a session loads (see initSession), so a page that starts
+  // hidden (e.g. opened in a background tab) still performs its initial fetch
+  // and schedules the polling loop.
   function pingLoop(force) {
     if (!POLLING || (document.hidden && !force)) return;
     fetch(SHEET_ENDPOINT + '?action=chatPing&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK))
@@ -379,10 +360,9 @@
   }
 
   // ---------- send ----------
-  // No mode:'no-cors' here — same reason as the listing form and enquiry
-  // fixes elsewhere on this site: without it, a real backend failure
-  // (session closed, invalid token, sheet error) would still clear the
-  // input and look like the message sent, when it silently never arrived.
+  // No mode:'no-cors' — the JSON response must stay readable so a real
+  // backend failure (session closed, invalid token, sheet error) surfaces
+  // as an error instead of looking like a sent message.
   function showLocalError(text) { const div = document.createElement('div'); div.className = 'sys'; div.textContent = text; stream.appendChild(div); scrollDown(); }
   function sendMessage() {
     const text = input.value.trim();

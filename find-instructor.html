@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
-<!-- Google Consent Mode v2 — must run BEFORE gtag.js loads, hence the
-     reordering. Starts DENIED so no advertising cookie is written unless the
-     visitor accepted on the homepage banner. This page carries no banner of
-     its own, so a direct landing here simply stays denied — which is the
-     correct default, and costs nothing today because this page fires no
-     conversion event yet. When one is added, the gate is already in place. -->
+<!-- Google Consent Mode v2 — must run BEFORE gtag.js loads. Starts DENIED;
+     granted only if the visitor accepts here or accepted previously. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -33,10 +29,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  /* Contrast-checked tokens, kept in step with index.html — the earlier
-     values (--ink-soft #0E8C45, --accent #D6206E, --muted #5b6b62) fail
-     WCAG AA as body text on --paper/--paper-warm and were fixed site-wide
-     on the homepage; this page had been left on the old set. */
+  /* Contrast-checked tokens (WCAG AA on --paper/--paper-warm), kept in
+     step with index.html. */
   :root { --ink:#0A6B36; --ink-soft:#037434; --paper:#F5F0E6; --paper-warm:#EBE3D2; --accent:#C3135F; --muted:#58685F; --max:960px; }
   * { box-sizing:border-box; margin:0; padding:0; }
   html { scroll-behavior:smooth; }
@@ -91,13 +85,9 @@
   .mmsg.ok { display:block; background:#e7f4ec; color:#0A6B36; border:1.5px solid #0A6B36; }
   .mmsg.err { display:block; background:#fdeaea; color:#a01313; border:1.5px solid #a01313; }
 
-  /* Cookie/ad-consent banner — this page previously had NO banner of its own,
-     only the read-and-reapply logic for a prior homepage visit. A visitor
-     landing here directly (an ad click, a bookmark, a shared link) never
-     got asked, so ad_storage stayed 'denied' for the whole visit and the
-     enquiry conversion could never be recorded — confirmed live: the
-     Instructor Enquiry Ads action showed zero conversions ever despite the
-     browser-side gtag call firing correctly on every send. */
+  /* Cookie/ad-consent banner — this page needs its own because visitors can
+     land here directly (ad click, bookmark, shared link) without ever seeing
+     the homepage banner. */
   .cookiebar { position:fixed; left:14px; right:14px; bottom:14px; max-width:640px; margin:0 auto;
     background:var(--ink); color:var(--paper); border-radius:14px; padding:14px 18px; z-index:200;
     box-shadow:0 10px 40px rgba(0,0,0,.25); display:none; }
@@ -238,9 +228,7 @@ document.getElementById('region').addEventListener('change', search);
 
 // open modal
 // The modal is a single reused element, so every piece of per-enquiry state
-// has to be cleared on open — previously the send button stayed disabled and
-// reading "Sent ✓" after the first enquiry, which made it impossible to
-// enquire with a second instructor without reloading the page.
+// has to be cleared on open.
 function closeModal(){ document.getElementById('modal').classList.remove('open'); }
 
 function resetModal(){

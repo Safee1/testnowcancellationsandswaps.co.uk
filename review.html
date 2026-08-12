@@ -88,9 +88,8 @@
 
       <div class="box">
         <label id="stars-label">Your rating</label>
-        <!-- A real radio group, not decorative spans. Submission is blocked
-             without a rating, so when these were click-only <span>s a keyboard
-             or screen-reader user could not leave a review at all. -->
+        <!-- A real radio group, not decorative spans, so keyboard and
+             screen-reader users can select a rating. -->
         <div class="stars" id="stars" role="radiogroup" aria-labelledby="stars-label">
           <span role="radio" data-v="1" tabindex="0"  aria-checked="false" aria-label="1 star out of 5">&#9733;</span><span role="radio" data-v="2" tabindex="-1" aria-checked="false" aria-label="2 stars out of 5">&#9733;</span><span role="radio" data-v="3" tabindex="-1" aria-checked="false" aria-label="3 stars out of 5">&#9733;</span><span role="radio" data-v="4" tabindex="-1" aria-checked="false" aria-label="4 stars out of 5">&#9733;</span><span role="radio" data-v="5" tabindex="-1" aria-checked="false" aria-label="5 stars out of 5">&#9733;</span>
         </div>
