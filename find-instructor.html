@@ -107,6 +107,48 @@
     .pick { padding:16px 14px; }
     .modal { padding:14px; }
     .modal-box { padding:20px 16px; }
+
+    /* Header: stack the tagline under the logo (same treatment as
+       index.html) instead of letting it wrap into the back link. */
+    .brand { flex-direction:column; align-items:flex-start; gap:4px; }
+    .brand img { height:24px; }
+    .brand-tag { padding-left:0; border-left:none; }
+    .brand-tag small { font-size:10.5px; letter-spacing:.12em; white-space:nowrap; }
+    .back { white-space:nowrap; font-size:13px; flex-shrink:0; }
+    header.nav { padding:16px 0; }
+
+    /* Search card: full-width control stack reads as one clear action */
+    .pick label { width:100%; }
+    .pick select { flex:1 1 100%; }
+    .pick button { width:100%; }
+  }
+
+  /* ===== Touch micro-interactions ===== */
+  .pick button, .card .enq, .modal-actions button, .cookiebar-btns button, .back {
+    -webkit-tap-highlight-color: transparent;
+    transition: transform .15s ease, background .2s ease, filter .2s ease, opacity .2s ease;
+  }
+  .pick button:active, .modal-actions button:active, .cookiebar-btns button:active { transform: scale(.97); }
+  .card .enq:active { transform: scale(.97); filter: brightness(.88); }
+  .back:active { opacity: .5; }
+  .card { transition: box-shadow .2s ease, border-color .2s ease; }
+  .card:active { border-color: var(--ink); }
+  .pick button:focus-visible, .card .enq:focus-visible, .modal-actions button:focus-visible,
+  .cookiebar-btns button:focus-visible, .back:focus-visible, .pick select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .pick select:focus { outline: none; border-color: var(--ink); }
+
+  /* ===== Reduced motion ===== */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+    }
+    .pick button:active, .card .enq:active, .modal-actions button:active, .cookiebar-btns button:active { transform: none; }
   }
 </style>
 </head>
