@@ -1113,6 +1113,51 @@
   .consent-box { background: var(--paper-warm); border-radius: 12px; padding: 14px 16px; }
   .consent-label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; font-size: 14px; line-height: 1.45; text-transform: none; letter-spacing: 0; }
   .consent-label input { width: auto; margin-top: 3px; flex-shrink: 0; }
+
+  /* ===== TOUCH MICRO-INTERACTIONS =====
+     Every tappable element answers the finger: the grey system tap-flash is
+     replaced (never just removed) with a designed pressed state, and the
+     properties those states change are transitioned so nothing snaps. */
+  .btn, .brequest, summary, .foot-col a, nav.links a, .board-foot a,
+  .form-success .again, .enquiry-close, .field-typo button, .board-tools select {
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn-primary:active { background: var(--accent); }
+  .btn-ghost:active { background: var(--ink); color: var(--paper); }
+  .consent .btn-ghost:active { background: var(--paper); color: var(--ink); }
+  .brequest { transition: background .2s ease, transform .15s ease; }
+  .bcard .brequest:active { background: var(--ink-soft); transform: scale(.98); }
+  summary { transition: color .2s ease; }
+  summary:active { color: var(--accent); }
+  .foot-col a, .board-foot a, .field-typo button { transition: opacity .2s ease, color .2s ease; }
+  .foot-col a:active, nav.links a:active, .board-foot a:active, .field-typo button:active { opacity: .55; }
+  .form-success .again:active { background: var(--paper); color: var(--ink); transform: scale(.97); }
+  .enquiry-close { transition: color .2s ease; }
+  .enquiry-close:active { color: var(--accent); }
+  .board-tools select { transition: border-color .2s ease, box-shadow .2s ease; }
+
+  /* Keyboard focus, one consistent voice across the page */
+  .btn:focus-visible, .brequest:focus-visible, summary:focus-visible,
+  .form-success .again:focus-visible, .enquiry-close:focus-visible,
+  .foot-col a:focus-visible, nav.links a:focus-visible, .board-foot a:focus-visible,
+  .field-typo button:focus-visible, .board-tools select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* ===== REDUCED MOTION ===== */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+    }
+    .reveal { opacity: 1; transform: none; }
+    .strip-track, .swap-arrow, .swap-arrow span, .eyebrow .dot { animation: none !important; }
+    .btn:active, .brequest:active, .form-success .again:active { transform: none; }
+  }
 </style>
 </head>
 <body>
