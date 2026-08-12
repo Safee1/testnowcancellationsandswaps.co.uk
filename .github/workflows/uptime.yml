@@ -1,0 +1,72 @@
+name: Uptime check
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Check website
+        id: site
+        continue-on-error: true
+        run: |
+          out=$(curl -sS --max-time 30 -w '\n%{http_code}' https://testnowcancellationsandswaps.co.uk/) || { echo "curl failed"; exit 1; }
+          code=$(printf '%s' "$out" | tail -n1)
+          if [ "$code" != "200" ]; then
+            echo "Homepage returned HTTP $code"
+            exit 1
+          fi
+          if ! printf '%s' "$out" | grep -q "Free UK Driving Test Swaps"; then
+            echo "Marker string missing from homepage response"
+            exit 1
+          fi
+          echo "Website OK"
+
+      - name: Check Apps Script backend
+        id: backend
+        continue-on-error: true
+        run: |
+          resp=$(curl -sS -L --max-time 60 "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec?action=board") || { echo "curl failed"; exit 1; }
+          if printf '%s' "$resp" | grep -q 'success' || printf '%s' "$resp" | grep -q '\['; then
+            echo "Backend OK"
+          else
+            echo "Backend response did not look like JSON. First 200 chars:"
+            printf '%.200s\n' "$resp"
+            exit 1
+          fi
+
+      - name: Open issue on failure
+        if: steps.site.outcome == 'failure' || steps.backend.outcome == 'failure'
+        run: |
+          failed=""
+          if [ "${{ steps.site.outcome }}" = "failure" ]; then failed="website"; fi
+          if [ "${{ steps.backend.outcome }}" = "failure" ]; then failed="${failed:+$failed + }backend (Apps Script)"; fi
+          gh label create site-down --repo "$GITHUB_REPOSITORY" --color D93F0B --description "Automated uptime alert" 2>/dev/null || true
+          open_count=$(gh issue list --repo "$GITHUB_REPOSITORY" --label site-down --state open --json number --jq 'length')
+          if [ "$open_count" = "0" ]; then
+            gh issue create --repo "$GITHUB_REPOSITORY" \
+              --title "🔴 Site check failed" \
+              --label site-down \
+              --body "Failed check(s): $failed. Time: $(date -u '+%Y-%m-%d %H:%M UTC'). Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          else
+            echo "An open site-down issue already exists; not creating another."
+          fi
+          exit 1
+
+      - name: Close recovered issue
+        if: steps.site.outcome == 'success' && steps.backend.outcome == 'success'
+        run: |
+          num=$(gh issue list --repo "$GITHUB_REPOSITORY" --label site-down --state open --json number --jq '.[0].number // empty')
+          if [ -n "$num" ]; then
+            gh issue close "$num" --repo "$GITHUB_REPOSITORY" --comment "recovered"
+          else
+            echo "No open site-down issue; nothing to close."
+          fi
