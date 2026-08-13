@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Remove my listing — TestNow Cancellations &amp; Swaps</title>
+<meta name="description" content="Remove your driving test swap listing from TestNow.">
+<meta name="theme-color" content="#0A6B36">
+
+<link rel="icon" type="image/jpeg" href="logo.jpg">
+<link rel="apple-touch-icon" href="logo.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* Same design tokens as index.html — keep in sync if index changes */
+  :root {
+    --ink: #0A6B36;
+    --ink-soft: #037434;
+    --paper: #F5F0E6;
+    --paper-warm: #EBE3D2;
+    --accent: #C3135F;
+    --muted: #58685F;
+    --radius: 18px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    padding: 28px 20px 60px;
+  }
+  a { color: inherit; }
+
+  .top { max-width: 560px; margin: 0 auto 28px; }
+  .top a.home {
+    font-size: 14px;
+    text-decoration: none;
+    opacity: .75;
+  }
+  .top a.home:hover { opacity: 1; }
+
+  .card {
+    background: var(--paper-warm);
+    border: 1.5px solid var(--ink);
+    border-radius: 24px;
+    padding: 36px 24px;
+    max-width: 560px;
+    margin: 0 auto;
+    box-shadow: 8px 8px 0 var(--ink);
+  }
+  @media (min-width: 720px) { .card { padding: 48px; } }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+  }
+  .sub { color: var(--ink-soft); font-size: 16px; margin-bottom: 26px; max-width: 46ch; }
+
+  .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  label {
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  input[type="tel"] {
+    font-family: inherit;
+    font-size: 16px; /* 16px on purpose — also stops iOS zoom-on-focus */
+    padding: 14px 16px;
+    border: 1.5px solid var(--ink);
+    background: var(--paper);
+    border-radius: 10px;
+    color: var(--ink);
+    transition: border-color .2s;
+    width: 100%;
+  }
+  input[type="tel"]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(215,85,59,.15);
+  }
+
+  .confirm-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .confirm-row input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .confirm-row label {
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    border-radius: 999px;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1;
+    transition: all .2s ease;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    width: 100%;
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .btn:hover:not(:disabled) { background: var(--accent); transform: translateY(-1px); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+  .field-error {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--accent);
+    margin: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .field-error[hidden] { display: none; }
+  .field-error::before { content: '⚠'; flex-shrink: 0; }
+
+  .done {
+    text-align: center;
+    padding: 12px 0 4px;
+  }
+  .done .tick { font-size: 40px; margin-bottom: 10px; }
+  .done h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 23px;
+    margin-bottom: 10px;
+  }
+  .done p { color: var(--ink-soft); font-size: 16px; max-width: 44ch; margin: 0 auto; }
+
+  .fallback {
+    margin-top: 22px;
+    font-size: 14px;
+    color: var(--muted);
+    text-align: center;
+  }
+  .fallback a { color: var(--ink-soft); }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="home" href="/">&larr; TestNow Cancellations &amp; Swaps</a>
+</div>
+
+<div class="card">
+  <form id="remove-form" novalidate>
+    <h1>Remove my listing</h1>
+    <p class="sub">Enter the mobile number you listed with and we'll take your test swap listing off the board. You'll get a confirmation text.</p>
+
+    <!-- Honeypot — same field name + hiding as index.html; real users never see it -->
+    <div style="position:absolute;left:-9999px;top:-9999px;opacity:0;height:0;width:0;overflow:hidden;" aria-hidden="true">
+      <label for="website">Leave this field blank</label>
+      <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+    </div>
+
+    <div class="field">
+      <label for="phone">Mobile number on your listing</label>
+      <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="07xxx xxxxxx" required>
+      <p class="field-error" id="phone-error" hidden>That doesn't look like a full UK mobile number — check and try again.</p>
+    </div>
+
+    <div class="confirm-row">
+      <input type="checkbox" id="confirm-box">
+      <label for="confirm-box">I understand this removes my listing</label>
+    </div>
+
+    <button type="submit" class="btn" id="remove-btn" disabled>Remove my listing</button>
+    <p class="field-error" id="send-error" hidden>Something went wrong sending that — please try again, or use the email below.</p>
+  </form>
+
+  <div class="done" id="remove-done" style="display:none;">
+    <div class="tick" aria-hidden="true">&#10003;</div>
+    <h2>Done</h2>
+    <p>If we had a listing for this number, it's gone and you'll get a confirmation text.</p>
+  </div>
+
+  <p class="fallback">or email <a href="mailto:info@testnowcancellationsandswaps.co.uk?subject=Remove%20my%20listing">info@testnowcancellationsandswaps.co.uk</a> with the subject &ldquo;Remove my listing&rdquo;</p>
+</div>
+
+<script>
+  // Same deployed Apps Script web app as index.html — keep in sync if redeployed under a new URL
+  const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
+  const PAGE_LOADED_AT = Date.now(); // bot guard: server silently ignores submissions within ~2s of load
+
+  const form = document.getElementById('remove-form');
+  const btn = document.getElementById('remove-btn');
+  const confirmBox = document.getElementById('confirm-box');
+  const phoneInput = document.getElementById('phone');
+  const phoneError = document.getElementById('phone-error');
+  const sendError = document.getElementById('send-error');
+
+  // Checkbox gates the button
+  confirmBox.addEventListener('change', function () {
+    btn.disabled = !confirmBox.checked;
+  });
+
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    if (!confirmBox.checked) return;
+
+    phoneError.hidden = true;
+    sendError.hidden = true;
+
+    const digits = String(phoneInput.value || '').replace(/[^0-9]/g, '');
+    if (digits.length < 10) {
+      phoneError.hidden = false;
+      phoneInput.focus();
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Removing…';
+
+    // No mode:'no-cors' — same as index.html: the endpoint returns real CORS
+    // headers, so we can read the JSON and only show "Done" on a real reply.
+    fetch(SHEET_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'removeListing',
+        phone: phoneInput.value,
+        confirm: 'REMOVE',
+        website: form.website ? form.website.value : '', // honeypot
+        formLoadedAt: PAGE_LOADED_AT
+      })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (json) {
+        if (!json || json.result !== 'success') throw new Error((json && json.message) || 'Unknown error');
+        form.style.display = 'none';
+        document.getElementById('remove-done').style.display = 'block';
+      })
+      .catch(function () {
+        sendError.hidden = false;
+        btn.disabled = false;
+        btn.textContent = 'Remove my listing';
+      });
+  });
+</script>
+
+</body>
+</html>
