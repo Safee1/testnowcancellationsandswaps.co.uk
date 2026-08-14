@@ -259,6 +259,11 @@
 
   let YOU_ARE = '', OTHER_HANDLE = '', LAST_INDEX = 0, SESSION_STATUS = 'open', POLLING = true;
   let firstPollDone = false, flowStarted = false, awaiting = false;
+  // Defaults to true (don't nag) until the backend confirms otherwise — an
+  // older cached deploy won't send hasEmail at all, and treating "missing"
+  // as "needs asking" would prompt everyone instead of just the learners
+  // who genuinely only ever gave a phone number.
+  let HAS_EMAIL = true, emailPromptShown = false;
 
   let myRef = '', myDate = '', myTime = '', myCentre = '', myType = '';
   let myChangesLeft = null, myInstructorOk = null;
@@ -279,7 +284,7 @@
       .then(r => r.json())
       .then(d => {
         if (d.result !== 'success') throw new Error(d.message || 'failed');
-        YOU_ARE = d.youAre; OTHER_HANDLE = d.otherHandle; SESSION_STATUS = d.status;
+        YOU_ARE = d.youAre; OTHER_HANDLE = d.otherHandle; SESSION_STATUS = d.status; HAS_EMAIL = (d.hasEmail === false) ? false : true;
         metaText.textContent = 'You are ' + (YOU_ARE === 'A' ? 'Learner A' : 'Learner B') + ' · ' + OTHER_HANDLE;
         progressEl.style.display = 'flex';
         document.getElementById('otherLabel').textContent = OTHER_HANDLE;
@@ -475,8 +480,42 @@
   function flowKickoff() {
     if (SESSION_STATUS !== 'open') return;
     if (myDone) { finishSetup(); return; }
+    // Only learners with no email on file get asked — mainly the
+    // WhatsApp-group imports, which never collect one (unlike the listing
+    // form, where it's required). Optional and skippable either way.
+    if (!HAS_EMAIL && !emailPromptShown) { emailPromptShown = true; stepEmail(); return; }
+    startGuidedFlow();
+  }
+
+  function startGuidedFlow() {
     if (!myRef && !myDate) gcard('<div class="g-text">👋 Let\'s set up your swap — it only takes a minute. I\'ll ask a few quick questions; the other learner answers the same. First one\'s below.</div>', true);
     nextStep();
+  }
+
+  function stepEmail() {
+    awaiting = true;
+    const c = gcard('<div class="g-text"><b>Before we start —</b> want match updates by email instead of text? It\'s free, and usually quicker than SMS. Totally optional.</div>');
+    const wrap = document.createElement('div'); wrap.className = 'g-controls';
+    const inp = document.createElement('input'); inp.type = 'email'; inp.placeholder = 'you@example.com';
+    const btn = document.createElement('button'); btn.className = 'g-btn'; btn.textContent = 'Save';
+    const skip = document.createElement('button'); skip.className = 'g-btn alt'; skip.textContent = 'Skip';
+    const err = document.createElement('div'); err.className = 'g-err';
+    function proceed() { awaiting = false; inp.disabled = true; btn.disabled = true; skip.disabled = true; startGuidedFlow(); }
+    btn.onclick = function () {
+      err.textContent = '';
+      const v = (inp.value || '').trim();
+      if (!v || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { err.textContent = 'That doesn\'t look like a valid email.'; return; }
+      btn.disabled = true; skip.disabled = true;
+      fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatSetEmail', sid: SID, tk: TK, email: v }) })
+        .then(r => r.json())
+        .then(function (j) {
+          if (j.result !== 'success') { err.textContent = 'Could not save — you can skip, it\'ll just ask again next time.'; btn.disabled = false; skip.disabled = false; return; }
+          proceed();
+        })
+        .catch(function () { err.textContent = 'Could not save — you can skip, it\'ll just ask again next time.'; btn.disabled = false; skip.disabled = false; });
+    };
+    skip.onclick = proceed;
+    wrap.appendChild(inp); wrap.appendChild(btn); wrap.appendChild(skip); c.appendChild(wrap); c.appendChild(err); scrollDown(); inp.focus();
   }
 
   function nextStep() {
