@@ -1264,7 +1264,8 @@
       </div>
       <div class="field">
         <label for="enq-email">Email</label>
-        <input id="enq-email" type="email" required placeholder="you@example.com" autocomplete="email">
+        <input id="enq-email" type="email" required placeholder="you@example.com" autocomplete="email" aria-describedby="enq-email-typo">
+        <p class="field-typo" id="enq-email-typo" role="status" hidden></p>
       </div>
       <div class="field">
         <label for="enq-phone">Phone number</label>
@@ -1649,9 +1650,13 @@
     return bestD > 0 && bestD <= 2 ? value.slice(0, at + 1) + best : '';
   }
 
-  (function wireEmailTypoGuard() {
-    const input = document.getElementById('email');
-    const hint = document.getElementById('email-typo');
+  // Wired to both email inputs on this page — the main listing form (#email)
+  // and the board's "request this swap" enquiry panel (#enq-email). A typo
+  // there is the exact same dead-lead risk as on the main form; it just used
+  // to only be caught on one of the two paths.
+  function wireEmailTypoGuard(inputId, hintId) {
+    const input = document.getElementById(inputId);
+    const hint = document.getElementById(hintId);
     if (!input || !hint) return;
 
     function clear() { hint.hidden = true; hint.textContent = ''; }
@@ -1669,7 +1674,9 @@
       hint.appendChild(document.createTextNode('?'));
     });
     input.addEventListener('input', clear);
-  })();
+  }
+  wireEmailTypoGuard('email', 'email-typo');
+  wireEmailTypoGuard('enq-email', 'enq-email-typo');
 
   function handleSubmit(e) {
     e.preventDefault();
