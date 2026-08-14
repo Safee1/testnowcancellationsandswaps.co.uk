@@ -200,6 +200,7 @@
   <div class="ptitle">Swap progress</div>
   <div class="prow"><span class="plabel">You</span><span class="pdots" id="youDots"></span><span class="pstage" id="youStage"></span></div>
   <div class="prow"><span class="plabel" id="otherLabel">Other learner</span><span class="pdots" id="otherDots"></span><span class="pstage" id="otherStage"></span></div>
+  <div class="prow" id="slotSummaryRow" style="display:none;"><span class="plabel">Their test</span><span class="pstage" id="otherSlotSummary"></span></div>
 </div>
 
 <div class="stream" id="stream">
@@ -415,6 +416,13 @@
     const oth = stageOf(otherRef, !!otherSlot, otherDone);
     setDots('youDots', mine); setStage('youStage', mine);
     setDots('otherDots', oth); setStage('otherStage', oth);
+    // Pinned here (not just the one-off swapinto card in the scrolling stream)
+    // so it stays visible without scrolling back — stops learners re-asking
+    // each other "what's your date/time" once it's already been shared.
+    if (otherSlot) {
+      document.getElementById('otherSlotSummary').textContent = prettySlot(otherSlot);
+      document.getElementById('slotSummaryRow').style.display = 'flex';
+    }
   }
 
   // ---------- send ----------
@@ -438,6 +446,27 @@
         if (j.result === 'success') wakePolling();
         return j.result === 'success';
       }).catch(() => false);
+  }
+
+  // ---------- quick-action guard ----------
+  // Chips and the "I'm here" nudge send a fixed, repeatable phrase with no
+  // typing step in between — easy to fire more than once (impatience, a slow
+  // network, or a stray double-tap), and each tap used to post its own
+  // message. This cooldown lives outside the DOM so it survives the action
+  // bar's periodic re-render (which used to wipe any per-button disabled
+  // state every 5s and let the same button be tapped again immediately).
+  let lastQuickSendAt = 0;
+  const QUICK_COOLDOWN = 4000;
+  function sendQuick(text, btn) {
+    const now = Date.now();
+    if (now - lastQuickSendAt < QUICK_COOLDOWN) return;
+    lastQuickSendAt = now;
+    postRaw(text);
+    if (btn) {
+      const old = btn.textContent;
+      btn.disabled = true; btn.textContent = 'Sent ✓';
+      setTimeout(function () { btn.disabled = false; btn.textContent = old; }, QUICK_COOLDOWN);
+    }
   }
 
   // ================= GUIDED FLOW =================
@@ -689,7 +718,13 @@
     const cb = document.getElementById('callBtn'); if (cb) cb.onclick = function () { if (!callingAnnounced) postRaw(SIG_CALLING); if (!aCallCardShown) { aCallCardShown = true; gcard('<div class="g-text">📞 <b>Calling DVSA now — keep this chat open.</b> Once you give them the booking reference, DVSA will ring the other learner (they\'re being told to stay by their phone). Stay on the line until it\'s all sorted.</div>', false, 'cheer'); } window.location.href = 'tel:03002001122'; };
     const copyBtn = document.getElementById('copyRefBtn'); if (copyBtn) copyBtn.onclick = function () { copyText(otherRef, copyBtn); };
     const cont = document.getElementById('continueBtn'); if (cont) cont.onclick = function () { if (awaiting) scrollDown(); else nextStep(); };
-    const here = document.getElementById('hereBtn'); if (here) here.onclick = function () { postRaw('👋 I\'m here! Ready when you are.'); here.disabled = true; here.textContent = 'Sent ✓'; };
+    const here = document.getElementById('hereBtn');
+    if (here) {
+      here.onclick = function () { sendQuick('👋 I\'m here! Ready when you are.', here); };
+      // A freshly-built button has no memory of an earlier click — if we're
+      // still inside the shared cooldown from one, start it disabled too.
+      if (Date.now() - lastQuickSendAt < QUICK_COOLDOWN) { here.disabled = true; here.textContent = 'Sent ✓'; }
+    }
   }
 
   function showCallStepsForA() { gcard('<div class="g-text">📞 <b>You\'re the caller.</b> Here\'s what happens:<ol style="margin:8px 0 0 18px;line-height:1.6;"><li>Call DVSA on <b>0300 200 1122</b>, option 1 (Mon–Fri, 8am–5pm).</li><li>Pass security checks and say you want to swap tests.</li><li>Give them the <b>other learner\'s booking reference</b> (shown in the bar below).</li><li>DVSA puts you on hold and phones the other learner to confirm.</li><li>Once they agree, DVSA completes the swap. Write down your new test details.</li></ol><div style="margin-top:8px;font-size:13px;color:var(--muted);">If it doesn\'t go through, it\'s usually: a failed security check, the date/time/centre given wrong, the other learner not answering their phone, or both test changes already used.</div></div>', true); }
@@ -743,14 +778,39 @@
       : [['📱 By my phone', '📱 I\'m right by my phone, ready for DVSA to call.']];
     const all = common.concat(role);
     chips.innerHTML = '';
+
+    // Always-available way out — before this, "I don't want this" typed as
+    // free text did nothing: the chat just sat there open with nobody told.
+    const declineBtn = document.createElement('button');
+    declineBtn.className = 'chip';
+    declineBtn.style.borderColor = 'var(--accent)'; declineBtn.style.color = 'var(--accent)';
+    declineBtn.textContent = '🚫 Not interested';
+    declineBtn.onclick = function () { declineMatch(); };
+    chips.appendChild(declineBtn);
+
     all.forEach(function (pair) {
       const b = document.createElement('button');
       b.className = 'chip';
       b.textContent = pair[0];
-      b.onclick = function () { if (SESSION_STATUS === 'open') postRaw(pair[1]); };
+      b.onclick = function () { if (SESSION_STATUS === 'open') sendQuick(pair[1], b); };
       chips.appendChild(b);
     });
     chips.style.display = 'flex';
+  }
+
+  // One tap + a native confirm (deliberately not the 5-option "how did it
+  // go" modal — that presumes a call was attempted, which usually isn't
+  // true yet when someone bails this early) closes the chat for both sides
+  // immediately, the same way the outcome modal does.
+  function declineMatch() {
+    if (SESSION_STATUS !== 'open') return;
+    if (!confirm('End this chat? The other learner will be told you\'re not interested, and you can browse other listings straight away.')) return;
+    postRaw('🚫 This learner isn\'t interested in this match.');
+    setTimeout(function () {
+      fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, outcome: 'declined' }) })
+        .then(r => r.json()).then(j => { if (j.result !== 'success') showLocalError('⚠ Could not close the chat — please try again.'); })
+        .catch(() => showLocalError('⚠ Could not close the chat — please try again.'));
+    }, 350);
   }
 
   function copyText(txt, btn) {
