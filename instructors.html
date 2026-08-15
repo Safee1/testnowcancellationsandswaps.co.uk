@@ -112,6 +112,10 @@
     border: 1.5px solid rgba(10,107,54,.35); border-radius: 10px; background: var(--paper);
   }
   .iform input:focus { outline: none; border-color: var(--ink); }
+  /* Email typo hint — a suggestion, never a block. Same pattern as index.html. */
+  .field-typo { margin-top: 7px; font-size: 13px; color: var(--muted); }
+  .field-typo[hidden] { display: none; }
+  .field-typo button { background: none; border: none; padding: 0; font: inherit; color: var(--accent); text-decoration: underline; cursor: pointer; }
   .regions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
   .regions label { display: flex; gap: 8px; align-items: center; text-transform: none; letter-spacing: 0; font-weight: 400; font-size: 14px; cursor: pointer; margin: 0; padding: 8px 0; }
   .regions input { width: auto; }
@@ -233,7 +237,8 @@
       </div>
       <div class="field">
         <label for="iemail">Email</label>
-        <input type="email" id="iemail" required>
+        <input type="email" id="iemail" required aria-describedby="iemail-typo">
+        <p class="field-typo" id="iemail-typo" role="status" hidden></p>
       </div>
       <div class="field">
         <label for="iphone">Mobile</label>
@@ -303,6 +308,61 @@
 document.getElementById('yr').textContent = new Date().getFullYear();
 
 var ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
+
+// ---- Email typo guard ----
+// Same guard as the main listing form (index.html) — a mistyped instructor
+// email is a signup that never gets its welcome mail, lead alerts or
+// dashboard link, and instructor supply is the actual bottleneck on this
+// marketplace right now. Suggestion only, never blocks submission.
+var EMAIL_DOMAINS = [
+  'gmail.com', 'googlemail.com', 'hotmail.com', 'hotmail.co.uk', 'outlook.com',
+  'live.co.uk', 'live.com', 'yahoo.com', 'yahoo.co.uk', 'icloud.com',
+  'btinternet.com', 'sky.com', 'aol.com', 'me.com', 'msn.com'
+];
+function editDistance(a, b) {
+  if (Math.abs(a.length - b.length) > 2) return 99;
+  var prev = []; for (var i = 0; i <= b.length; i++) prev[i] = i;
+  for (var i = 1; i <= a.length; i++) {
+    var last = prev[0]; prev[0] = i;
+    for (var j = 1; j <= b.length; j++) {
+      var tmp = prev[j];
+      prev[j] = Math.min(prev[j] + 1, prev[j - 1] + 1, last + (a[i - 1] === b[j - 1] ? 0 : 1));
+      last = tmp;
+    }
+  }
+  return prev[b.length];
+}
+function suggestEmailDomain(value) {
+  var at = String(value || '').lastIndexOf('@');
+  if (at < 1) return '';
+  var domain = value.slice(at + 1).toLowerCase().trim();
+  if (!domain || EMAIL_DOMAINS.indexOf(domain) !== -1) return '';
+  var best = '', bestD = 99;
+  EMAIL_DOMAINS.forEach(function (d) {
+    var dist = editDistance(domain, d);
+    if (dist < bestD) { bestD = dist; best = d; }
+  });
+  return bestD > 0 && bestD <= 2 ? value.slice(0, at + 1) + best : '';
+}
+(function wireEmailTypoGuard() {
+  var input = document.getElementById('iemail');
+  var hint = document.getElementById('iemail-typo');
+  if (!input || !hint) return;
+  function clear() { hint.hidden = true; hint.textContent = ''; }
+  input.addEventListener('blur', function () {
+    var suggestion = suggestEmailDomain(input.value);
+    if (!suggestion) return clear();
+    hint.hidden = false;
+    hint.textContent = 'Did you mean ';
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = suggestion;
+    btn.addEventListener('click', function () { input.value = suggestion; clear(); input.focus(); });
+    hint.appendChild(btn);
+    hint.appendChild(document.createTextNode('?'));
+  });
+  input.addEventListener('input', clear);
+})();
 
 document.getElementById('isubmit').addEventListener('click', function(){
   var btn = this, msg = document.getElementById('imsg');
