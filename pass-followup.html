@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>How did it go? — TestNow</title>
+<meta name="theme-color" content="#0A6B36">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+<link rel="icon" type="image/png" href="favicon-48x48.png" sizes="48x48">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#0A6B36; --ink-soft:#037434; --paper:#F5F0E6; --paper-warm:#EBE3D2;
+    --accent:#C3135F; --muted:#58685F;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { height:100%; }
+  body { font-family:'Inter Tight',sans-serif; background:var(--paper); color:var(--ink); display:flex; flex-direction:column; min-height:100%; min-height:100vh; min-height:100dvh; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+  header.bar { background:var(--ink); color:var(--paper); padding:14px 18px; display:flex; align-items:center; gap:11px; flex-shrink:0; }
+  header.bar img { height:32px; width:auto; border-radius:8px; background:var(--paper); padding:3px; display:block; }
+  header.bar .title { font-family:'Fraunces',serif; font-size:16px; }
+
+  main { flex:1; display:flex; align-items:center; justify-content:center; padding:24px 16px; }
+  .card { background:#fff; border:1.5px solid rgba(10,107,54,.2); border-radius:18px; padding:28px 24px; max-width:440px; width:100%; text-align:center; }
+  .card h1 { font-family:'Fraunces',serif; font-size:21px; margin-bottom:10px; line-height:1.25; }
+  .card p { font-size:14.5px; line-height:1.55; color:var(--muted); margin-bottom:8px; overflow-wrap:anywhere; }
+
+  .btn { display:inline-block; width:100%; border:none; border-radius:12px; padding:14px 18px; font-family:inherit; font-weight:600; font-size:15.5px; cursor:pointer; margin-top:6px; text-decoration:none; }
+  .btn-primary { background:var(--ink); color:var(--paper); }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
+  .btn-cancel { background:none; color:var(--muted); font-size:13.5px; margin-top:12px; padding:6px; min-height:44px; }
+
+  .state-icon { font-size:34px; margin-bottom:6px; }
+  .footnote { font-size:12px; color:var(--muted); margin-top:18px; line-height:1.5; }
+  .footnote a { color:var(--ink-soft); }
+
+  .offers { margin-top:20px; text-align:left; }
+  .offers .lbl { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  .offer-link { display:block; background:var(--paper-warm); border-radius:10px; padding:12px 14px; margin-bottom:8px; text-decoration:none; color:var(--ink); font-weight:600; font-size:14.5px; }
+
+  @media (max-width:600px) {
+    main { padding:16px 12px calc(16px + env(safe-area-inset-bottom)); }
+    .card { padding:22px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <img src="logo.jpg" alt="TestNow" onerror="this.style.display='none'">
+  <div class="title">TestNow Cancellations &amp; Swaps</div>
+</header>
+
+<main>
+  <div class="card" id="card">
+    <p>Checking your link…</p>
+  </div>
+</main>
+
+<script>
+  const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
+  const qs = new URLSearchParams(location.search);
+  const TK = qs.get('tk') || '';
+  const OUTCOME = (qs.get('r') === 'passed') ? 'passed' : 'failed';
+  const card = document.getElementById('card');
+
+  function render(html) { card.innerHTML = html; }
+  function esc(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function renderInvalid() {
+    render(
+      '<div class="state-icon">⚠️</div>' +
+      '<h1>This link isn\'t valid</h1>' +
+      '<p>It may have already been used, or the link has expired.</p>' +
+      '<a class="btn btn-primary" href="index.html">Back to TestNow</a>'
+    );
+  }
+
+  function renderError(msg) {
+    render(
+      '<div class="state-icon">⚠️</div>' +
+      '<h1>Something went wrong</h1>' +
+      '<p>' + esc(msg || 'Please try again in a moment.') + '</p>' +
+      '<a class="btn btn-primary" href="index.html">Back to TestNow</a>'
+    );
+  }
+
+  function offersHtml(offers) {
+    if (!offers || !offers.length) return '';
+    var rows = offers.map(function (o) {
+      var url = SHEET_ENDPOINT + '?action=affiliateClick&offer=' + encodeURIComponent(o.name) + '&tk=' + encodeURIComponent(TK);
+      return '<a class="offer-link" href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(o.name) + '</a>';
+    }).join('');
+    return '<div class="offers"><div class="lbl">You might also need</div>' + rows + '</div>';
+  }
+
+  function renderFinal(outcome, offers) {
+    if (outcome === 'passed') {
+      render(
+        '<div class="state-icon">🎉</div>' +
+        '<h1>Congratulations — you passed!</h1>' +
+        '<p>Brilliant news. Thanks for letting us know, and good luck out there.</p>' +
+        offersHtml(offers)
+      );
+    } else {
+      render(
+        '<div class="state-icon">👍</div>' +
+        '<h1>No worries — next time</h1>' +
+        '<p>Plenty of learners need a few goes. If you need to swap onto a new test date, you know where we are.</p>' +
+        '<a class="btn btn-primary" href="index.html">Back to TestNow</a>'
+      );
+    }
+  }
+
+  function renderConfirm() {
+    var isPassed = OUTCOME === 'passed';
+    render(
+      '<h1>' + (isPassed ? 'Did you pass?' : 'Sorry to hear that') + '</h1>' +
+      '<p>' + (isPassed
+        ? 'Just confirming — tap below and we\'ll mark your test as passed.'
+        : 'Just confirming — tap below and we\'ll mark it as not passed this time.') +
+      '</p>' +
+      '<button class="btn btn-primary" id="confirmBtn">' +
+        (isPassed ? 'Yes, I passed 🎉' : 'Confirm — not this time') +
+      '</button>' +
+      '<a class="btn-cancel" href="index.html">Cancel, do nothing</a>'
+    );
+    document.getElementById('confirmBtn').addEventListener('click', submitOutcome);
+  }
+
+  function submitOutcome() {
+    var btn = document.getElementById('confirmBtn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Please wait…'; }
+    fetch(SHEET_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'passOutcome', token: TK, outcome: OUTCOME })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (json) {
+        if (json.result !== 'success') return renderError(json.message || 'Something went wrong.');
+        renderFinal(json.outcome, json.offers);
+      })
+      .catch(function () { renderError('Could not reach TestNow — check your connection and try again.'); });
+  }
+
+  if (!TK) {
+    renderInvalid();
+  } else {
+    fetch(SHEET_ENDPOINT + '?action=passInfo&tk=' + encodeURIComponent(TK))
+      .then(function (r) { return r.json(); })
+      .then(function (json) {
+        if (json.result !== 'success' || !json.valid) return renderInvalid();
+        if (json.outcome) return renderFinal(json.outcome, json.offers || []);
+        renderConfirm();
+      })
+      .catch(function () { renderError('Could not reach TestNow — check your connection and try again.'); });
+  }
+</script>
+
+</body>
+</html>
