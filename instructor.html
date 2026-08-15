@@ -193,7 +193,16 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 var ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
 var TK = new URLSearchParams(location.search).get('tk') || '';
 
-function esc(s){ var d=document.createElement('div'); d.textContent=String(s==null?'':s); return d.innerHTML; }
+// The textContent/innerHTML round-trip only escapes &, <, > — not " or '.
+// l.contact.phone/email are learner-submitted free text and land straight
+// inside double-quoted href="tel:...">/href="mailto:...">  attributes below
+// — a phone number containing a literal " could break out of the attribute.
+// Same pattern already used correctly on enquiry-respond.html.
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
 
 function load() {
   if (!TK) { showErr("This page needs your personal dashboard link. Check the email/confirmation you got when you registered."); return; }
