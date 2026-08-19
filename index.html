@@ -41,11 +41,15 @@
 <meta name="description" content="Swap your DVSA practical driving test date with another learner. Free, anonymous, no fees. Skip the months-long DVSA wait.">
 <meta name="theme-color" content="#0A6B36">
 
-<!-- Favicon (uses existing logo) -->
-<link rel="icon" href="favicon.ico" sizes="32x32">
+<!-- Favicon (uses existing logo). Google Search wants a crawlable icon in
+     multiples of 48px — favicon.ico now carries 16/32/48 and the 96/192
+     PNGs cover the larger slots. -->
+<link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
 <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
 <link rel="icon" type="image/png" href="favicon-48x48.png" sizes="48x48">
+<link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96">
+<link rel="icon" type="image/png" href="favicon-192x192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
 <!-- Open Graph / social share preview -->
@@ -59,6 +63,31 @@
 <meta name="twitter:title" content="Free UK Driving Test Swaps — skip the wait">
 <meta name="twitter:description" content="Swap your DVSA practical driving test date with another learner. Free, anonymous, no fees.">
 <meta name="twitter:image" content="https://testnowcancellationsandswaps.co.uk/logo.jpg">
+
+<!-- Structured data: tells Google the site name + brand logo for search
+     results. Logo must be a crawlable absolute URL (min 112px on one side;
+     logo.jpg is 869x209). -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "url": "https://testnowcancellationsandswaps.co.uk/",
+      "name": "TestNow Cancellations & Swaps",
+      "alternateName": "TestNow"
+    },
+    {
+      "@type": "Organization",
+      "url": "https://testnowcancellationsandswaps.co.uk/",
+      "name": "TestNow Cancellations & Swaps",
+      "alternateName": "TestNow",
+      "logo": "https://testnowcancellationsandswaps.co.uk/logo.jpg",
+      "image": "https://testnowcancellationsandswaps.co.uk/logo.jpg"
+    }
+  ]
+}
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
