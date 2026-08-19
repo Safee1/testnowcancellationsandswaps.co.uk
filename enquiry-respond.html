@@ -32,6 +32,7 @@
   .card h1 { font-family:'Fraunces',serif; font-size:21px; margin-bottom:10px; line-height:1.25; }
   .card p { font-size:14.5px; line-height:1.55; color:var(--muted); margin-bottom:8px; overflow-wrap:anywhere; }
   .card p.detail { color:var(--ink); font-weight:600; background:var(--paper-warm); border-radius:10px; padding:10px 12px; margin:14px 0; }
+  .card p.message { color:var(--ink); font-style:italic; text-align:left; background:var(--paper); border-left:3px solid var(--ink); border-radius:6px; padding:10px 14px; margin:14px 0; }
 
   .btn { display:inline-block; width:100%; border:none; border-radius:12px; padding:14px 18px; font-family:inherit; font-weight:600; font-size:15.5px; cursor:pointer; margin-top:6px; text-decoration:none; }
   .btn-accept { background:var(--ink); color:var(--paper); }
@@ -109,11 +110,12 @@
     );
   }
 
-  function renderConfirm(centre) {
+  function renderConfirm(centre, message) {
     var isAccept = DECISION === 'accept';
     render(
       '<h1>' + (isAccept ? 'Accept this swap request?' : 'Decline this swap request?') + '</h1>' +
       (centre ? '<p class="detail">' + esc(centre) + '</p>' : '') +
+      (message ? '<p class="message">“' + esc(message) + '”</p>' : '') +
       '<p>' + (isAccept
         ? 'Nothing has happened yet — you\'re just confirming. If you accept, we\'ll open a private chat between you both and share the next steps. Your contact details stay private until then, exactly as always.'
         : 'Nothing has happened yet — you\'re just confirming. Declining costs you nothing: your listing stays up and we\'ll keep matching you automatically in the background too.') +
@@ -171,7 +173,7 @@
       .then(function (json) {
         if (json.result !== 'success' || !json.valid) return renderInvalid();
         if (json.status !== 'pending') return renderAlreadyDecided(json.status);
-        renderConfirm(json.centre);
+        renderConfirm(json.centre, json.message);
       })
       .catch(function () { renderError('Could not reach TestNow — check your connection and try again.'); });
   }
