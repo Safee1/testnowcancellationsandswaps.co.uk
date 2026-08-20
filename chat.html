@@ -41,6 +41,8 @@
   .dot.on { background:var(--online); box-shadow:0 0 0 3px rgba(34,197,94,.25); }
   header.bar .right { display:flex; align-items:center; gap:10px; }
   header.bar .pill { font-size:12px; letter-spacing:.12em; text-transform:uppercase; padding:4px 10px; border-radius:999px; background:rgba(245,240,230,.15); }
+  /* v78 PATCH (Feature 3): moderator badge — reuses .pill's shape/uppercase style, own accent colour so it reads as distinct from the Open/Closed status pill next to it */
+  header.bar .pill.mod-badge { background:var(--accent); color:var(--paper); font-weight:700; }
   .complete-btn { background:var(--accent); color:var(--paper); border:none; padding:9px 15px; border-radius:999px; font-family:inherit; font-size:12px; font-weight:600; cursor:pointer; min-height:44px; }
   .complete-btn:disabled { opacity:.4; cursor:not-allowed; }
 
@@ -191,6 +193,7 @@
     </div>
   </div>
   <div class="right">
+    <span class="pill mod-badge" id="modBadge" style="display:none;">Moderator view</span>
     <span class="pill" id="status-pill">Open</span>
     <button class="complete-btn" id="complete-btn">🏁 Finish</button>
   </div>
@@ -228,6 +231,26 @@
     <button class="outcome-btn bad" data-msg="🔐 A security check failed at DVSA, so it couldn't complete." data-outcome="security_failed">🔐 Security check failed</button>
     <button class="outcome-btn bad" data-msg="📅 Our tests weren't eligible (date/time/centre or type), so DVSA couldn't swap." data-outcome="not_eligible">📅 Not eligible (date/time/centre)</button>
     <button class="modal-cancel" id="modalCancel">← Keep chatting</button>
+  </div>
+</div>
+
+<!-- v78 PATCH (Feature 2): optional decline-reason step. This modal IS the
+     confirmation step (replaces the old native confirm() dialog) — tapping
+     a reason chip, or "Skip", ends the chat immediately; no second prompt. -->
+<div class="modal" id="declineModal">
+  <div class="modal-card">
+    <h3>Not interested?</h3>
+    <p>Optional — telling us why helps us match better. This ends the chat for both of you.</p>
+    <button class="outcome-btn bad" data-reason="Date too far away">📅 Date too far away</button>
+    <button class="outcome-btn bad" data-reason="Wrong test centre">📍 Wrong test centre</button>
+    <button class="outcome-btn bad" data-reason="Already sorted it">✅ Already sorted it</button>
+    <button class="outcome-btn bad" id="declineOtherBtn">✏️ Other</button>
+    <div id="declineOtherWrap" style="display:none;margin:-3px 0 9px;">
+      <textarea id="declineOtherText" maxlength="100" placeholder="Say a bit more… (max 100 characters)" style="width:100%;min-height:44px;border:1.5px solid rgba(10,107,54,.3);border-radius:10px;padding:10px 12px;font-family:inherit;font-size:14px;background:var(--paper);color:var(--ink);resize:vertical;"></textarea>
+      <button class="ab-btn small" id="declineOtherSubmit" style="margin-top:8px;">Confirm decline</button>
+    </div>
+    <button class="outcome-btn" id="declineNoReasonBtn" style="border-left:4px solid var(--muted);">Skip — just end the chat</button>
+    <button class="modal-cancel" id="declineCancel">← Keep chatting</button>
   </div>
 </div>
 
@@ -285,13 +308,23 @@
       .then(d => {
         if (d.result !== 'success') throw new Error(d.message || 'failed');
         YOU_ARE = d.youAre; OTHER_HANDLE = d.otherHandle; SESSION_STATUS = d.status; HAS_EMAIL = (d.hasEmail === false) ? false : true;
-        metaText.textContent = 'You are ' + (YOU_ARE === 'A' ? 'Learner A' : 'Learner B') + ' · ' + OTHER_HANDLE;
-        progressEl.style.display = 'flex';
-        document.getElementById('otherLabel').textContent = OTHER_HANDLE;
-        renderProgress();
-        if (SESSION_STATUS === 'open') buildChips();
+        // v78 PATCH (Feature 3): moderator view — badge, no guided-flow
+        // progress panel (it tracks a single "you vs other" pair, which
+        // doesn't apply to someone watching both sides at once).
+        if (YOU_ARE === 'MOD') {
+          metaText.textContent = 'Moderator view · ' + (OTHER_HANDLE || 'Learner A & Learner B');
+          const badge = document.getElementById('modBadge'); if (badge) badge.style.display = 'inline-block';
+          completeBtn.textContent = '🔒 Close chat';
+        } else {
+          metaText.textContent = 'You are ' + (YOU_ARE === 'A' ? 'Learner A' : 'Learner B') + ' · ' + OTHER_HANDLE;
+          progressEl.style.display = 'flex';
+          document.getElementById('otherLabel').textContent = OTHER_HANDLE;
+          renderProgress();
+        }
+        if (SESSION_STATUS === 'open' && YOU_ARE !== 'MOD') buildChips(); // v78 PATCH: "Not interested" chip is learner-only
         if (SESSION_STATUS !== 'open') setClosedUI();
-        pollMessages(true); pingLoop(true);   // forced — see the note on pollMessages
+        pollMessages(true);                     // forced — see the note on pollMessages
+        if (YOU_ARE !== 'MOD') pingLoop(true);   // v78 PATCH: presence ping is an A/B-only concept, skipped for MOD
       })
       .catch(() => { metaText.textContent = 'Could not open chat.'; composer.style.display = 'none'; completeBtn.style.display = 'none'; abInner.innerHTML = ''; });
   }
@@ -375,6 +408,12 @@
     const t = String(m.text || '');
     const mine = (m.sender === YOU_ARE);
 
+    // v78 PATCH (Feature 3): moderator sees every message as a plain,
+    // sender-labelled bubble (see renderMessage below) — the guided-flow
+    // signal parsing further down (progress dots, swap-into cards, cheer/
+    // motivator cards) is a learner-only side effect and stays off for MOD.
+    if (YOU_ARE === 'MOD') { renderMessage(m); return; }
+
     if (t.indexOf(SIG_REF) === 0) {
       const ref = t.slice(SIG_REF.length).trim();
       if (mine) { if (!myRef) myRef = ref; } else { otherRef = ref; }
@@ -405,6 +444,9 @@
     const ts = escapeHtml(m.ts);
     if (m.sender === 'MOD') { div.className = 'msg mod'; div.innerHTML = '<div class="who">TestNow Moderator</div>' + escapeHtml(m.text) + '<div class="when">' + ts + '</div>'; }
     else if (m.sender === 'SYSTEM') { div.className = 'sys'; div.textContent = m.text; }
+    // v78 PATCH (Feature 3): a moderator viewer has no single OTHER_HANDLE —
+    // label each side by name so both learners are distinguishable.
+    else if (YOU_ARE === 'MOD' && (m.sender === 'A' || m.sender === 'B')) { div.className = 'msg them'; div.innerHTML = '<div class="who">' + (m.sender === 'A' ? 'Learner A' : 'Learner B') + '</div>' + escapeHtml(m.text) + '<div class="when">' + ts + '</div>'; }
     else if (m.sender === YOU_ARE) { div.className = 'msg me'; div.innerHTML = escapeHtml(m.text) + '<div class="when">' + ts + '</div>'; }
     else { div.className = 'msg them'; div.innerHTML = '<div class="who">' + escapeHtml(OTHER_HANDLE) + '</div>' + escapeHtml(m.text) + '<div class="when">' + ts + '</div>'; }
     stream.appendChild(div); scrollDown();
@@ -479,6 +521,7 @@
 
   function flowKickoff() {
     if (SESSION_STATUS !== 'open') return;
+    if (YOU_ARE === 'MOD') return; // v78 PATCH (Feature 3): no guided flow / email prompt for a moderator viewer
     if (myDone) { finishSetup(); return; }
     // Only learners with no email on file get asked — mainly the
     // WhatsApp-group imports, which never collect one (unlike the listing
@@ -706,6 +749,10 @@
   function renderActionBar() {
     if (SESSION_STATUS !== 'open') { abInner.innerHTML = '<div class="ab-grey">Chat closed.</div>'; return; }
     if (!YOU_ARE) { abInner.innerHTML = ''; return; }
+    // v78 PATCH (Feature 3): the A/B call-DVSA action bar below is a
+    // learner-only concept (isA branch etc.) — a moderator gets a static
+    // note instead, not the A/B logic.
+    if (YOU_ARE === 'MOD') { abInner.innerHTML = '<div class="ab-grey">Moderator view — read, post and close only, no swap actions here.</div>'; return; }
     const isA = (YOU_ARE === 'A');
     const refsShared = myRef && otherRef;
     const bothReady = myDone && otherDone;
@@ -776,15 +823,32 @@
 
   completeBtn.addEventListener('click', () => {
     if (SESSION_STATUS !== 'open') return;
+    if (YOU_ARE === 'MOD') { modClose(); return; } // v78 PATCH (Feature 3)
     document.getElementById('outcomeModal').classList.add('show');
   });
+
+  // v78 PATCH (Feature 3): moderator close — no outcome picker (that modal
+  // is a learner-facing "how did the swap go" concept); just closes the
+  // session for both sides. Goes through the same chatClose action, with
+  // no outcome — chatCloseSession_ already handles a blank outcome fine.
+  function modClose() {
+    if (!confirm('Close this chat for both learners?')) return;
+    fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK }) })
+      .then(r => r.json()).then(j => { if (j.result !== 'success') showLocalError('⚠ Could not close the chat — please try again.'); })
+      .catch(() => showLocalError('⚠ Could not close the chat — please try again.'));
+  }
 
   // outcome modal wiring
   (function () {
     const modal = document.getElementById('outcomeModal');
     const cancel = document.getElementById('modalCancel');
     if (cancel) cancel.onclick = function () { modal.classList.remove('show'); };
-    document.querySelectorAll('.outcome-btn').forEach(b => {
+    // v78 PATCH: scoped to #outcomeModal — the new #declineModal (Feature 2)
+    // now also uses the .outcome-btn class for matching visual style, and an
+    // unscoped selector here would (harmlessly, by assignment-order luck,
+    // but confusingly) also attach this outcome-picker's handler to those
+    // buttons before the decline-modal's own wiring overwrites it.
+    document.querySelectorAll('#outcomeModal .outcome-btn').forEach(b => {
       b.onclick = function () {
         if (SESSION_STATUS !== 'open') { modal.classList.remove('show'); return; }
         const msg = b.getAttribute('data-msg');
@@ -837,20 +901,50 @@
     chips.style.display = 'flex';
   }
 
-  // One tap + a native confirm (deliberately not the 5-option "how did it
-  // go" modal — that presumes a call was attempted, which usually isn't
-  // true yet when someone bails this early) closes the chat for both sides
-  // immediately, the same way the outcome modal does.
+  // v78 PATCH (Feature 2): one tap opens the decline-reason modal below —
+  // that modal IS the confirmation step now (replaces the old native
+  // confirm() dialog), so tapping any reason chip or "Skip" there ends the
+  // chat immediately. Deliberately not the 5-option "how did it go" modal —
+  // that presumes a call was attempted, which usually isn't true yet when
+  // someone bails this early.
   function declineMatch() {
     if (SESSION_STATUS !== 'open') return;
-    if (!confirm('End this chat? The other learner will be told you\'re not interested, and you can browse other listings straight away.')) return;
-    postRaw('🚫 This learner isn\'t interested in this match.');
-    setTimeout(function () {
-      fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, outcome: 'declined' }) })
-        .then(r => r.json()).then(j => { if (j.result !== 'success') showLocalError('⚠ Could not close the chat — please try again.'); })
-        .catch(() => showLocalError('⚠ Could not close the chat — please try again.'));
-    }, 350);
+    document.getElementById('declineModal').classList.add('show');
   }
+
+  // v78 PATCH (Feature 2): single request — outcome + optional reason both
+  // travel on the one chatClose call, so the backend (see chatCloseSession_
+  // v78 PATCH) can write the decline notice line itself, guarded by the
+  // same idempotency check that closes the session. Reason is entirely
+  // optional; declining with '' works exactly as the old flow did.
+  function submitDecline(reason) {
+    const modal = document.getElementById('declineModal');
+    if (modal) modal.classList.remove('show');
+    const otherWrap = document.getElementById('declineOtherWrap');
+    if (otherWrap) otherWrap.style.display = 'none';
+    if (SESSION_STATUS !== 'open') return;
+    fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, outcome: 'declined', reason: reason || '' }) })
+      .then(r => r.json()).then(j => { if (j.result !== 'success') showLocalError('⚠ Could not close the chat — please try again.'); })
+      .catch(() => showLocalError('⚠ Could not close the chat — please try again.'));
+  }
+
+  // decline-reason modal wiring (Feature 2, v78)
+  (function () {
+    const modal = document.getElementById('declineModal');
+    const cancel = document.getElementById('declineCancel');
+    const otherBtn = document.getElementById('declineOtherBtn');
+    const otherWrap = document.getElementById('declineOtherWrap');
+    const otherText = document.getElementById('declineOtherText');
+    const otherSubmit = document.getElementById('declineOtherSubmit');
+    const noReason = document.getElementById('declineNoReasonBtn');
+    if (cancel) cancel.onclick = function () { if (modal) modal.classList.remove('show'); if (otherWrap) otherWrap.style.display = 'none'; };
+    document.querySelectorAll('#declineModal .outcome-btn[data-reason]').forEach(function (b) {
+      b.onclick = function () { submitDecline(b.getAttribute('data-reason')); };
+    });
+    if (otherBtn) otherBtn.onclick = function () { if (otherWrap) otherWrap.style.display = (otherWrap.style.display === 'none') ? 'block' : 'none'; if (otherText) otherText.focus(); };
+    if (otherSubmit) otherSubmit.onclick = function () { submitDecline(((otherText && otherText.value) || '').trim().slice(0, 100)); };
+    if (noReason) noReason.onclick = function () { submitDecline(''); };
+  })();
 
   function copyText(txt, btn) {
     function done() { if (btn) { const old = btn.textContent; btn.textContent = 'Copied ✓'; setTimeout(function () { btn.textContent = old; }, 1500); } }
