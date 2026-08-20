@@ -636,6 +636,27 @@
     color: var(--accent);
     cursor: default;
   }
+  /* v79 PATCH (Feature 2): "Listed by instructor" badge. Same pill
+     geometry/typography as .btag above (so it reads as the same family
+     of badge) but its own colour, and deliberately its own class rather
+     than reusing .btag — the mobile breakpoint below absolutely
+     positions .btag in the card's top-right corner, and a second badge
+     sharing that class would land on top of it instead of stacking. */
+  .bcard .binstructor {
+    display: inline-block;
+    margin-top: 10px;
+    margin-right: 8px;
+    font-size: 12px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: transparent;
+    border: 1.5px solid var(--ink-soft);
+    color: var(--ink-soft);
+    cursor: default;
+  }
   .bcard .brequest {
     /* This one IS a real action, unlike .btag above — same solid-fill
        weight as the site's other real CTA buttons, so it reads correctly
@@ -1471,6 +1492,18 @@
           <textarea id="notes" name="notes" placeholder="Theory test expiry date, weekday/weekend preference, etc."></textarea>
         </div>
 
+        <!-- v79 PATCH (Feature 2): "Listed By" classification — lets a driving
+             instructor flag that they're listing this swap on behalf of a
+             pupil, not for themselves. Always visible (unlike the consent
+             tick below, which only appears conditionally), matches the
+             existing .consent-box/.consent-label styling exactly. -->
+        <div class="field full consent-box" id="listed-by-instructor-box">
+          <label class="consent-label">
+            <input type="checkbox" id="listed-by-instructor" name="listed-by-instructor">
+            <span>I'm a driving instructor listing this test for my pupil</span>
+          </label>
+        </div>
+
         <div class="field full">
           <label for="has-instructor" class="label-sentence">Do you already have an instructor available for your test?</label>
           <select id="has-instructor" name="has-instructor" required>
@@ -1772,6 +1805,11 @@
     var tick = document.getElementById('instructor-consent');
     if (box) box.style.display = 'none';
     if (tick) { tick.checked = false; tick.required = false; }
+    // v79 PATCH (Feature 2): the "listed by instructor" tick is always
+    // visible (not toggled like instructor-consent-box above), so it just
+    // needs its checked state cleared between listings.
+    var listedByTick = document.getElementById('listed-by-instructor');
+    if (listedByTick) listedByTick.checked = false;
     setDateError(false);
   }
 
@@ -1798,6 +1836,15 @@
       instructorConsent: (function () {
         var t = document.getElementById('instructor-consent');
         return (t && t.checked) ? 'yes' : 'no';
+      })(),
+      // v79 PATCH (Feature 2): flags this listing as posted by a driving
+      // instructor on behalf of their pupil rather than by the learner
+      // themselves. Backend stores whatever isn't exactly "instructor" as
+      // "learner", so leaving this 'learner' when unchecked (rather than
+      // omitting it) is equivalent and simpler.
+      listedBy: (function () {
+        var t = document.getElementById('listed-by-instructor');
+        return (t && t.checked) ? 'instructor' : 'learner';
       })(),
       website: form.website ? form.website.value : '', // honeypot — real users never see/fill this
       formLoadedAt: PAGE_LOADED_AT
@@ -2027,6 +2074,10 @@
         '<div class="bcentre">' + esc(r.centre) + '</div>' +
         '<div class="bdate"><span>Date</span><span>' + esc(fmtDate(r.date)) + '</span></div>' +
         (r.time ? '<div class="bdate"><span>Time</span><span>' + esc(r.time) + '</span></div>' : '') +
+        // v79 PATCH (Feature 2): its own class (not .btag) so it never
+        // collides with .btag's absolute top-right mobile position — see
+        // the .binstructor CSS comment above for why.
+        (r.listedBy === 'instructor' ? '<span class="binstructor">Listed by instructor</span>' : '') +
         '<span class="btag">Swap ASAP</span>' +
         (r.id ? '<button type="button" class="brequest" data-id="' + esc(r.id) + '" data-centre="' + esc(r.centre) + '" data-region="' + esc(r.region) + '" data-date="' + esc(fmtDate(r.date)) + '">Request this swap</button>' : '') +
       '</div>'
