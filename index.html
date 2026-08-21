@@ -657,6 +657,25 @@
     color: var(--ink-soft);
     cursor: default;
   }
+  /* v82 PATCH (Bug B): "Weekday"/"Weekend" test-type chip. Same pill
+     geometry/typography family as .btag/.binstructor above, own class so
+     it stacks independently of both (see .binstructor's comment on why a
+     shared class breaks the mobile .btag positioning). */
+  .bcard .btesttype {
+    display: inline-block;
+    margin-top: 10px;
+    margin-right: 8px;
+    font-size: 12px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: transparent;
+    border: 1.5px solid var(--muted);
+    color: var(--muted);
+    cursor: default;
+  }
   .bcard .brequest {
     /* This one IS a real action, unlike .btag above — same solid-fill
        weight as the site's other real CTA buttons, so it reads correctly
@@ -1461,6 +1480,20 @@
           <label for="time">Your current test time</label>
           <input id="time" name="time" type="time" step="60" required>
         </div>
+        <!-- v82 PATCH (Bug B): "Test type" — DVSA's two price/type tiers
+             (weekday £62 / evening-weekend £75), same labels and values
+             chat.html's own guided flow already uses for this exact
+             concept (myType, TEST_SLOT signal). Required so the matching
+             engine can enforce like-for-like swaps only; same .field
+             markup/CSS as every other required select on this form. -->
+        <div class="field">
+          <label for="test-type">Your test type</label>
+          <select id="test-type" name="test-type" required>
+            <option value="">Choose…</option>
+            <option value="weekday">Weekday (£62)</option>
+            <option value="weekend">Evening or weekend (£75)</option>
+          </select>
+        </div>
 
         <div class="form-step-head"><span class="form-step-num"><strong>03</strong>What you want instead</span></div>
         <div class="field">
@@ -1825,6 +1858,8 @@
       centre: form.centre.value,
       date: form.date.value,
       time: form.time.value,
+      // v82 PATCH (Bug B): weekday/weekend swap-type constraint.
+      testType: form['test-type'].value,
       wantedWhen: form['wanted-when'].value,
       wantedRegion: form['wanted-region'].value,
       wantedCentre: form['wanted-centre'].value,
@@ -2078,6 +2113,11 @@
         // collides with .btag's absolute top-right mobile position — see
         // the .binstructor CSS comment above for why.
         (r.listedBy === 'instructor' ? '<span class="binstructor">Listed by instructor</span>' : '') +
+        // v82 PATCH (Bug B): weekday/weekend test-type chip — its own
+        // class (not .binstructor, a different concept/badge slot; not
+        // .btag, absolutely positioned top-right on mobile, see the
+        // .binstructor CSS comment for why a second badge can't share it).
+        (r.testType === 'weekday' ? '<span class="btesttype">Weekday</span>' : (r.testType === 'weekend' ? '<span class="btesttype">Weekend</span>' : '')) +
         '<span class="btag">Swap ASAP</span>' +
         (r.id ? '<button type="button" class="brequest" data-id="' + esc(r.id) + '" data-centre="' + esc(r.centre) + '" data-region="' + esc(r.region) + '" data-date="' + esc(fmtDate(r.date)) + '">Request this swap</button>' : '') +
       '</div>'

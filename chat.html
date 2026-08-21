@@ -402,6 +402,16 @@
   // call right after a session loads (see initSession), so a page that starts
   // hidden (e.g. opened in a background tab) still performs its initial fetch
   // and schedules the polling loop.
+  //
+  // v82 PATCH (Bug A fix, considered and NOT applied here): pollMessages's
+  // identical-shaped guard above was changed so `force` also bypasses
+  // !POLLING — this one deliberately was NOT changed the same way.
+  // initSession only ever calls pingLoop(true) for non-MOD users
+  // (`if (YOU_ARE !== 'MOD') pingLoop(true);`), and "is the other person
+  // online right now" has no meaning once a session is closed — there's
+  // no live conversation left for presence to describe, and MOD never
+  // calls this at all. So the closed-session no-op here is correct
+  // behaviour, not the same bug.
   function pingLoop(force) {
     if (!POLLING || (document.hidden && !force)) return;
     fetch(SHEET_ENDPOINT + '?action=chatPing&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK))
@@ -417,8 +427,20 @@
   }
 
   // ---------- message poll ----------
+  // v82 PATCH (Bug A fix): `force` used to be gated out by `!POLLING`
+  // just like the hidden-tab check below it — but for a CLOSED session,
+  // setClosedUI() (see below) sets POLLING = false BEFORE initSession's
+  // one explicit pollMessages(true) call ever runs, so that forced
+  // initial fetch was silently a no-op for every closed session (learner
+  // reopening an old link, or a moderator via the mod link) — no
+  // messages ever rendered, even though the backend had the full
+  // transcript. Fix: `force` now bypasses the POLLING gate too, exactly
+  // like it already bypasses the hidden-tab gate — the only caller that
+  // ever passes force=true is initSession's one-time forced fetch; every
+  // recurring call via schedule('poll') still calls pollMessages() with
+  // no argument and stays correctly gated by POLLING.
   function pollMessages(force) {
-    if (!POLLING || (document.hidden && !force)) return;
+    if ((!POLLING && !force) || (document.hidden && !force)) return;
     fetch(SHEET_ENDPOINT + '?action=chatMessages&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK) + '&since=' + LAST_INDEX)
       .then(r => r.json())
       .then(d => {
