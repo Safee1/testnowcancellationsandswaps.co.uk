@@ -1778,6 +1778,19 @@
     const form = e.target;
     const btn = form.querySelector('button[type="submit"]');
 
+    // v83 PATCH: every required field except date relied purely on the
+    // browser's own native validation bubble to stop submission - easy to
+    // miss if the offending field (e.g. the two required dropdowns,
+    // has-instructor / wanted-centre) is out of view, and nothing here
+    // guaranteed the rest of this function couldn't run first. Explicit
+    // check now: forces the browser to focus+scroll+show its error on
+    // whichever field is actually blank, same as the date check below
+    // already does for itself, and returns before any submission attempt.
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
     // --- Validate the test date/time isn't in the past ---
     const dateVal = form.date.value;     // "YYYY-MM-DD"
     const timeVal = form.time.value;     // "HH:MM"
