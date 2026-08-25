@@ -471,10 +471,16 @@
     if (t.indexOf(SIG_SLOT) === 0) {
       const p = t.slice(SIG_SLOT.length).split('|');
       if (mine) { myDate = myDate || p[0]; myTime = myTime || p[1]; myCentre = myCentre || p[2]; myType = myType || p[3]; slotSent = true; }
-      else {
-        otherSlot = { date: p[0] || '', time: p[1] || '', centre: p[2] || '', type: p[3] || '' };
-        if (!swapIntoShown) { swapIntoShown = true; const c = document.createElement('div'); c.className = 'swapinto'; c.innerHTML = '↔ <b>The slot you\'d swap into:</b><br>' + escapeHtml(prettySlot(otherSlot)); stream.appendChild(c); scrollDown(); }
-      }
+      else { otherSlot = { date: p[0] || '', time: p[1] || '', centre: p[2] || '', type: p[3] || '' }; }
+      // v83 PATCH: mutual reveal. Used to show the other side's slot the
+      // instant THEIRS arrived, regardless of whether you'd sent your own —
+      // so whoever answered first got to see the other's real details
+      // before committing anything themselves (and could then tailor their
+      // own claim to match). Now gated on slotSent (yours) being true too,
+      // so neither side sees the other's until both have typed and sent
+      // their own — whichever side completes second triggers the reveal on
+      // both clients within their next poll.
+      maybeRevealSwap();
       renderProgress(); maybeEndState(); renderActionBar(); return;
     }
     if (t.indexOf(SIG_DONE) === 0) {
@@ -509,6 +515,19 @@
   }
   function scrollDown() { stream.scrollTop = stream.scrollHeight; }
 
+  // v83 PATCH: single choke point for the mutual-reveal card, called from
+  // both branches of the SIG_SLOT handler above (whichever side's slot
+  // arrives/gets-sent second is the one whose client actually fires this).
+  function maybeRevealSwap() {
+    if (slotSent && otherSlot && !swapIntoShown) {
+      swapIntoShown = true;
+      const c = document.createElement('div');
+      c.className = 'swapinto';
+      c.innerHTML = '↔ <b>The slot you\'d swap into:</b><br>' + escapeHtml(prettySlot(otherSlot));
+      stream.appendChild(c); scrollDown();
+    }
+  }
+
   // ---------- progress ----------
   function stageOf(ref, slot, done) { if (done) return 3; if (slot) return 2; if (ref) return 1; return 0; }
   function setDots(id, stage) { let h = ''; for (let i = 1; i <= 3; i++) h += '<span class="pseg' + (i <= stage ? ' on' : '') + '"></span>'; document.getElementById(id).innerHTML = h; }
@@ -522,7 +541,10 @@
     // Pinned here (not just the one-off swapinto card in the scrolling stream)
     // so it stays visible without scrolling back — stops learners re-asking
     // each other "what's your date/time" once it's already been shared.
-    if (otherSlot) {
+    // v83 PATCH: gated on slotSent (yours) too — same mutual-reveal rule as
+    // maybeRevealSwap() above, so this pinned row can't leak their details
+    // to you before you've sent your own either.
+    if (otherSlot && slotSent) {
       document.getElementById('otherSlotSummary').textContent = prettySlot(otherSlot);
       document.getElementById('slotSummaryRow').style.display = 'flex';
     }
