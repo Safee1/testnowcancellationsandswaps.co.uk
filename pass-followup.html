@@ -43,6 +43,7 @@
 
   .offers { margin-top:20px; text-align:left; }
   .offers .lbl { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  .offers .disclosure { font-size:12px; color:var(--muted); line-height:1.5; margin-bottom:10px; }
   .offer-link { display:block; background:var(--paper-warm); border-radius:10px; padding:12px 14px; margin-bottom:8px; text-decoration:none; color:var(--ink); font-weight:600; font-size:14.5px; }
 
   @media (max-width:600px) {
@@ -100,9 +101,11 @@
     if (!offers || !offers.length) return '';
     var rows = offers.map(function (o) {
       var url = SHEET_ENDPOINT + '?action=affiliateClick&offer=' + encodeURIComponent(o.name) + '&tk=' + encodeURIComponent(TK);
-      return '<a class="offer-link" href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(o.name) + '</a>';
+      return '<a class="offer-link" href="' + esc(url) + '" target="_blank" rel="sponsored noopener">' + esc(o.name) + '</a>';
     }).join('');
-    return '<div class="offers"><div class="lbl">You might also need</div>' + rows + '</div>';
+    return '<div class="offers"><div class="lbl">You might also need</div>' +
+      '<p class="disclosure">Some links are partner links — TestNow may earn a small commission at no cost to you.</p>' +
+      rows + '</div>';
   }
 
   function renderFinal(outcome, offers) {

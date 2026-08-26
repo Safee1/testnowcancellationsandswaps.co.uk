@@ -1686,6 +1686,42 @@
   const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
   const PAGE_LOADED_AT = Date.now(); // bot guard: real humans never submit within ~2s of page load
 
+  // ---- Source attribution: tag each submission with how the visitor arrived ----
+  // First-touch wins: whatever source resolves on the very first page load of the
+  // session is persisted, so a later page view or submit with no query string
+  // still carries the original ads/utm/organic source rather than falling to direct.
+  const TN_SOURCE = (function () {
+    function sanitise(s) {
+      return String(s || '').toLowerCase().replace(/[^a-z0-9:._-]/g, '').slice(0, 60);
+    }
+    var stored = '';
+    try { stored = sessionStorage.getItem('tn_source') || ''; } catch (e) {}
+    if (stored) return stored;
+
+    var computed = 'direct';
+    try {
+      var params = new URLSearchParams(location.search);
+      var gclid = params.get('gclid');
+      var utmSource = params.get('utm_source');
+      var utmMedium = (params.get('utm_medium') || '').toLowerCase();
+      var utmCampaign = params.get('utm_campaign');
+      if (gclid || ['cpc', 'ppc', 'paid'].indexOf(utmMedium) !== -1) {
+        computed = 'ads:' + (utmCampaign || 'google');
+      } else if (utmSource) {
+        computed = 'utm:' + utmSource;
+      } else if (document.referrer) {
+        var refHost = new URL(document.referrer).hostname;
+        if (refHost && refHost !== location.hostname) {
+          computed = 'organic:' + refHost;
+        }
+      }
+    } catch (e) {}
+    computed = sanitise(computed) || 'direct';
+
+    try { sessionStorage.setItem('tn_source', computed); } catch (e) {}
+    return computed;
+  })();
+
   function setDateError(show) {
     const field = document.getElementById('date').closest('.field');
     const errEl = document.getElementById('date-error');
@@ -1895,7 +1931,8 @@
         return (t && t.checked) ? 'instructor' : 'learner';
       })(),
       website: form.website ? form.website.value : '', // honeypot — real users never see/fill this
-      formLoadedAt: PAGE_LOADED_AT
+      formLoadedAt: PAGE_LOADED_AT,
+      source: TN_SOURCE || ''
     };
 
     // No mode:'no-cors' on purpose — the endpoint returns CORS headers, so
@@ -2189,7 +2226,7 @@
       body: JSON.stringify({
         action: 'enquire', listingId: ENQUIRY_LISTING_ID,
         name: name, email: email, phone: phone, message: message,
-        website: honeypot, formLoadedAt: PAGE_LOADED_AT
+        website: honeypot, formLoadedAt: PAGE_LOADED_AT, source: TN_SOURCE || ''
       })
     }).then(function (r) { return r.json(); })
       .then(function (json) {
