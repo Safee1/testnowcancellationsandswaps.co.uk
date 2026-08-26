@@ -508,7 +508,9 @@
     // captured in initSession above) instead of a hardcoded 'Learner A'/
     // 'Learner B' — falls back to the old hardcoded pair if a stale
     // backend response left them blank.
-    else if (YOU_ARE === 'MOD' && (m.sender === 'A' || m.sender === 'B')) { div.className = 'msg them'; div.innerHTML = '<div class="who">' + escapeHtml((m.sender === 'A' ? HANDLE_A_ : HANDLE_B_) || (m.sender === 'A' ? 'Learner A' : 'Learner B')) + '</div>' + escapeHtml(m.text) + '<div class="when">' + ts + '</div>'; }
+    // v84: moderator view shows guided-flow signals humanised (same wording as
+    // the backend transcript) instead of the raw "📅 TEST_SLOT:…" text.
+    else if (YOU_ARE === 'MOD' && (m.sender === 'A' || m.sender === 'B')) { div.className = 'msg them'; div.innerHTML = '<div class="who">' + escapeHtml((m.sender === 'A' ? HANDLE_A_ : HANDLE_B_) || (m.sender === 'A' ? 'Learner A' : 'Learner B')) + '</div>' + escapeHtml(humanizeSignalForMod(m.text)) + '<div class="when">' + ts + '</div>'; }
     else if (m.sender === YOU_ARE) { div.className = 'msg me'; div.innerHTML = escapeHtml(m.text) + '<div class="when">' + ts + '</div>'; }
     else { div.className = 'msg them'; div.innerHTML = '<div class="who">' + escapeHtml(OTHER_HANDLE) + '</div>' + escapeHtml(m.text) + '<div class="when">' + ts + '</div>'; }
     stream.appendChild(div); scrollDown();
@@ -822,8 +824,21 @@
     scrollDown();
   }
 
-  function prettySlot(s) { const tl = s.type === 'weekday' ? 'weekday £62' : (s.type === 'weekend' ? 'evening/weekend £75' : ''); return formatDate(s.date) + ' at ' + s.time + ', ' + s.centre + (tl ? ' (' + tl + ')' : ''); }
-  function formatDate(iso) { try { const p = iso.split('-'); const dt = new Date(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2])); const M = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']; return dt.getDate() + ' ' + M[dt.getMonth()] + ' ' + dt.getFullYear(); } catch (e) { return iso; } }
+  function prettySlot(s) { const tl = s.type === 'weekday' ? 'weekday £62' : (s.type === 'weekend' ? 'evening/weekend £75' : ''); return (s.dateLabel || fmtDateUK(s.date)) + ' at ' + s.time + ', ' + s.centre + (tl ? ' (' + tl + ')' : ''); }
+  // Shared display-date formatter — "Tue 14th June 2026". Used for VISIBLE
+  // date text only; SIG_SLOT wire format (yyyy-mm-dd|HH:MM|centre|type) is untouched.
+  function fmtDateUK(v){try{var d=null;if(v instanceof Date)d=v;else{var s=String(v||'').trim();var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)d=new Date(+m[1],+m[2]-1,+m[3]);else{var m2=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m2)d=new Date(+m2[3],+m2[2]-1,+m2[1]);else if(s){var t=new Date(s);if(!isNaN(t))d=t;}}}if(!d||isNaN(d))return String(v||'');var n=d.getDate(),sfx=(n%10==1&&n!=11)?'st':(n%10==2&&n!=12)?'nd':(n%10==3&&n!=13)?'rd':'th';return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]+' '+n+sfx+' '+['January','February','March','April','May','June','July','August','September','October','November','December'][d.getMonth()]+' '+d.getFullYear();}catch(e){return String(v||'');}}
+
+  // v84: display-only humanising of the guided-flow signals for the moderator
+  // view (learner views parse the same signals into cards and never call this).
+  function humanizeSignalForMod(t) {
+    const s = String(t || '');
+    if (s.indexOf(SIG_SLOT) === 0) { const p = s.slice(SIG_SLOT.length).split('|'); const tl = p[3] === 'weekday' ? 'weekday £62' : (p[3] === 'weekend' ? 'evening/weekend £75' : ''); return 'shared test: ' + fmtDateUK(p[0]) + ' at ' + (p[1] || '') + ', ' + (p[2] || '') + (tl ? ' (' + tl + ')' : ''); }
+    if (s.indexOf(SIG_REF) === 0) return 'shared booking reference ' + s.slice(SIG_REF.length).trim();
+    if (s.indexOf(SIG_DONE) === 0) return 'is ready to call DVSA';
+    if (s.indexOf(SIG_CALLING) === 0) return 'is calling DVSA now';
+    return s;
+  }
 
   // ================= ACTION BAR =================
   function renderActionBar() {
