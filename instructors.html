@@ -23,6 +23,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>For Driving Instructors — TestNow</title>
+<link rel="canonical" href="https://testnowcancellationsandswaps.co.uk/instructors.html">
 <meta name="description" content="Get matched with UK learners who need an instructor for their upcoming driving test.">
 <meta name="theme-color" content="#0A6B36">
 <link rel="icon" href="favicon.ico" sizes="32x32">
@@ -397,9 +398,17 @@ document.getElementById('isubmit').addEventListener('click', function(){
       var html = "You're registered! Your personal dashboard: <a href=\"" + link + "\">open dashboard</a>.<br><strong>Save this link</strong> — it’s your key to viewing and responding to enquiries.";
       html += "<br><br><strong>Save 07462 169428</strong> in your phone as <strong>TestNow</strong> — that’s the number your enquiry alerts are texted from.";
       if (d.community && d.community.length) {
+        // Same attribute-safe escaper as instructor.html / enquiry-respond.html —
+        // the group url/region come from the backend's config sheet, but they
+        // still land inside an href="" and visible text, so escape on output.
+        var esc = function (s) {
+          return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+          });
+        };
         html += "<br><br><strong>Your area community group" + (d.community.length > 1 ? "s" : "") + "</strong> — instructors only (traffic, test-centre intel, cancellations):";
         for (var ci = 0; ci < d.community.length; ci++) {
-          html += "<br><a href=\"" + d.community[ci].url + "\" target=\"_blank\" rel=\"noopener\">Join " + d.community[ci].region + " instructors</a>";
+          html += "<br><a href=\"" + esc(d.community[ci].url) + "\" target=\"_blank\" rel=\"noopener\">Join " + esc(d.community[ci].region) + " instructors</a>";
         }
       }
       msg.innerHTML = html;

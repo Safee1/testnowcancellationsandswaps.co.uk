@@ -710,7 +710,7 @@
 
   function stepCentre() {
     awaiting = true;
-    const c = gcard('<div class="g-text"><b>Step 4 of 6 — Test centre.</b> Which test centre is your test at?<span class="g-warn">From 9 June 2026 you can only swap with the same centre, one of your 3 nearest, or your original booked centre.</span></div>');
+    const c = gcard('<div class="g-text"><b>Step 4 of 6 — Test centre.</b> Which test centre is your test at?<span class="g-warn">DVSA rules: you can only swap with the same centre, one of your 3 nearest, or your original booked centre.</span></div>');
     const wrap = document.createElement('div'); wrap.className = 'g-controls';
     const err = document.createElement('div'); err.className = 'g-err';
     const btn = document.createElement('button'); btn.className = 'g-btn'; btn.textContent = 'Next';
@@ -809,7 +809,7 @@
     if (myDate && workingDaysUntil(myDate) < 10) w.push('One of your tests is under 10 working days away — DVSA may say it\'s too soon.');
     else if (otherSlot && otherSlot.date && workingDaysUntil(otherSlot.date) < 10) w.push('One of your tests is under 10 working days away — DVSA may say it\'s too soon.');
     if (myType && otherSlot && otherSlot.type && myType !== otherSlot.type) w.push('Your test types differ (weekday £62 vs evening/weekend £75) — swaps must be like-for-like.');
-    if (myCentre && otherSlot && otherSlot.centre && centresLoaded && !centresCompatible(myCentre, otherSlot.centre)) w.push('Your centres may be outside the 3-nearest range allowed from 9 June 2026.');
+    if (myCentre && otherSlot && otherSlot.centre && centresLoaded && !centresCompatible(myCentre, otherSlot.centre)) w.push('Your centres may be outside the 3-nearest range DVSA allows.');
     if (myChangesLeft === false) w.push('You might have used both your test changes.');
     if (myInstructorOk === false) w.push('Double-check your instructor\'s happy with the new slot.');
     return w;

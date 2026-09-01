@@ -38,6 +38,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Test Now — Free UK Driving Test Swaps</title>
+<link rel="canonical" href="https://testnowcancellationsandswaps.co.uk/">
 <meta name="description" content="Swap your DVSA practical driving test date with another learner. Free, anonymous, no fees. Skip the months-long DVSA wait.">
 <meta name="theme-color" content="#0A6B36">
 
@@ -1464,9 +1465,9 @@
         </div>
 
         <div class="field full" id="moves-box" style="display:none;">
-          <label class="label-sentence">Centres you'll be able to swap to (from 9 June)</label>
+          <label class="label-sentence">Centres you can swap to</label>
           <div class="moves-note">
-            From 9 June 2026, DVSA limits swaps to your 3 nearest centres (or back to your original). These are shown so you know your options — they're set by DVSA, not us.
+            Since 9 June 2026, DVSA limits swaps to your 3 nearest centres (or back to your original). These are shown so you know your options — they're set by DVSA, not us.
           </div>
           <div class="moves-chips" id="moves-chips"></div>
         </div>
@@ -2143,7 +2144,9 @@
     return dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   }
   // Shared display-date formatter — "Tue 14th June 2026". Used for VISIBLE
-  // date text only; data-date/machine values keep using fmtDate()/raw ISO.
+  // date text only. The board button's data-date keeps the short fmtDate()
+  // form ("14 Jun 2026") — it is only a display fallback for the enquiry
+  // sheet header when data-date-display is absent; nothing parses it.
   function fmtDateUK(v){try{var d=null;if(v instanceof Date)d=v;else{var s=String(v||'').trim();var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)d=new Date(+m[1],+m[2]-1,+m[3]);else{var m2=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m2)d=new Date(+m2[3],+m2[2]-1,+m2[1]);else if(s){var t=new Date(s);if(!isNaN(t))d=t;}}}if(!d||isNaN(d))return String(v||'');var n=d.getDate(),sfx=(n%10==1&&n!=11)?'st':(n%10==2&&n!=12)?'nd':(n%10==3&&n!=13)?'rd':'th';return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]+' '+n+sfx+' '+['January','February','March','April','May','June','July','August','September','October','November','December'][d.getMonth()]+' '+d.getFullYear();}catch(e){return String(v||'');}}
   function renderBoard(filterRegion) {
     const grid = document.getElementById('board-grid');
@@ -2321,13 +2324,25 @@
       .then(r => r.json())
       .then(loc => {
         if (!loc || loc.country_code !== 'GB') return; // only UK visitors
-        const guessed = regionFromLocation(loc.city, loc.region);
-        if (guessed) {
-          DETECTED_REGION = guessed;
-          setCookie('tn_region', encodeURIComponent(guessed), 90);
-          sortBoardByRegion();
-          renderBoard(document.getElementById('board-filter').value || '');
-        }
+        // ipwho.is usually answers before the Apps Script centres call has
+        // cold-started, and regionFromLocation() returns '' while CENTRES is
+        // still empty — so on a first visit the guess was silently dropped.
+        // Wait for CENTRES (same 200ms poll / 8s cap pattern as the BOARD
+        // re-sort in consentInit) before matching.
+        const apply = () => {
+          const guessed = regionFromLocation(loc.city, loc.region);
+          if (guessed) {
+            DETECTED_REGION = guessed;
+            setCookie('tn_region', encodeURIComponent(guessed), 90);
+            sortBoardByRegion();
+            renderBoard(document.getElementById('board-filter').value || '');
+          }
+        };
+        if (CENTRES && CENTRES.length) { apply(); return; }
+        const t = setInterval(() => {
+          if (CENTRES && CENTRES.length) { clearInterval(t); apply(); }
+        }, 200);
+        setTimeout(() => clearInterval(t), 8000);
       })
       .catch(() => {});
   }

@@ -158,7 +158,7 @@
   <div class="wrap">
     <div class="eyebrow">Instructor dashboard</div>
     <h1>Available learner requests</h1>
-    <p class="masknote">Contact details stay hidden until you take a lead. Each lead can only ever be taken by one instructor.</p>
+    <p class="masknote">Contact details stay hidden until you take a learner request. Each request can only ever be taken by one instructor.</p>
 
     <div class="topbar" id="topbar" style="display:none;">
       <div class="who" id="who"></div>
@@ -167,7 +167,7 @@
     </div>
 
     <div class="empty" id="paidbanner" style="display:none;background:#e7f4ec;border:1.5px solid var(--ink);">
-      ✅ Payment received. Your lead's contact details are being released — they'll appear in <strong>My leads</strong> below within a minute (refresh if needed), and we've emailed them to you too.
+      ✅ Payment received. The learner's contact details are being released — they'll appear in <strong>My learners</strong> below within a minute (refresh if needed), and we've emailed them to you too.
     </div>
 
     <div class="error" id="err" style="display:none;"></div>
@@ -175,9 +175,9 @@
     <div class="lead-grid" id="grid"></div>
 
     <div id="minewrap" style="display:none;margin-top:44px;">
-      <div class="eyebrow">My leads</div>
-      <h1 style="font-size:26px;">Leads you've taken</h1>
-      <p class="masknote">These are exclusively yours. Contact the learner promptly — leads are non-refundable once details are released.</p>
+      <div class="eyebrow">My learners</div>
+      <h1 style="font-size:26px;">Learners you've taken on</h1>
+      <p class="masknote">These are exclusively yours. Contact the learner promptly — requests are non-refundable once details are released.</p>
       <div class="lead-grid" id="minegrid"></div>
     </div>
   </div>
@@ -215,11 +215,14 @@ function load() {
       if (d.result !== 'success') { showErr(d.message || "Couldn't load your dashboard."); return; }
       document.getElementById('topbar').style.display = '';
       document.getElementById('who').textContent = d.instructor.name;
-      CREDITS = d.instructor.credits;
-      document.getElementById('credits').textContent = '';
       var grid = document.getElementById('grid');
       renderMine(d.mine || []);
       if (!d.leads.length) { document.getElementById('empty').style.display = ''; return; }
+      // The id goes in a data attribute, not an inline onclick string:
+      // esc() turns ' into &#39;, which the HTML parser decodes straight
+      // back to ' before the JS engine ever sees the attribute — so a quote
+      // in an id could still break out of the string. A data attribute has
+      // no second parsing layer.
       grid.innerHTML = d.leads.map(function(l){
         return '<div class="lcard">' +
           '<div class="lregion">' + esc(l.region) + '</div>' +
@@ -227,16 +230,17 @@ function load() {
           '<div class="lrow"><span>Test date</span><strong>' + esc(l.dateLabel || fmtDateUK(l.date)) + '</strong></div>' +
           '<div class="lrow"><span>Needs</span><strong>Instructor for their test</strong></div>' +
           '<div class="lrow"><span>Wants</span><strong>' + esc(l.wantedWhen || '—') + '</strong></div>' +
-          '<button class="lbtn" onclick="useCredit(\'' + esc(l.id) + '\')">Take this lead — FREE (launch offer)</button>' +
-          '' +
+          '<button class="lbtn" data-take="' + esc(l.id) + '">Take this learner request — FREE (launch offer)</button>' +
           '</div>';
       }).join('');
     })
     .catch(function(){ showErr("Couldn't load your dashboard — try again in a minute."); });
 }
+document.getElementById('grid').addEventListener('click', function (ev) {
+  var b = ev.target && ev.target.closest ? ev.target.closest('button[data-take]') : null;
+  if (b) useCredit(b.getAttribute('data-take'));
+});
 function showErr(m){ var e=document.getElementById('err'); e.style.display=''; e.textContent=m; }
-
-var CREDITS = 0;
 
 if (new URLSearchParams(location.search).get('paid') === '1') {
   document.getElementById('paidbanner').style.display = '';
@@ -250,6 +254,9 @@ function post(body) {
   }).then(function(r){ return r.json(); });
 }
 
+// buyLead() and the hidden #buycredits button are the parked paid path
+// (Stripe still in test mode, free-launch mode on). Left in place so the
+// paywall can be switched back on without a frontend rewrite.
 function buyLead(id) {
   post({ action: 'createCheckout', tk: TK, kind: 'lead', leadId: id })
     .then(function(d){
@@ -260,13 +267,13 @@ function buyLead(id) {
 }
 
 function useCredit(id) {
-  if (!confirm('Take this lead for free? The learner\'s contact details are revealed to you immediately - please only take leads you intend to follow up.')) return;
+  if (!confirm('Take this learner request for free? The learner\'s contact details are revealed to you immediately - please only take requests you intend to follow up.')) return;
   post({ action: 'claimLead', tk: TK, leadId: id })
     .then(function(d){
       if (d.result === 'success' && d.contact) {
-        alert('Lead is yours!\n\nName: ' + d.contact.name + '\nPhone: ' + d.contact.phone + '\nEmail: ' + d.contact.email + '\n\nWe have emailed you a copy. It also appears in My leads.');
+        alert('This learner is yours!\n\nName: ' + d.contact.name + '\nPhone: ' + d.contact.phone + '\nEmail: ' + d.contact.email + '\n\nWe have emailed you a copy. It also appears under My learners.');
         load2();
-      } else { showErr(d.message || 'Could not claim the lead.'); }
+      } else { showErr(d.message || 'Could not take this request.'); }
     })
     .catch(function(){ showErr('Could not claim — try again.'); });
 }

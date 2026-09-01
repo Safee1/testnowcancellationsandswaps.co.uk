@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Page not found — TestNow Cancellations &amp; Swaps</title>
+<meta name="description" content="That page doesn't exist on TestNow. Head back to the swap board or the instructor pages.">
+<meta name="theme-color" content="#0A6B36">
+
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+<link rel="icon" type="image/png" href="favicon-48x48.png" sizes="48x48">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* Same design tokens as index.html / remove.html — keep in sync if index changes.
+     GitHub Pages serves this file for any unknown path on the custom domain, so
+     every link below is ROOT-relative — the missing URL may be nested. */
+  :root {
+    --ink: #0A6B36;
+    --ink-soft: #037434;
+    --paper: #F5F0E6;
+    --paper-warm: #EBE3D2;
+    --accent: #C3135F;
+    --muted: #58685F;
+    --radius: 18px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    padding: 28px 20px 60px;
+  }
+  a { color: inherit; }
+
+  .top { max-width: 560px; margin: 0 auto 28px; }
+  .top a.home { font-size: 14px; text-decoration: none; opacity: .75; }
+  .top a.home:hover { opacity: 1; }
+
+  .card {
+    background: var(--paper-warm);
+    border: 1.5px solid var(--ink);
+    border-radius: 24px;
+    padding: 36px 24px;
+    max-width: 560px;
+    margin: 0 auto;
+    box-shadow: 8px 8px 0 var(--ink);
+  }
+  @media (min-width: 720px) { .card { padding: 48px; } }
+
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+  }
+  .sub { color: var(--ink-soft); font-size: 16px; margin-bottom: 26px; max-width: 46ch; }
+
+  .links { display: grid; gap: 12px; }
+  .links a {
+    display: block;
+    text-decoration: none;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-weight: 600;
+    text-align: center;
+    border: 1.5px solid var(--ink);
+  }
+  .links a.secondary { background: transparent; color: var(--ink); }
+  .links a:hover { filter: brightness(1.08); }
+
+  .fine { margin-top: 26px; font-size: 13px; color: var(--muted); }
+  footer {
+    max-width: 560px;
+    margin: 40px auto 0;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="home" href="/">&larr; TestNow home</a>
+</div>
+
+<main class="card">
+  <div class="eyebrow">Page not found</div>
+  <h1>That page isn't here.</h1>
+  <p class="sub">The link may be old, or the address was mistyped. Nothing's been lost — your listing, chat or dashboard is still where it was.</p>
+
+  <div class="links">
+    <a href="/">See the swap board</a>
+    <a class="secondary" href="/find-instructor.html">Find a driving instructor</a>
+    <a class="secondary" href="/instructors.html">For driving instructors</a>
+  </div>
+
+  <p class="fine">Looking for a chat or dashboard link from an email or text? Open the link from that message again — those pages need the personal code it contains.</p>
+</main>
+
+<footer>
+  &copy; <span id="yr"></span> testnowcancellationsandswaps.co.uk &middot; Independent &amp; not affiliated with DVSA or gov.uk.
+</footer>
+
+<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+</body>
+</html>
