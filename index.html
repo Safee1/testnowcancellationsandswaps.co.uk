@@ -1232,6 +1232,132 @@
     .strip-track, .swap-arrow, .swap-arrow span, .eyebrow .dot { animation: none !important; }
     .btn:active, .brequest:active, .form-success .again:active { transform: none; }
   }
+
+  /* ===== v92 (2026-09-02): live proof + honest urgency =====
+     Every number rendered by these blocks comes from the backend
+     (?action=stats, ?action=board) — nothing is seeded or faked (UK DMCC
+     Act 2024 bans fabricated urgency/social proof, and we run paid ads).
+     Blocks stay hidden until real data arrives. */
+  .hero-stats {
+    display: flex; gap: 28px; flex-wrap: wrap;
+    margin-top: 26px; padding-top: 22px;
+    border-top: 1.5px solid var(--ink);
+  }
+  .hero-stats div { min-width: 96px; }
+  .hero-stats strong {
+    display: block;
+    font-family: 'Fraunces', serif;
+    font-size: 34px; font-weight: 600; line-height: 1; letter-spacing: -0.02em;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .hero-stats strong em { font-style: normal; color: var(--accent); }
+  .hero-stats span { display: block; margin-top: 6px; font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+
+  .soonest {
+    display: inline-flex; align-items: center; gap: 12px;
+    margin-top: 18px; padding: 10px 16px 10px 12px;
+    border: 1.5px solid var(--ink); border-radius: 999px;
+    background: var(--paper-warm); color: var(--ink);
+    text-decoration: none; font-size: 14px; font-weight: 500;
+    box-shadow: 3px 3px 0 var(--ink);
+    transition: transform .2s ease, box-shadow .2s ease;
+    max-width: 100%;
+  }
+  .soonest:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--accent); }
+  .soonest .flash {
+    width: 10px; height: 10px; border-radius: 50%; background: var(--accent); flex: 0 0 auto;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .soonest strong { font-weight: 700; }
+  .soonest .arrow { color: var(--accent); font-weight: 700; }
+
+  .board-tools .sort-toggle {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 14px; font-weight: 500; color: var(--ink); cursor: pointer; user-select: none;
+  }
+  .board-tools .sort-toggle input { accent-color: var(--accent); width: 18px; height: 18px; }
+  .bcard.soon { border-color: var(--accent); box-shadow: 4px 4px 0 var(--accent); }
+  .bcard.soon:hover { box-shadow: 6px 6px 0 var(--accent); }
+  .bcard .bsoon, .bcard .bnew {
+    position: absolute; top: 14px; right: 14px;
+    font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700;
+    padding: 4px 10px; border-radius: 999px;
+  }
+  .bcard .bsoon { background: var(--accent); color: #fff; }
+  .bcard .bnew { background: var(--ink); color: var(--paper); }
+  .bcard .bsoon + .bnew { right: 92px; }
+  @media (max-width: 720px) {
+    /* .btag owns the top-right slot on mobile — badges go top-left and the
+       region line drops below them. */
+    .bcard.has-badge .bregion { padding-top: 24px; }
+    .bcard .bsoon, .bcard .bnew { top: 12px; left: 14px; right: auto; }
+    .bcard .bsoon + .bnew { left: 90px; }
+  }
+  .bcard .bage { font-size: 12px; color: var(--muted); margin-top: 10px; }
+  .bcard .bage strong { color: var(--ink); }
+
+  .waitmath {
+    margin: 0 auto 56px; padding: 26px 30px;
+    border: 1.5px solid var(--ink); border-radius: 18px;
+    background: var(--ink); color: var(--paper);
+    display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center;
+    box-shadow: 6px 6px 0 var(--accent);
+  }
+  .waitmath h3 { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 600; line-height: 1.15; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .waitmath h3 em { font-style: italic; color: var(--accent-soft); font-weight: 400; }
+  .waitmath p { margin: 0; font-size: 15px; line-height: 1.55; opacity: .92; }
+  .waitmath .btn-primary { background: var(--paper); color: var(--ink); white-space: nowrap; }
+  .waitmath .btn-primary:hover { background: var(--accent); color: #fff; }
+  @media (max-width: 720px) {
+    .waitmath { grid-template-columns: 1fr; padding: 22px; margin-bottom: 36px; }
+    .waitmath h3 { font-size: 22px; }
+    .waitmath .btn-primary { width: 100%; text-align: center; }
+    .hero-stats { gap: 18px; }
+    .hero-stats strong { font-size: 28px; }
+    .soonest { font-size: 13px; padding: 9px 14px 9px 11px; }
+  }
+
+  /* Mobile sticky CTA — appears once the hero's own CTA scrolls away,
+     hides again while the listing form or cookie banner is on screen. */
+  .sticky-cta {
+    position: fixed; left: 12px; right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    z-index: 190;
+    display: none; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 10px 10px 10px 16px;
+    background: var(--ink); color: var(--paper);
+    border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.28);
+    transform: translateY(120%); transition: transform .3s ease;
+  }
+  .sticky-cta.on { transform: translateY(0); }
+  .sticky-cta .s-txt { font-size: 13px; line-height: 1.3; min-width: 0; }
+  .sticky-cta .s-txt strong { display: block; font-size: 14px; }
+  .sticky-cta .s-txt em { font-style: normal; color: var(--accent-soft); }
+  .sticky-cta .btn { padding: 11px 16px; font-size: 14px; background: var(--paper); color: var(--ink); white-space: nowrap; min-height: 44px; }
+  @media (max-width: 720px) { .sticky-cta { display: flex; } }
+
+  /* Desktop activity toast — rotates REAL facts from the board/stats. */
+  .toast {
+    position: fixed; left: 20px; bottom: 20px; z-index: 180;
+    max-width: 340px;
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 40px 14px 16px;
+    background: var(--paper); color: var(--ink);
+    border: 1.5px solid var(--ink); border-radius: 14px;
+    box-shadow: 5px 5px 0 var(--ink);
+    font-size: 14px; line-height: 1.45;
+    opacity: 0; transform: translateY(16px); pointer-events: none;
+    transition: opacity .35s ease, transform .35s ease;
+  }
+  .toast.on { opacity: 1; transform: none; pointer-events: auto; }
+  .toast .t-ico { width: 34px; height: 34px; border-radius: 10px; background: var(--ink); color: var(--paper); display: grid; place-items: center; flex: 0 0 auto; font-size: 16px; }
+  .toast strong { font-weight: 700; }
+  .toast .t-sub { display: block; font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .toast .t-x { position: absolute; top: 8px; right: 10px; background: none; border: 0; font-size: 16px; cursor: pointer; color: var(--muted); padding: 4px; line-height: 1; }
+  .toast .t-x:hover { color: var(--accent); }
+  @media (max-width: 720px) { .toast { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .toast, .sticky-cta { transition: none; } }
 </style>
 </head>
 <body>
@@ -1271,13 +1397,23 @@
         <a href="#how" class="btn btn-ghost">How does it work?</a>
       </div>
       <p class="cta-note" style="margin-top:18px;">No account required. Takes about 90 seconds.</p>
+      <a class="soonest" id="soonest" href="#board" hidden>
+        <span class="flash" aria-hidden="true"></span>
+        <span>Earliest test on the board: <strong id="soonest-date"></strong> <span id="soonest-where"></span></span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+      <div class="hero-stats" id="hero-stats" hidden aria-label="Live numbers">
+        <div><strong id="st-live">0</strong><span>tests listed now</span></div>
+        <div><strong><em id="st-matches">0</em></strong><span>matches made</span></div>
+        <div><strong id="st-learners">0</strong><span>learners using it</span></div>
+      </div>
     </div>
 
     <div class="swap-illo reveal" aria-hidden="true">
       <div class="swap-card a">
         <p class="card-name">Sarah · Manchester</p>
         <div class="row"><span>Test centre</span><strong>West Didsbury</strong></div>
-        <div class="row"><span>Date</span><strong>14 Aug 2026</strong></div>
+        <div class="row"><span>Date</span><strong data-illo-days="74">14 Aug 2026</strong></div>
         <div class="row"><span>Wants</span><strong>Anything sooner</strong></div>
         <span class="stamp">Listed today</span>
       </div>
@@ -1285,8 +1421,8 @@
       <div class="swap-card b">
         <p class="card-name">James · Manchester</p>
         <div class="row"><span>Test centre</span><strong>Cheetham Hill</strong></div>
-        <div class="row"><span>Date</span><strong>05 Jun 2026</strong></div>
-        <div class="row"><span>Wants</span><strong>August or later</strong></div>
+        <div class="row"><span>Date</span><strong data-illo-days="12">05 Jun 2026</strong></div>
+        <div class="row"><span>Wants</span><strong data-illo-wants="74">August or later</strong></div>
         <span class="stamp">Match found</span>
       </div>
     </div>
@@ -1312,6 +1448,7 @@
       <select id="board-filter">
         <option value="">All regions</option>
       </select>
+      <label class="sort-toggle"><input type="checkbox" id="board-sort-soon" checked> Soonest first</label>
       <span class="board-count" id="board-count"></span>
     </div>
     <div class="board-grid" id="board-grid">
@@ -1424,6 +1561,13 @@
 <!-- FORM -->
 <section class="block" id="swap" style="padding-top: 0;">
   <div class="wrap">
+    <div class="waitmath reveal">
+      <div>
+        <h3>Every week you wait is <em>another lesson you're paying for.</em></h3>
+        <p>A two-month wait at one lesson a week is eight more lessons before you even sit the test. Somebody on this board wants the date you've got — <span id="wm-line">and listing yours is free and takes 90 seconds.</span></p>
+      </div>
+      <a href="#swap-form" class="btn btn-primary">List my test free →</a>
+    </div>
     <div class="section-head reveal">
       <div class="section-num"><strong>02</strong> List your test</div>
       <h2 class="section-title">Post your <em>swap</em> in 90 seconds.</h2>
@@ -1655,6 +1799,15 @@
 </footer>
 
 <!-- COOKIE / LOCATION CONSENT BANNER -->
+<div class="sticky-cta" id="sticky-cta" aria-hidden="true">
+  <div class="s-txt"><strong id="sc-line1">Tests are being listed right now</strong><span id="sc-line2">Free · no account · 90 seconds</span></div>
+  <a href="#swap-form" class="btn">List mine →</a>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <div class="t-ico" id="toast-ico">⇄</div>
+  <div><span id="toast-main"></span><span class="t-sub" id="toast-sub"></span></div>
+  <button type="button" class="t-x" id="toast-x" aria-label="Dismiss">✕</button>
+</div>
 <div class="consent" id="consent" role="dialog" aria-label="Cookie and location notice" style="display:none;">
   <div class="consent-inner">
     <p>
@@ -2158,13 +2311,30 @@
       count.textContent = '';
       return;
     }
+    // v92: "Soonest first" sort (default on) — within the detected-region
+    // priority sortBoardByRegion already applied. The 3 earliest dates
+    // across the WHOLE board get a "Soonest" badge; anything listed in
+    // the last 7 days (timestamp is baked into the listing id) gets "New".
+    const soonSort = document.getElementById('board-sort-soon');
+    if (soonSort && soonSort.checked) {
+      rows.sort((a, b) => {
+        const aN = DETECTED_REGION && a.region === DETECTED_REGION ? 0 : 1;
+        const bN = DETECTED_REGION && b.region === DETECTED_REGION ? 0 : 1;
+        if (aN !== bN) return aN - bN;
+        return String(a.date || '9999').localeCompare(String(b.date || '9999'));
+      });
+    }
+    const soonIds = BOARD.slice().filter(r => r.date).sort((a, b) => String(a.date).localeCompare(String(b.date))).slice(0, 3).map(r => r.id);
     count.textContent = rows.length + (rows.length === 1 ? ' test available' : ' tests available');
     grid.innerHTML = rows.map(r =>
-      '<div class="bcard">' +
+      '<div class="bcard' + (soonIds.indexOf(r.id) > -1 ? ' soon' : '') + ((soonIds.indexOf(r.id) > -1 || (listingAgeDays(r.id) !== null && listingAgeDays(r.id) <= 7)) ? ' has-badge' : '') + '">' +
+        (soonIds.indexOf(r.id) > -1 ? '<span class="bsoon">Soonest</span>' : '') +
+        (listingAgeDays(r.id) !== null && listingAgeDays(r.id) <= 7 ? '<span class="bnew">New</span>' : '') +
         '<div class="bregion">' + esc(r.region) + '</div>' +
         '<div class="bcentre">' + esc(r.centre) + '</div>' +
         '<div class="bdate"><span>Date</span><span>' + esc(r.dateLabel || fmtDateUK(r.date)) + '</span></div>' +
         (r.time ? '<div class="bdate"><span>Time</span><span>' + esc(r.time) + '</span></div>' : '') +
+        (daysUntil(r.date) !== null ? '<div class="bage">' + (daysUntil(r.date) <= 0 ? '<strong>Today</strong>' : daysUntil(r.date) === 1 ? '<strong>Tomorrow</strong>' : '<strong>' + daysUntil(r.date) + ' days</strong> away') + (listingAgeDays(r.id) !== null ? ' · listed ' + ageLabel(listingAgeDays(r.id)) : '') + '</div>' : '') +
         // v79 PATCH (Feature 2): its own class (not .btag) so it never
         // collides with .btag's absolute top-right mobile position — see
         // the .binstructor CSS comment above for why.
@@ -2281,14 +2451,167 @@
         sel.innerHTML = '<option value="">All regions</option>' +
           regions.map(r => '<option>' + r + '</option>').join('');
         sel.addEventListener('change', () => renderBoard(sel.value));
+        const soonSort = document.getElementById('board-sort-soon');
+        if (soonSort) soonSort.addEventListener('change', () => renderBoard(sel.value));
         sortBoardByRegion();
         renderBoard('');
+        liveProof.onBoard(); // v92
       })
       .catch(() => {
         // If it can't load, hide it rather than showing a broken/empty board
         hideBoardSection();
       });
   }
+
+  // v92: keep the hero illustration dates in the future (they were hard-coded and had drifted into the past).
+  (function illoDates() {
+    const M = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const MF = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    document.querySelectorAll("[data-illo-days]").forEach(el => { const d = new Date(); d.setDate(d.getDate() + Number(el.dataset.illoDays)); el.textContent = String(d.getDate()).padStart(2,"0") + " " + M[d.getMonth()] + " " + d.getFullYear(); });
+    document.querySelectorAll("[data-illo-wants]").forEach(el => { const d = new Date(); d.setDate(d.getDate() + Number(el.dataset.illoWants)); el.textContent = MF[d.getMonth()] + " or later"; });
+  })();
+
+  // ---- v92 helpers: listing age (timestamp baked into the id) + days-until ----
+  function listingAgeDays(id) {
+    const m = /^L(\d{13})/.exec(String(id || ''));
+    if (!m) return null;
+    return Math.max(0, Math.floor((Date.now() - Number(m[1])) / 86400000));
+  }
+  function ageLabel(d) {
+    if (d === 0) return 'today';
+    if (d === 1) return 'yesterday';
+    if (d < 7) return d + ' days ago';
+    if (d < 14) return 'last week';
+    return Math.round(d / 7) + ' weeks ago';
+  }
+  function daysUntil(iso) {
+    if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
+    const t = new Date(iso + 'T00:00:00');
+    const now = new Date(); now.setHours(0, 0, 0, 0);
+    return Math.round((t - now) / 86400000);
+  }
+
+  // ---- v92: live proof + honest urgency (hero stats, soonest pill, sticky
+  // CTA, activity toast). Everything shown is real backend data; if a fetch
+  // fails or a number is 0 the element simply stays hidden. ----
+  const liveProof = (function () {
+    let STATS = null;
+    let boardReady = false;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function countUp(el, target) {
+      target = Number(target) || 0;
+      if (reduce || target < 20) { el.textContent = target.toLocaleString('en-GB'); return; }
+      const start = performance.now(), dur = 1100;
+      (function tick(now) {
+        const p = Math.min(1, (now - start) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(target * eased).toLocaleString('en-GB');
+        if (p < 1) requestAnimationFrame(tick);
+      })(start);
+    }
+
+    function showStats() {
+      if (!STATS) return;
+      const live = STATS.liveListings || 0, matches = STATS.matches || 0, learners = STATS.learners || 0;
+      if (!live || !matches || !learners) return;
+      const wrap = document.getElementById('hero-stats');
+      wrap.hidden = false;
+      countUp(document.getElementById('st-live'), live);
+      countUp(document.getElementById('st-matches'), matches);
+      countUp(document.getElementById('st-learners'), learners);
+      const sc1 = document.getElementById('sc-line1');
+      if (sc1) sc1.innerHTML = '<em>' + live + '</em> tests listed · ' + matches + ' matches made';
+      // Marquee: swap the generic "All UK test centres" for the real match count
+      document.querySelectorAll('.strip-track > span').forEach(s => {
+        s.innerHTML = s.innerHTML.replace('All UK test centres', matches + ' matches made so far');
+      });
+    }
+
+    function soonest() {
+      const dated = BOARD.filter(r => r.date).slice().sort((a, b) => String(a.date).localeCompare(String(b.date)));
+      return dated[0] || null;
+    }
+
+    function showSoonest() {
+      const s = soonest();
+      if (!s) return;
+      const d = daysUntil(s.date);
+      const pill = document.getElementById('soonest');
+      document.getElementById('soonest-date').textContent = (s.dateLabel || fmtDateUK(s.date)).replace(/\s\d{4}$/, '');
+      document.getElementById('soonest-where').textContent = '· ' + s.centre + (d !== null ? (d <= 0 ? ' · today' : d === 1 ? ' · tomorrow' : ' · ' + d + ' days away') : '');
+      pill.hidden = false;
+      const sc2 = document.getElementById('sc-line2');
+      if (sc2 && d !== null && d >= 0) sc2.textContent = 'Earliest on the board: ' + (s.dateLabel || fmtDateUK(s.date)).replace(/\s\d{4}$/, '') + (d === 0 ? ' (today)' : d === 1 ? ' (tomorrow)' : ' (' + d + ' days)');
+      const wm = document.getElementById('wm-line');
+      if (wm) wm.textContent = 'the earliest date on the board right now is ' + (s.dateLabel || fmtDateUK(s.date)).replace(/\s\d{4}$/, '') + '. Listing yours is free and takes 90 seconds.';
+    }
+
+    // Sticky CTA (mobile): on when hero CTA has scrolled off, off while the
+    // form section or the cookie banner is visible.
+    function stickyCta() {
+      const bar = document.getElementById('sticky-cta');
+      const heroCta = document.querySelector('.hero .cta-row');
+      const form = document.getElementById('swap');
+      const consent = document.getElementById('consent');
+      if (!bar || !heroCta || !form) return;
+      let heroOff = false, formOn = false;
+      function sync() {
+        const consentOn = consent && consent.style.display !== 'none';
+        const on = heroOff && !formOn && !consentOn;
+        bar.classList.toggle('on', on);
+        bar.setAttribute('aria-hidden', on ? 'false' : 'true');
+      }
+      new IntersectionObserver(es => { heroOff = !es[0].isIntersecting && es[0].boundingClientRect.top < 0; sync(); }).observe(heroCta);
+      new IntersectionObserver(es => { formOn = es[0].isIntersecting; sync(); }, { rootMargin: '0px 0px -30% 0px' }).observe(form);
+      if (consent) new MutationObserver(sync).observe(consent, { attributes: true, attributeFilter: ['style'] });
+    }
+
+    // Activity toast (desktop): a rotating set of true statements.
+    let toastStarted = false;
+    function toast() {
+      const el = document.getElementById('toast');
+      if (!el || window.innerWidth <= 720 || toastStarted) return;
+      toastStarted = true;
+      try { if (sessionStorage.getItem('tn_toast_off') === '1') return; } catch (e) {}
+      const facts = [];
+      const newest = BOARD.slice().filter(r => listingAgeDays(r.id) !== null).sort((a, b) => listingAgeDays(a.id) - listingAgeDays(b.id));
+      newest.slice(0, 3).forEach(r => facts.push({ ico: '📍', main: 'A learner listed a test at <strong>' + esc(r.centre) + '</strong>', sub: (r.region ? esc(r.region) + ' · ' : '') + 'listed ' + ageLabel(listingAgeDays(r.id)) }));
+      const s = soonest();
+      if (s) { const d = daysUntil(s.date); facts.push({ ico: '⚡', main: 'Earliest test on the board: <strong>' + esc((s.dateLabel || fmtDateUK(s.date)).replace(/\s\d{4}$/, '')) + '</strong>', sub: esc(s.centre) + (d !== null && d > 0 ? ' · ' + d + ' days away' : '') }); }
+      if (STATS && STATS.matches) facts.push({ ico: '⇄', main: '<strong>' + STATS.matches + '</strong> learners matched so far', sub: 'Free, no account, no fees' });
+      if (STATS && STATS.listingsLast7d) facts.push({ ico: '🆕', main: '<strong>' + STATS.listingsLast7d + '</strong> new ' + (STATS.listingsLast7d === 1 ? 'test' : 'tests') + ' listed this week', sub: 'Sooner dates go first' });
+      if (!facts.length) return;
+      let i = 0, timer = null;
+      function show() {
+        const f = facts[i % facts.length]; i++;
+        document.getElementById('toast-ico').textContent = f.ico;
+        document.getElementById('toast-main').innerHTML = f.main;
+        document.getElementById('toast-sub').innerHTML = f.sub;
+        el.classList.add('on');
+        timer = setTimeout(() => { el.classList.remove('on'); timer = setTimeout(show, 14000); }, 7000);
+      }
+      document.getElementById('toast-x').addEventListener('click', () => {
+        clearTimeout(timer); el.classList.remove('on');
+        try { sessionStorage.setItem('tn_toast_off', '1'); } catch (e) {}
+      });
+      timer = setTimeout(show, 5000);
+    }
+
+    fetch(SHEET_ENDPOINT + '?action=stats').then(r => r.json()).then(d => {
+      if (d && d.result === 'success') { STATS = d; showStats(); if (boardReady) toast(); }
+    }).catch(() => {});
+
+    return {
+      onBoard: function () {
+        boardReady = true;
+        showSoonest();
+        stickyCta();
+        if (STATS) toast(); else setTimeout(() => { if (!STATS) toast(); }, 4000);
+      }
+    };
+  })();
+
   loadBoard();
 
   loadCentres();
