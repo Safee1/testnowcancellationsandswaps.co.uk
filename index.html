@@ -677,6 +677,26 @@
     color: var(--muted);
     cursor: default;
   }
+  /* v93 (2026-09-05): "In a chat already" chip — backend v92 now returns
+     listings that are in an open chat (status "matching") instead of
+     hiding them. Same pill family, own class for the same stacking reason
+     as .binstructor/.btesttype. Still requestable: most chats die
+     unanswered, and the listing only leaves the board on a completed swap. */
+  .bcard .bmatching {
+    display: inline-block;
+    margin-top: 10px;
+    margin-right: 8px;
+    font-size: 12px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: transparent;
+    border: 1.5px dashed var(--ink-soft);
+    color: var(--ink-soft);
+    cursor: default;
+  }
   .bcard .brequest {
     /* This one IS a real action, unlike .btag above — same solid-fill
        weight as the site's other real CTA buttons, so it reads correctly
@@ -2325,7 +2345,10 @@
       });
     }
     const soonIds = BOARD.slice().filter(r => r.date).sort((a, b) => String(a.date).localeCompare(String(b.date))).slice(0, 3).map(r => r.id);
-    count.textContent = rows.length + (rows.length === 1 ? ' test available' : ' tests available');
+    // v93 (2026-09-05): count shows the whole board, with the in-chat share
+    // stated honestly rather than hidden.
+    const inChat = rows.filter(r => r.status === 'matching').length;
+    count.textContent = rows.length + (rows.length === 1 ? ' test available' : ' tests available') + (inChat ? ' · ' + inChat + ' already in a chat' : '');
     grid.innerHTML = rows.map(r =>
       '<div class="bcard' + (soonIds.indexOf(r.id) > -1 ? ' soon' : '') + ((soonIds.indexOf(r.id) > -1 || (listingAgeDays(r.id) !== null && listingAgeDays(r.id) <= 7)) ? ' has-badge' : '') + '">' +
         (soonIds.indexOf(r.id) > -1 ? '<span class="bsoon">Soonest</span>' : '') +
@@ -2344,6 +2367,9 @@
         // .btag, absolutely positioned top-right on mobile, see the
         // .binstructor CSS comment for why a second badge can't share it).
         (r.testType === 'weekday' ? '<span class="btesttype">Weekday</span>' : (r.testType === 'weekend' ? '<span class="btesttype">Weekend</span>' : '')) +
+        // v93 (2026-09-05): chip for listings already in an open chat (backend
+        // v92 status field). Button stays — see .bmatching CSS comment.
+        (r.status === 'matching' ? '<span class="bmatching" title="This learner is already talking to someone, but nothing is agreed yet — you can still ask">In a chat already</span>' : '') +
         '<span class="btag">Swap ASAP</span>' +
         (r.id ? '<button type="button" class="brequest" data-id="' + esc(r.id) + '" data-centre="' + esc(r.centre) + '" data-region="' + esc(r.region) + '" data-date="' + esc(fmtDate(r.date)) + '" data-date-display="' + esc(r.dateLabel || fmtDateUK(r.date)) + '">Request this swap</button>' : '') +
       '</div>'
