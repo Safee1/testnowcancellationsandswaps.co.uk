@@ -221,7 +221,7 @@
        are stripped server-side before they're stored or relayed; this tells
        both sides why, and that the only legitimate route is DVSA itself. -->
   <div class="info" style="border-left:3px solid #d9822b;">
-    🔒 <b>Safety:</b> phone numbers, emails and links are removed automatically — nobody here can ask you to text, call or pay them. A swap only ever happens through <b>DVSA on 0300 200 1122</b>, using booking references. Never pay anyone for a test date. If someone tries, tap <b>Not interested</b> and the chat closes.
+    🔒 <b>Safety:</b> this chat is buttons-only — nobody can type a phone number, email or link, so nobody here can ask you to text, call or pay them. A swap only ever happens through <b>DVSA on 0300 200 1122</b>, using booking references. Never pay anyone for a test date. If anything feels off, tap <b>Not interested</b> and the chat closes.
   </div>
 </div>
 
@@ -261,7 +261,10 @@
     <button class="outcome-btn bad" data-reason="Date too far away">📅 Date too far away</button>
     <button class="outcome-btn bad" data-reason="Wrong test centre">📍 Wrong test centre</button>
     <button class="outcome-btn bad" data-reason="Already sorted it">✅ Already sorted it</button>
-    <button class="outcome-btn bad" id="declineOtherBtn">✏️ Other</button>
+    <!-- v95 (2026-09-10): free-text "Other" reason hidden — learners are
+         buttons-only now (backend v101 drops any non-preset reason anyway).
+         Element kept so the existing wiring below doesn't dereference null. -->
+    <button class="outcome-btn bad" id="declineOtherBtn" style="display:none;">✏️ Other</button>
     <div id="declineOtherWrap" style="display:none;margin:-3px 0 9px;">
       <textarea id="declineOtherText" maxlength="100" placeholder="Say a bit more… (max 100 characters)" style="width:100%;min-height:44px;border:1.5px solid rgba(10,107,54,.3);border-radius:10px;padding:10px 12px;font-family:inherit;font-size:14px;background:var(--paper);color:var(--ink);resize:vertical;"></textarea>
       <button class="ab-btn small" id="declineOtherSubmit" style="margin-top:8px;">Confirm decline</button>
@@ -337,6 +340,11 @@
         // var declaration above for why these have safe empty-string
         // defaults.
         YOU_ARE = d.youAre; OTHER_HANDLE = d.otherHandle; YOUR_HANDLE = d.yourHandle || '';
+        // v95 (2026-09-10): learners are buttons-only. The typing box is only
+        // shown to a moderator; everyone else talks through the guided steps
+        // and the reply chips. Backend v101 refuses any other text anyway —
+        // this just removes the invitation to try.
+        if (YOU_ARE !== 'MOD') composer.style.display = 'none';
         HANDLE_A_ = d.handleA || ''; HANDLE_B_ = d.handleB || '';
         SESSION_STATUS = d.status; HAS_EMAIL = (d.hasEmail === false) ? false : true;
         // v78 PATCH (Feature 3): moderator view — badge, no guided-flow
@@ -566,6 +574,7 @@
   // as an error instead of looking like a sent message.
   function showLocalError(text) { const div = document.createElement('div'); div.className = 'sys'; div.textContent = text; stream.appendChild(div); scrollDown(); }
   function sendMessage() {
+    if (YOU_ARE !== 'MOD') return; // v95: learners are buttons-only (see initSession)
     const text = input.value.trim();
     if (!text || SESSION_STATUS !== 'open') return;
     input.value = ''; input.style.height = 'auto'; sendBtn.disabled = true;
@@ -579,6 +588,9 @@
         // Sending means the conversation is active — drop any idle backoff so
         // the other learner's reply still lands within the fast interval.
         if (j.result === 'success') wakePolling();
+        // v95: backend v101 refuses anything that isn't a button phrase or a
+        // guided-flow signal — say so plainly instead of a generic "didn't send".
+        if (j.result === 'error' && j.message === 'free_text_disabled') showLocalError('🔒 ' + (j.hint || 'Typing is switched off in this chat — use the buttons.'));
         return j.result === 'success';
       }).catch(() => false);
   }
@@ -723,11 +735,21 @@
     const err = document.createElement('div'); err.className = 'g-err';
     const btn = document.createElement('button'); btn.className = 'g-btn'; btn.textContent = 'Next';
     let control;
+    // v95 (2026-09-10): no typed centre any more — it was the one free-text
+    // field that travelled inside a guided-flow signal. If the centre list
+    // hasn't loaded yet, offer a retry instead of a text box; backend v101
+    // also refuses a centre containing any digit.
     if (centresLoaded && centresData.length) control = buildCentreSelect();
-    else { control = document.createElement('input'); control.type = 'text'; control.placeholder = 'Type your test centre, e.g. Wednesbury'; }
+    else {
+      control = document.createElement('select'); control.disabled = true;
+      const o = document.createElement('option'); o.value = ''; o.textContent = 'Loading test centres…'; control.appendChild(o);
+      const retry = function () { loadCentres(); setTimeout(function () { if (centresLoaded && centresData.length) { const sel = buildCentreSelect(); wrap.replaceChild(sel, control); control = sel; } else setTimeout(retry, 1500); }, 1200); };
+      retry();
+    }
     btn.onclick = function () {
       err.textContent = ''; const v = (control.value || '').trim();
-      if (!v) { err.textContent = 'Choose or type your test centre.'; return; }
+      if (!v) { err.textContent = 'Choose your test centre from the list.'; return; }
+      if (/\d/.test(v)) { err.textContent = 'Please pick a centre from the list.'; return; }
       myCentre = v; awaiting = false; control.disabled = true; btn.disabled = true; nextStep();
     };
     wrap.appendChild(control); wrap.appendChild(btn); c.appendChild(wrap); c.appendChild(err); scrollDown();
@@ -992,7 +1014,21 @@
       ['⏱️ Give me 5', 'Give me about 5 minutes ⏱️'],
       ['❓ What stage are you on?', 'What stage are you on?'],
       ['❓ How long will you be?', 'How long will you be?'],
-      ['👍 Ready when you are', 'I\'m ready when you are 👍']
+      ['👍 Ready when you are', 'I\'m ready when you are 👍'],
+      // v95 (2026-09-10): more preset replies, because typing is now off for
+      // learners. Every phrase here MUST also be in the backend allowlist
+      // (CHAT_ALLOWED_TEXT101_) or the server refuses it.
+      ['✅ Yes', 'Yes 👍'],
+      ['❌ No', 'No 👎'],
+      ['📅 Can\'t make that date', 'Sorry, I can\'t make that date.'],
+      ['🔁 Different date/time?', 'Can you do a different date or time?'],
+      ['📍 Confirm your centre', 'Please confirm your test centre in the steps above.'],
+      ['🔁 Used both changes', 'I\'ve used both my test changes already.'],
+      ['🕐 Free later today', 'I\'ll be free later today.'],
+      ['📆 Free tomorrow', 'I\'ll be free tomorrow.'],
+      ['👀 Still there?', 'Are you still there?'],
+      ['✅ All done my side', 'All done on my side ✅'],
+      ['🙏 Thank you', 'Thank you! 🙏']
     ];
     const role = (YOU_ARE === 'A')
       ? [['📞 Calling now', '📞 I\'m calling DVSA now — stay close to your phone, they\'ll ring you!']]
