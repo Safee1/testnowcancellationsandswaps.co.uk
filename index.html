@@ -1825,6 +1825,7 @@
         <h3>Contact</h3>
         <a href="mailto:info@testnowcancellationsandswaps.co.uk?subject=TestNow%20enquiry">Email us</a>
         <a href="mailto:info@testnowcancellationsandswaps.co.uk?subject=Report%20a%20problem">Report a problem</a>
+        <a href="mailto:info@testnowcancellationsandswaps.co.uk?subject=Report%20a%20scam%20or%20suspicious%20user">Report a scam or suspicious user</a>
         <a href="remove.html">Remove my listing</a>
       </div>
     </div>
@@ -2503,7 +2504,29 @@
       .catch(() => {
         // If it can't load, hide it rather than showing a broken/empty board
         hideBoardSection();
+        // v97 (2026-09-11): during the 9–11 Sep backend outage visitors filled
+        // in the whole listing form before finding out nothing could send.
+        // Re-check once after 4s (so one slow/cold response never triggers
+        // it); if the backend still doesn't answer, say so up front.
+        setTimeout(function () {
+          fetch(SHEET_ENDPOINT + '?action=stats')
+            .then(r => r.json())
+            .then(d => { if (!d || d.result !== 'success') throw new Error('down'); })
+            .catch(showBackendNotice);
+        }, 4000);
       });
+  }
+
+  function showBackendNotice() {
+    if (document.getElementById('backend-notice')) return;
+    const form = document.getElementById('swap-form');
+    if (!form || !form.parentNode) return;
+    const n = document.createElement('div');
+    n.id = 'backend-notice';
+    n.setAttribute('role', 'status');
+    n.style.cssText = 'border:1.5px solid rgba(195,19,95,.35);border-left:5px solid var(--accent);background:#fff;border-radius:14px;padding:14px 18px;margin:0 0 18px;line-height:1.6;';
+    n.innerHTML = '⚠️ <b>We\'re having a temporary technical problem</b>, so new listings may not go through right now. Please try again in a little while — or email <a href="mailto:info@testnowcancellationsandswaps.co.uk?subject=Please%20list%20my%20test">info@testnowcancellationsandswaps.co.uk</a> with your test centre and date and we\'ll add you.';
+    form.parentNode.insertBefore(n, form);
   }
 
   // v92: keep the hero illustration dates in the future (they were hard-coded and had drifted into the past).
