@@ -1593,6 +1593,16 @@
       <h2 class="section-title">Post your <em>swap</em> in 90 seconds.</h2>
     </div>
 
+    <!-- v96 (2026-09-11): reassurance, per Saif — driving-test fraud is rising
+         elsewhere; tell learners plainly how TestNow rules it out. Backed by
+         real controls: chat is buttons-only (backend v101), numbers/links are
+         stripped (v100), swaps only complete via DVSA. -->
+    <div class="reveal" style="border:1.5px solid rgba(10,107,54,.25);border-left:5px solid var(--ink);background:#fff;border-radius:14px;padding:18px 20px;margin:0 0 22px;">
+      <div style="font-weight:700;color:var(--ink);font-size:17px;margin-bottom:6px;">🔒 Safe by design</div>
+      <p style="margin:0 0 8px;line-height:1.6;">Driving-test scams are on the rise across the UK — people selling fake test slots and asking for money. So we've stepped up our security. When you're matched, you chat through <b>set questions only</b>, so nobody can share phone numbers, ask you to pay, or pressure you.</p>
+      <p style="margin:0;line-height:1.6;">Every swap is completed by phoning <b>DVSA directly on 0300 200 1122</b> — never through another person. TestNow is free, and we will <b>never</b> ask you for money.</p>
+    </div>
+
     <form class="form-wrap reveal" id="swap-form" onsubmit="handleSubmit(event)">
       <div style="position:absolute;left:-9999px;top:-9999px;opacity:0;height:0;width:0;overflow:hidden;" aria-hidden="true">
         <label for="website">Leave this field blank</label>
@@ -1743,6 +1753,10 @@
     </div>
     <div class="faq-list reveal">
       <details>
+        <summary>Is it safe? What about scams?</summary>
+        <p>Yes. We've seen fraud rising across the driving-test world, so we built TestNow to rule it out. Your details are never shown to anyone. Matched learners can only reply using set questions and answers, so nobody can pass on a phone number or ask you for payment. The swap itself only ever happens when you phone DVSA on 0300 200 1122 — no middleman, no money. If anyone ever asks you to pay for a test date, it's a scam: tap <b>Report</b> in the chat and we'll look into it.</p>
+      </details>
+      <details>
         <summary>Is swapping a driving test actually allowed?</summary>
         <p>Yes. The DVSA allows learners to change their test date through their official booking system, including via a 3-way call where two learners exchange dates with a DVSA agent on the line. We just help you find each other. We don't touch your DVSA account.</p>
       </details>
@@ -1787,7 +1801,10 @@
           <img src="logo.jpg" alt="Test Now" class="logo-img">
           <span class="brand-tag"><small>Cancellations &amp; Swaps</small></span>
         </a>
-        <p>A free, independent website helping UK learner drivers swap their practical test dates.</p>
+        <!-- Awin publisher verification (case 03156106): "HELLO AWIN" must be
+             visible in the site's about text until Awin confirms ownership.
+             Remove it once they've verified. -->
+        <p>A free, independent website helping UK learner drivers swap their practical test dates. HELLO AWIN</p>
       </div>
       <div class="foot-col">
         <h3>Explore</h3>

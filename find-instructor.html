@@ -216,6 +216,10 @@
     <label for="l-msg">Message (optional)</label>
     <textarea id="l-msg" maxlength="500" placeholder="e.g. test booked for 12 Aug at Wolverhampton, need lessons + a car"></textarea>
     <p class="consent">By sending, you agree we pass your name and contact to this instructor so they can reply.</p>
+    <!-- v96 (2026-09-11): fraud reassurance. Lessons are a legitimate paid
+         service, so this deliberately does NOT say "never pay" — it says
+         nobody can sell you a test DATE. -->
+    <p class="consent" style="border-left:3px solid #0A6B36;padding-left:8px;">🔒 Test dates only ever come from DVSA. No instructor on TestNow will sell you a test date or ask you to pay for a test slot — if anyone does, it's a scam. Email info@testnowcancellationsandswaps.co.uk and we'll deal with it.</p>
     <div class="mmsg" id="mmsg"></div>
     <div class="modal-actions">
       <button class="btn-cancel" id="m-cancel" type="button">Cancel</button>

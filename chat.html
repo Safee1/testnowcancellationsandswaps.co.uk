@@ -221,7 +221,7 @@
        are stripped server-side before they're stored or relayed; this tells
        both sides why, and that the only legitimate route is DVSA itself. -->
   <div class="info" style="border-left:3px solid #d9822b;">
-    🔒 <b>Safety:</b> this chat is buttons-only — nobody can type a phone number, email or link, so nobody here can ask you to text, call or pay them. A swap only ever happens through <b>DVSA on 0300 200 1122</b>, using booking references. Never pay anyone for a test date. If anything feels off, tap <b>Not interested</b> and the chat closes.
+    🔒 <b>You're protected here.</b> Driving-test fraud is on the rise, so we've stepped up our security: this chat uses <b>set questions only</b>, so nobody can share phone numbers or links, ask you to pay, or pressure you. The swap itself is done by phoning <b>DVSA on 0300 200 1122</b> — never through another person, and it never costs money. If anything feels wrong, tap <b>⚠️ Report</b> or <b>Not interested</b>.
   </div>
 </div>
 
@@ -274,8 +274,26 @@
   </div>
 </div>
 
+<!-- v96 (2026-09-11): Report a concern. Preset reasons only (same
+     buttons-only rule as the rest of the chat). The report goes to TestNow
+     privately via backend v102 — it is never shown in the chat and the other
+     person is not told. data-reason codes MUST match CHAT_REPORT_REASONS102_. -->
+<div class="modal" id="reportModal">
+  <div class="modal-card">
+    <h3>Report a concern</h3>
+    <p>This goes to TestNow privately. The other person won't be told. Pick what happened:</p>
+    <button class="outcome-btn bad" data-reason="asked_to_pay">💷 Asked me to pay money</button>
+    <button class="outcome-btn bad" data-reason="fake_dvsa">🏛️ Claimed to be DVSA / sent a fake booking</button>
+    <button class="outcome-btn bad" data-reason="asked_contact">📵 Asked for my number, email or socials</button>
+    <button class="outcome-btn bad" data-reason="abusive">🚫 Rude, threatening or abusive</button>
+    <button class="outcome-btn bad" data-reason="spam">📢 Spam or advertising</button>
+    <button class="outcome-btn bad" data-reason="other">❓ Something else felt wrong</button>
+    <button class="modal-cancel" id="reportCancel">← Back to the chat</button>
+  </div>
+</div>
+
 <script>
-  const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
+  const SHEET_ENDPOINT ="https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
   const DVSA_URL = "https://www.gov.uk/guidance/swapping-your-driving-test-with-another-learner-driver";
 
   const SIG_REF = "🔖 BOOKING_REF:";
@@ -1045,6 +1063,15 @@
     declineBtn.onclick = function () { declineMatch(); };
     chips.appendChild(declineBtn);
 
+    // v96: Report a concern — private, preset reasons, one per chat.
+    const reportBtn = document.createElement('button');
+    reportBtn.className = 'chip'; reportBtn.id = 'reportChip';
+    reportBtn.style.borderColor = '#b3261e'; reportBtn.style.color = '#b3261e';
+    reportBtn.textContent = reportSent ? '⚠️ Reported ✓' : '⚠️ Report';
+    reportBtn.disabled = reportSent;
+    reportBtn.onclick = function () { if (!reportSent && SESSION_STATUS === 'open') document.getElementById('reportModal').classList.add('show'); };
+    chips.appendChild(reportBtn);
+
     all.forEach(function (pair) {
       const b = document.createElement('button');
       b.className = 'chip';
@@ -1054,6 +1081,38 @@
     });
     chips.style.display = 'flex';
   }
+
+  // v96: report modal wiring. Posts a preset code to backend v102
+  // (chatReport), which logs it privately and alerts TestNow. Nothing is
+  // posted into the chat. The reporter is then told how to leave safely.
+  let reportSent = false;
+  (function () {
+    const modal = document.getElementById('reportModal');
+    if (!modal) return;
+    const cancel = document.getElementById('reportCancel');
+    if (cancel) cancel.onclick = function () { modal.classList.remove('show'); };
+    modal.querySelectorAll('.outcome-btn[data-reason]').forEach(function (b) {
+      b.onclick = function () {
+        if (reportSent) { modal.classList.remove('show'); return; }
+        const code = b.getAttribute('data-reason');
+        modal.querySelectorAll('.outcome-btn').forEach(function (x) { x.disabled = true; });
+        fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatReport', sid: SID, tk: TK, reason: code }) })
+          .then(r => r.json()).then(j => {
+            modal.classList.remove('show');
+            if (j.result === 'success') {
+              reportSent = true;
+              const chip = document.getElementById('reportChip');
+              if (chip) { chip.disabled = true; chip.textContent = '⚠️ Reported ✓'; }
+              gcard('<div class="g-text">✅ <b>Thanks — reported privately.</b> TestNow will review this chat. The other person hasn\'t been told.<br><br>Never pay anyone or share your details. A real swap only ever happens by phoning <b>DVSA on 0300 200 1122</b>. If you want to leave now, tap <b>Not interested</b>.</div>', true);
+            } else {
+              showLocalError('⚠ The report didn\'t send — please try again.');
+            }
+          })
+          .catch(function () { modal.classList.remove('show'); showLocalError('⚠ The report didn\'t send — please try again.'); })
+          .finally(function () { modal.querySelectorAll('.outcome-btn').forEach(function (x) { x.disabled = false; }); });
+      };
+    });
+  })();
 
   // v78 PATCH (Feature 2): one tap opens the decline-reason modal below —
   // that modal IS the confirmation step now (replaces the old native
