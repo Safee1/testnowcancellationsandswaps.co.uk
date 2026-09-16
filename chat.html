@@ -222,7 +222,7 @@
        both sides why, and that the only legitimate route is DVSA itself. -->
   <div class="info" style="border-left:3px solid #d9822b;">
     🔒 <b>You're protected here.</b> Driving-test fraud is on the rise, so we've stepped up our security: this chat uses <b>set questions only</b>, so nobody can share phone numbers or links, ask you to pay, or pressure you. The swap itself is done by phoning <b>DVSA on 0300 200 1122</b> — never through another person, and it never costs money. If anything feels wrong, tap <b>⚠️ Report</b> or <b>Not interested</b>.
-    <br><br>🔗 <b>This link is personal to you.</b> Please don't share it or post it in group chats — anyone who has it can open this chat as you.
+    <br><br>🔗 <b>This link is personal to you.</b> Please don't share it or post it in group chats. We also ask for your booking reference at the door, so a link on its own opens nothing — and links stop working 48 hours after a chat closes.
   </div>
 </div>
 
@@ -308,6 +308,20 @@
   const SID = qs.get('cs') || qs.get('sid') || '';
   const TK = qs.get('tk') || '';
 
+  // v99 (2026-09-16): the door. Backend v104 lets each side bind its own
+  // 8-digit DVSA booking reference the first time it opens the link; every
+  // call after that must carry it (param/field "g"), so a screenshotted link
+  // on its own opens nothing. Kept per-session in localStorage so the same
+  // phone never has to re-enter it. CID is a random per-browser id the
+  // backend writes to its access log (it never sees an IP) — the only way to
+  // answer "did anyone else open this link?" after a leak.
+  const CID = (function () { try { let c = localStorage.getItem('tn_cid'); if (!c) { c = Math.random().toString(36).slice(2, 10) + Date.now().toString(36); localStorage.setItem('tn_cid', c); } return c; } catch (e) { return ''; } })();
+  let GATE = ''; try { GATE = localStorage.getItem('tn_gate_' + SID) || ''; } catch (e) {}
+  let gateTries = 0;
+  function gateQs() { return GATE ? '&g=' + encodeURIComponent(GATE) : ''; }
+  function saveGate(v) { GATE = v; try { localStorage.setItem('tn_gate_' + SID, v); } catch (e) {} }
+  function deviceQs() { return '&cid=' + encodeURIComponent(CID) + '&ua=' + encodeURIComponent(String(navigator.userAgent || '').slice(0, 80)); }
+
   const stream = document.getElementById('stream');
   const input = document.getElementById('input');
   const sendBtn = document.getElementById('send');
@@ -351,10 +365,24 @@
 
   // ---------- session ----------
   function initSession() {
-    fetch(SHEET_ENDPOINT + '?action=chatSession&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK))
+    fetch(SHEET_ENDPOINT + '?action=chatSession&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK) + gateQs() + deviceQs())
       .then(r => r.json())
       .then(d => {
-        if (d.result !== 'success') throw new Error(d.message || 'failed');
+        if (d.result !== 'success') {
+          // v99: the door (backend v104)
+          if (d.message === 'gate') { showGate('verify', null); return; }
+          if (d.message === 'expired') { showExpired(); return; }
+          throw new Error(d.message || 'failed');
+        }
+        if (d.gateRequired && d.youAre !== 'MOD') { showGate('set', d); return; }
+        afterSession(d);
+      })
+      .catch(() => { metaText.textContent = 'Could not open chat.'; composer.style.display = 'none'; completeBtn.style.display = 'none'; abInner.innerHTML = ''; });
+  }
+
+  // Everything that used to run straight after a successful chatSession —
+  // now reached either directly or after the door (v99).
+  function afterSession(d) {
         // v80 PATCH (Feature 1): capture yourHandle/handleA/handleB — see
         // var declaration above for why these have safe empty-string
         // defaults.
@@ -387,8 +415,43 @@
         if (SESSION_STATUS !== 'open') setClosedUI();
         pollMessages(true);                     // forced — see the note on pollMessages
         if (YOU_ARE !== 'MOD') pingLoop(true);   // v78 PATCH: presence ping is an A/B-only concept, skipped for MOD
-      })
-      .catch(() => { metaText.textContent = 'Could not open chat.'; composer.style.display = 'none'; completeBtn.style.display = 'none'; abInner.innerHTML = ''; });
+  }
+
+  function showExpired() {
+    metaText.textContent = 'This chat link has expired.';
+    composer.style.display = 'none'; completeBtn.style.display = 'none'; abInner.innerHTML = '';
+    gcard('<div class="g-text">⏳ <b>This chat link has expired.</b> A chat stays readable for 48 hours after it closes, then its link stops working for good. Still want a swap? Head back to the <a href="https://testnowcancellationsandswaps.co.uk/#board">board</a> and we\'ll keep matching you.</div>');
+  }
+
+  // mode 'set': first open — bind the reference (POST chatGateSet), then continue with d.
+  // mode 'verify': the reference is already bound and we don't have it — ask, store, reload.
+  function showGate(mode, d) {
+    metaText.textContent = mode === 'set' ? 'One quick check' : 'Your booking reference';
+    composer.style.display = 'none'; completeBtn.style.display = 'none'; abInner.innerHTML = '';
+    const c = gcard('<div class="g-text">🔐 <b>' + (mode === 'set' ? 'First, your booking reference.' : 'Welcome back — your booking reference?') + '</b> Enter the <b>8-digit DVSA booking reference</b> for the test you listed. Only you know it, so a shared or screenshotted link can\'t open your chat as you.' + (mode === 'set' ? ' You\'ll need it for the swap anyway.' : '') + '<span class="g-warn">Share ONLY this. Never your licence number, payment card, address, phone or email.</span></div>');
+    const wrap = document.createElement('div'); wrap.className = 'g-controls';
+    const inp = document.createElement('input'); inp.type = 'text'; inp.setAttribute('inputmode', 'numeric'); inp.maxLength = 8; inp.placeholder = 'e.g. 68194673'; inp.setAttribute('autocomplete', 'off');
+    const btn = document.createElement('button'); btn.className = 'g-btn'; btn.textContent = 'Open my chat';
+    const err = document.createElement('div'); err.className = 'g-err';
+    const mismatch = 'That doesn\'t match the reference this chat was opened with. If it\'s definitely yours, email info@testnowcancellationsandswaps.co.uk from the address you listed with and we\'ll reset it.';
+    if (mode === 'verify' && gateTries > 0) err.textContent = mismatch;
+    btn.onclick = function () {
+      err.textContent = '';
+      const v = inp.value.replace(/\s+/g, '');
+      if (/[a-zA-Z]/.test(v) || v.length === 16) { err.textContent = 'That looks like a driving licence number. Enter your 8-digit booking reference instead.'; return; }
+      if (!/^[0-9]{8}$/.test(v)) { err.textContent = 'Your booking reference is 8 digits, numbers only. Please check it.'; return; }
+      btn.disabled = true; inp.disabled = true;
+      if (mode === 'verify') { gateTries++; saveGate(v); c.remove(); metaText.textContent = 'Connecting…'; initSession(); return; }
+      fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatGateSet', sid: SID, tk: TK, ref: v, cid: CID, ua: String(navigator.userAgent || '').slice(0, 80) }) })
+        .then(r => r.json()).then(j => {
+          if (j.result === 'success') { if (j.gate !== 'off') saveGate(v); c.remove(); afterSession(d); return; }
+          btn.disabled = false; inp.disabled = false;
+          err.textContent = j.message === 'gate' ? mismatch : (j.message || 'Something went wrong — please try again.');
+        })
+        .catch(() => { btn.disabled = false; inp.disabled = false; err.textContent = 'Couldn\'t reach the server — please try again.'; });
+    };
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); btn.click(); } });
+    wrap.appendChild(inp); wrap.appendChild(btn); c.appendChild(wrap); c.appendChild(err); scrollDown(); inp.focus();
   }
 
   function loadCentres() {
@@ -449,7 +512,7 @@
   // behaviour, not the same bug.
   function pingLoop(force) {
     if (!POLLING || (document.hidden && !force)) return;
-    fetch(SHEET_ENDPOINT + '?action=chatPing&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK))
+    fetch(SHEET_ENDPOINT + '?action=chatPing&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK) + gateQs())
       .then(r => r.json())
       .then(d => {
         if (d.result === 'success') {
@@ -476,7 +539,7 @@
   // no argument and stays correctly gated by POLLING.
   function pollMessages(force) {
     if ((!POLLING && !force) || (document.hidden && !force)) return;
-    fetch(SHEET_ENDPOINT + '?action=chatMessages&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK) + '&since=' + LAST_INDEX)
+    fetch(SHEET_ENDPOINT + '?action=chatMessages&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK) + gateQs() + '&since=' + LAST_INDEX)
       .then(r => r.json())
       .then(d => {
         if (d.result === 'success' && Array.isArray(d.messages)) {
@@ -602,7 +665,7 @@
     }).finally(() => { sendBtn.disabled = false; input.focus(); });
   }
   function postRaw(text) {
-    return fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatSend', sid: SID, tk: TK, text: text }) })
+    return fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatSend', sid: SID, tk: TK, g: GATE, text: text }) })
       .then(r => r.json()).then(j => {
         // Sending means the conversation is active — drop any idle backoff so
         // the other learner's reply still lands within the fast interval.
@@ -669,7 +732,7 @@
       const v = (inp.value || '').trim();
       if (!v || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { err.textContent = 'That doesn\'t look like a valid email.'; return; }
       btn.disabled = true; skip.disabled = true;
-      fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatSetEmail', sid: SID, tk: TK, email: v }) })
+      fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatSetEmail', sid: SID, tk: TK, g: GATE, email: v }) })
         .then(r => r.json())
         .then(function (j) {
           if (j.result !== 'success') { err.textContent = 'Could not save — you can skip, it\'ll just ask again next time.'; btn.disabled = false; skip.disabled = false; return; }
@@ -707,6 +770,7 @@
     const c = gcard('<div class="g-text"><b>Step 1 of 6 — Booking reference.</b> What\'s your <b>8-digit booking reference</b>? It\'s on your DVSA confirmation email or text.<span class="g-warn">Share ONLY this. Never share your licence number, payment card, address, phone or email.</span></div>');
     const wrap = document.createElement('div'); wrap.className = 'g-controls';
     const inp = document.createElement('input'); inp.type = 'text'; inp.setAttribute('inputmode', 'numeric'); inp.maxLength = 8; inp.placeholder = 'e.g. 68194673';
+    if (GATE) inp.value = GATE; // v99: already given at the door — one tap to share it
     const btn = document.createElement('button'); btn.className = 'g-btn'; btn.textContent = 'Share';
     const err = document.createElement('div'); err.className = 'g-err';
     btn.onclick = function () {
@@ -984,15 +1048,16 @@
 
   // v78 PATCH (Feature 3): moderator close — no outcome picker (that modal
   // is a learner-facing "how did the swap go" concept); just closes the
-  // session for both sides. Goes through the same chatClose action, with
-  // no outcome — chatCloseSession_ already handles a blank outcome fine.
+  // session for both sides. Goes through the same chatClose action.
+  // v99: records the honest outcome "admin_closed" (backend v104) — an admin
+  // close is non-destructive: nothing is archived, nobody is texted.
   function modClose() {
     // v80 PATCH (Feature 1): "both learners" -> the actual pair of handles
     // (OTHER_HANDLE for a MOD viewer is the concatenated "X & Y" — see
     // chatGetSession_'s v78 PATCH (Feature 3) comment), falling back to the
     // old generic wording if a stale backend response left it blank.
     if (!confirm('Close this chat for ' + (OTHER_HANDLE || 'both people') + '?')) return;
-    fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK }) })
+    fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, g: GATE, outcome: 'admin_closed' }) })
       .then(r => r.json()).then(j => { if (j.result !== 'success') showLocalError('⚠ Could not close the chat — please try again.'); })
       .catch(() => showLocalError('⚠ Could not close the chat — please try again.'));
   }
@@ -1014,7 +1079,7 @@
         const outcome = b.getAttribute('data-outcome') || '';
         postRaw('🏁 Outcome: ' + msg);
         setTimeout(function () {
-          fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, outcome: outcome }) })
+          fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, g: GATE, outcome: outcome }) })
             .then(r => r.json()).then(j => {
               if (j.result !== 'success') showLocalError('⚠ Could not close the chat — please tap Finish again.');
             }).catch(() => showLocalError('⚠ Could not close the chat — please tap Finish again.'));
@@ -1097,7 +1162,7 @@
         if (reportSent) { modal.classList.remove('show'); return; }
         const code = b.getAttribute('data-reason');
         modal.querySelectorAll('.outcome-btn').forEach(function (x) { x.disabled = true; });
-        fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatReport', sid: SID, tk: TK, reason: code }) })
+        fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatReport', sid: SID, tk: TK, g: GATE, reason: code }) })
           .then(r => r.json()).then(j => {
             modal.classList.remove('show');
             if (j.result === 'success') {
@@ -1137,7 +1202,7 @@
     const otherWrap = document.getElementById('declineOtherWrap');
     if (otherWrap) otherWrap.style.display = 'none';
     if (SESSION_STATUS !== 'open') return;
-    fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, outcome: 'declined', reason: reason || '' }) })
+    fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, g: GATE, outcome: 'declined', reason: reason || '' }) })
       .then(r => r.json()).then(j => { if (j.result !== 'success') showLocalError('⚠ Could not close the chat — please try again.'); })
       .catch(() => showLocalError('⚠ Could not close the chat — please try again.'));
   }
