@@ -252,6 +252,17 @@
   </div>
 </div>
 
+<!-- v100 (2026-09-16): moderator close confirmation. Was a native confirm(),
+     which blocks browser automation and behaves inconsistently on mobile. -->
+<div class="modal" id="modCloseModal">
+  <div class="modal-card">
+    <h3>Close this chat?</h3>
+    <p id="modCloseText">This closes the chat for both people and records it as closed by TestNow. No listing is removed and nobody is texted.</p>
+    <button class="outcome-btn bad" id="modCloseConfirm">🔒 Yes, close it</button>
+    <button class="modal-cancel" id="modCloseCancel">← Keep it open</button>
+  </div>
+</div>
+
 <!-- v78 PATCH (Feature 2): optional decline-reason step. This modal IS the
      confirmation step (replaces the old native confirm() dialog) — tapping
      a reason chip, or "Skip", ends the chat immediately; no second prompt. -->
@@ -1056,11 +1067,28 @@
     // (OTHER_HANDLE for a MOD viewer is the concatenated "X & Y" — see
     // chatGetSession_'s v78 PATCH (Feature 3) comment), falling back to the
     // old generic wording if a stale backend response left it blank.
-    if (!confirm('Close this chat for ' + (OTHER_HANDLE || 'both people') + '?')) return;
-    fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, g: GATE, outcome: 'admin_closed' }) })
-      .then(r => r.json()).then(j => { if (j.result !== 'success') showLocalError('⚠ Could not close the chat — please try again.'); })
-      .catch(() => showLocalError('⚠ Could not close the chat — please try again.'));
+    // v100: in-page modal instead of confirm()
+    const m = document.getElementById('modCloseModal');
+    const txt = document.getElementById('modCloseText');
+    if (txt) txt.textContent = 'This closes the chat for ' + (OTHER_HANDLE || 'both people') + ' and records it as closed by TestNow. No listing is removed and nobody is texted.';
+    m.classList.add('show');
   }
+  (function () {
+    const m = document.getElementById('modCloseModal');
+    const yes = document.getElementById('modCloseConfirm');
+    const no = document.getElementById('modCloseCancel');
+    if (no) no.onclick = function () { m.classList.remove('show'); };
+    if (yes) yes.onclick = function () {
+      if (SESSION_STATUS !== 'open') { m.classList.remove('show'); return; }
+      yes.disabled = true;
+      fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, g: GATE, outcome: 'admin_closed' }) })
+        .then(r => r.json()).then(j => {
+          yes.disabled = false; m.classList.remove('show');
+          if (j.result !== 'success') showLocalError('⚠ Could not close the chat — please try again.');
+        })
+        .catch(() => { yes.disabled = false; m.classList.remove('show'); showLocalError('⚠ Could not close the chat — please try again.'); });
+    };
+  })();
 
   // outcome modal wiring
   (function () {
