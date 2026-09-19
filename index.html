@@ -1811,6 +1811,7 @@
         <a href="#how">How it works</a>
         <a href="#why">Why us</a>
         <a href="#swap">List a swap</a>
+        <a href="test-centres/">Swaps by test centre</a>
         <a href="find-instructor.html">Find an instructor</a>
       <a href="instructors.html">For instructors</a>
         <a href="#faq">FAQ</a>
@@ -2228,6 +2229,20 @@
         CENTRES = d.centres;
         buildRegionIndex();
         fillRegionSelect(regionSel, 'Choose your region…');
+        // v101 (2026-09-19): /test-centres/<centre>.html links here as
+        // /?centre=<name>#swap-form — pre-select that centre's region and the
+        // centre itself, firing the same change events a visitor would.
+        try {
+          const want101 = new URLSearchParams(location.search).get('centre');
+          const hit101 = want101 && CENTRES.find(function (c) { return c.centre === want101; });
+          if (hit101) {
+            regionSel.value = hit101.region;
+            regionSel.dispatchEvent(new Event('change'));
+            const cs101 = document.getElementById('centre');
+            cs101.value = hit101.centre;
+            if (cs101.value === hit101.centre) cs101.dispatchEvent(new Event('change'));
+          }
+        } catch (ePre101) {}
         // Preferred region keeps a "Same" option at the top, then all regions
         const wr = document.getElementById('wanted-region');
         const regions = Object.keys(byRegion).sort();
