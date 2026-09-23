@@ -103,7 +103,7 @@ ${body}
 </main>
 <footer><div class="wrap">
   <p>TestNow is a free, independent service for UK learner drivers. It is not DVSA. Every swap is completed by phoning DVSA on 0300 200 1122 — nobody can sell you a test date.</p>
-  <p style="margin-top:10px;"><a href="/">Home</a><a href="/test-centres/">All test centres</a><a href="/find-instructor.html">Find an instructor</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></p>
+  <p style="margin-top:10px;"><a href="/">Home</a><a href="/test-centres/">All test centres</a><a href="/find-instructor.html">Find an instructor</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/report-concern.html">Report a concern</a></p>
 </div></footer>
 </body>
 </html>
@@ -223,7 +223,7 @@ for (const c of bySlug.values()) {
 }
 fs.writeFileSync(path.join(OUT, "index.html"), indexPage(centres));
 
-const core = ["/", "/find-instructor.html", "/instructors.html", "/privacy.html", "/terms.html", "/cookies.html", "/test-centres/"];
+const core = ["/", "/find-instructor.html", "/instructors.html", "/privacy.html", "/terms.html", "/cookies.html", "/report-concern.html", "/test-centres/"];
 const today = new Date().toISOString().slice(0, 10);
 const urls = core.map((u) => SITE + u).concat([...bySlug.keys()].map((k) => `${SITE}/test-centres/${k}.html`));
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` + urls.map((u) => `  <url>\n    <loc>${u}</loc>\n    <lastmod>${today}</lastmod>\n  </url>`).join("\n") + "\n</urlset>\n");
