@@ -360,6 +360,29 @@
     border-radius: 4px;
     text-transform: uppercase;
   }
+  .illo-label {
+    position: absolute;
+    top: -28px;
+    left: 0;
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .swap-card .example-tag {
+    position: absolute;
+    top: -10px;
+    right: 14px;
+    background: var(--accent);
+    color: var(--ink);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--ink);
+  }
   .swap-arrow {
     position: absolute;
     top: 48%;
@@ -1430,22 +1453,25 @@
         <span class="arrow" aria-hidden="true">→</span>
       </a>
       <div class="hero-stats" id="hero-stats" hidden aria-label="Live numbers">
-        <div><strong id="st-live">0</strong><span>tests listed now</span></div>
-        <div><strong><em id="st-matches">0</em></strong><span>matches made</span></div>
-        <div><strong id="st-learners">0</strong><span>learners using it</span></div>
+        <div><strong id="st-live">–</strong><span>tests listed now</span></div>
+        <div><strong><em id="st-matches">–</em></strong><span>matches made</span></div>
+        <div><strong id="st-learners">–</strong><span>learners using it</span></div>
       </div>
     </div>
 
-    <div class="swap-illo reveal" aria-hidden="true">
+    <div class="swap-illo reveal">
+      <p class="illo-label">Example listings</p>
       <div class="swap-card a">
+        <span class="example-tag">Example</span>
         <p class="card-name">Sarah · Manchester</p>
         <div class="row"><span>Test centre</span><strong>West Didsbury</strong></div>
         <div class="row"><span>Date</span><strong data-illo-days="74">14 Aug 2026</strong></div>
         <div class="row"><span>Wants</span><strong>Anything sooner</strong></div>
         <span class="stamp">Listed today</span>
       </div>
-      <div class="swap-arrow"><span>⇄</span></div>
+      <div class="swap-arrow" aria-hidden="true"><span>⇄</span></div>
       <div class="swap-card b">
+        <span class="example-tag">Example</span>
         <p class="card-name">James · Manchester</p>
         <div class="row"><span>Test centre</span><strong>Cheetham Hill</strong></div>
         <div class="row"><span>Date</span><strong data-illo-days="12">05 Jun 2026</strong></div>
