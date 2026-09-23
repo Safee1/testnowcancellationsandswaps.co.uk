@@ -866,6 +866,13 @@
     margin: 0;
   }
   .field-typo[hidden] { display: none; }
+  .field-hint {
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+    margin: 4px 0 0;
+  }
+  .field-hint[hidden] { display: none; }
   .field-typo button {
     background: none;
     border: none;
@@ -1616,8 +1623,9 @@
         </div>
         <div class="field">
           <label for="email">Email</label>
-          <input id="email" name="email" type="email" required placeholder="you@example.com" autocomplete="email" aria-describedby="email-typo">
+          <input id="email" name="email" type="email" required placeholder="you@example.com" autocomplete="email" aria-describedby="email-typo email-instructor-hint">
           <p class="field-typo" id="email-typo" role="status" hidden></p>
+          <p class="field-hint" id="email-instructor-hint" role="status" hidden>Instructors: we'll email you the match link, so you don't miss it. Have your pupil's 8-digit booking reference ready to open the chat.</p>
         </div>
         <div class="field">
           <label for="phone">Phone number</label>
@@ -2087,6 +2095,8 @@
     // needs its checked state cleared between listings.
     var listedByTick = document.getElementById('listed-by-instructor');
     if (listedByTick) listedByTick.checked = false;
+    var emailHint = document.getElementById('email-instructor-hint');
+    if (emailHint) emailHint.hidden = true;
     setDateError(false);
   }
 
@@ -2859,6 +2869,24 @@
       tick.required = wants;
       if (!wants) tick.checked = false;
     });
+  })();
+
+  // v107: instructor listings need their email — that's where the match
+  // link goes — so make it explicitly required and explain why, on top of
+  // the field's existing always-required baseline. Learner listings are
+  // unaffected: same field, same behaviour as before.
+  (function(){
+    var listedByTick = document.getElementById('listed-by-instructor');
+    var email = document.getElementById('email');
+    var hint = document.getElementById('email-instructor-hint');
+    if (!listedByTick || !email || !hint) return;
+    function sync(){
+      var isInstructor = listedByTick.checked;
+      email.required = true; // required either way, but keep explicit
+      hint.hidden = !isInstructor;
+    }
+    listedByTick.addEventListener('change', sync);
+    sync();
   })();
 </script>
 
