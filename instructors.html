@@ -287,8 +287,28 @@
     </div>
 
     <p style="margin-top:26px;font-size:13.5px;color:rgba(31,41,35,.75);">We handle your data as set out in our <a href="privacy.html">Privacy Notice</a>. By registering you agree that we may text and email you about learner requests in the regions you cover. If you choose to join our instructors-only community group, other members of that group will be able to see your name and mobile number. Registering doesn't commit you to anything.</p>
+
+    <section id="featured-offer" hidden style="margin-top:28px;padding:20px;border:2px solid #f5b301;border-radius:14px;background:#fffaf0;">
+      <h2 style="margin:0 0 6px;font-size:1.25rem;">Get featured: <span id="feat-price"></span></h2>
+      <p style="margin:0 0 10px;">Registering is free. If you want more pupils, a featured listing puts you <b>first in your region</b> on our &ldquo;find an instructor&rdquo; page, with a Featured badge. Learners looking for lessons see you before anyone else.</p>
+      <ul style="margin:0 0 14px 18px;">
+        <li>Top of the directory in every region you cover</li>
+        <li>&ldquo;Featured instructor&rdquo; badge on your card</li>
+        <li>Monthly, cancel any time. No contract.</li>
+      </ul>
+      <a id="feat-buy" class="ibtn" href="#" rel="noopener" style="display:inline-block;text-decoration:none;">Get featured <span aria-hidden="true">&nbsp;&rarr;</span></a>
+      <p style="margin:10px 0 0;font-size:13px;color:rgba(31,41,35,.75);">Register above first, and use the same email at checkout so we can match your payment to your listing. Payments are handled securely by Stripe.</p>
+    </section>
   </div>
 </main>
+<script>
+fetch("/featured.json", { cache: "no-store" }).then(function(r){ return r.json(); }).then(function(j){
+  if (!j || !j.paymentLink) return;
+  document.getElementById("feat-price").textContent = j.price || "";
+  document.getElementById("feat-buy").href = j.paymentLink;
+  document.getElementById("featured-offer").hidden = false;
+}).catch(function(){});
+</script>
 
 <!-- COOKIE / AD CONSENT BANNER -->
 <div class="cookiebar" id="cookiebar" role="dialog" aria-label="Cookie notice">

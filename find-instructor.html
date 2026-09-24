@@ -156,6 +156,8 @@
     }
     .pick button:active, .card .enq:active, .modal-actions button:active, .cookiebar-btns button:active { transform: none; }
   }
+.card.featured{border:2px solid #f5b301;box-shadow:0 4px 14px rgba(245,179,1,.18)}
+.feat-badge{display:inline-block;background:#f5b301;color:#1a1a1a;font-size:.72rem;font-weight:700;letter-spacing:.02em;padding:2px 8px;border-radius:999px;margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -254,6 +256,10 @@ var currentId = "", currentName = "";
 
 function esc(t){ return String(t||"").replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 
+window.__tnFeatured = null;
+fetch("/featured.json", { cache: "no-store" }).then(function(r){ return r.json(); })
+  .then(function(j){ window.__tnFeatured = j; }).catch(function(){});
+
 function search(){
   var region = document.getElementById('region').value;
   if (!region) { statusEl.textContent = "Please choose your region first."; grid.innerHTML=""; return; }
@@ -262,6 +268,11 @@ function search(){
     .then(function(r){ return r.json(); })
     .then(function(d){
       var list = (d && d.instructors) || [];
+      // Featured (paid) instructors first, with a badge. featured.json is
+      // edited by hand when an instructor pays; missing file = no change.
+      var feat = (window.__tnFeatured && window.__tnFeatured.featuredIds) || [];
+      list.forEach(function(it){ it.__f = feat.indexOf(String(it.id)) !== -1; });
+      list.sort(function(a, b){ return (b.__f ? 1 : 0) - (a.__f ? 1 : 0); });
       if (!list.length) { statusEl.textContent = "No instructors listed for " + region + " yet — check back soon."; return; }
       statusEl.textContent = list.length + " instructor" + (list.length>1?"s":"") + " covering " + region + ":";
       grid.innerHTML = list.map(function(it){
@@ -274,7 +285,9 @@ function search(){
         var ratingHtml = (it.reviewCount > 0)
           ? "<div class='rating'><span class='star'>&#9733;</span> " + esc(it.rating) + " (" + esc(it.reviewCount) + ")</div>"
           : "<div class='rating none'>No reviews yet</div>";
-        return "<div class='card'><h3>" + esc(it.name || "Instructor") + "</h3>" +
+        return "<div class='card" + (it.__f ? " featured" : "") + "'>" +
+          (it.__f ? "<div class='feat-badge'>Featured instructor</div>" : "") +
+          "<h3>" + esc(it.name || "Instructor") + "</h3>" +
           ratingHtml +
           (it.school ? "<div class='school'>" + esc(it.school) + "</div>" : "<div class='school'>Driving instructor</div>") +
           "<ul>" + rows + "</ul>" +

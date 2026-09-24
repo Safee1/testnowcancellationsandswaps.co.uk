@@ -1,0 +1,6 @@
+{
+  "_note": "Featured instructor listings. paymentLink = TestNow Stripe Payment Link. Add the instructor's directory id to featuredIds when they pay; remove it when they cancel.",
+  "price": "£9.99 a month",
+  "paymentLink": "",
+  "featuredIds": []
+}
