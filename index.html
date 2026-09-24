@@ -35,6 +35,7 @@
   gtag('config', 'G-THEHZYLS0C'); // GA4 — same consent gate as the Ads tag above, nothing extra needed
 </script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18364427323"></script>
+<script src="/assets/attribution.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Test Now — Free UK Driving Test Swaps</title>
@@ -2009,6 +2010,10 @@
   // First-touch wins: whatever source resolves on the very first page load of the
   // session is persisted, so a later page view or submit with no query string
   // still carries the original ads/utm/organic source rather than falling to direct.
+  // Computed by /assets/attribution.js (loaded in <head>, runs on every public
+  // page so first-touch is captured even when the visitor lands elsewhere —
+  // a /guides/* or /test-centres/* page — before reaching this form). Falls
+  // back to localStorage (30-day) or 'direct' if that script somehow didn't run.
   const TN_SOURCE = (function () {
     function sanitise(s) {
       return String(s || '').toLowerCase().replace(/[^a-z0-9:._-]/g, '').slice(0, 60);
@@ -2016,29 +2021,16 @@
     var stored = '';
     try { stored = sessionStorage.getItem('tn_source') || ''; } catch (e) {}
     if (stored) return stored;
-
-    var computed = 'direct';
     try {
-      var params = new URLSearchParams(location.search);
-      var gclid = params.get('gclid');
-      var utmSource = params.get('utm_source');
-      var utmMedium = (params.get('utm_medium') || '').toLowerCase();
-      var utmCampaign = params.get('utm_campaign');
-      if (gclid || ['cpc', 'ppc', 'paid'].indexOf(utmMedium) !== -1) {
-        computed = 'ads:' + (utmCampaign || 'google');
-      } else if (utmSource) {
-        computed = 'utm:' + utmSource;
-      } else if (document.referrer) {
-        var refHost = new URL(document.referrer).hostname;
-        if (refHost && refHost !== location.hostname) {
-          computed = 'organic:' + refHost;
+      var raw = localStorage.getItem('tn_source_ls');
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (parsed && parsed.v && parsed.t && (Date.now() - parsed.t) < 30 * 24 * 60 * 60 * 1000) {
+          return sanitise(parsed.v) || 'direct';
         }
       }
     } catch (e) {}
-    computed = sanitise(computed) || 'direct';
-
-    try { sessionStorage.setItem('tn_source', computed); } catch (e) {}
-    return computed;
+    return 'direct';
   })();
 
   function setDateError(show) {

@@ -44,7 +44,8 @@ const HEAD_TRACKING = `<script>
   gtag('config', 'AW-18364427323');
   gtag('config', 'G-THEHZYLS0C');
 </script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18364427323"></script>`;
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18364427323"></script>
+<script src="/assets/attribution.js"></script>`;
 
 const CSS = `<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">

@@ -26,7 +26,8 @@ const HEAD_TRACKING = `<script>
   gtag('config', 'AW-18364427323');
   gtag('config', 'G-THEHZYLS0C');
 </script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18364427323"></script>`;
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18364427323"></script>
+<script src="/assets/attribution.js"></script>`;
 
 const STYLE = `<style>
   :root { --ink:#0A6B36; --ink-soft:#037434; --paper:#F5F0E6; --paper-warm:#EBE3D2; --accent:#C3135F; --muted:#58685F; --line:rgba(10,107,54,.18); }
