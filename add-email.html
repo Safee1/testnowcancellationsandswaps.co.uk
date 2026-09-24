@@ -157,6 +157,48 @@
     text-align: center;
   }
   .fallback a { color: var(--ink-soft); }
+
+  .opt-out-block {
+    margin-top: 26px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(10,107,54,.2);
+    text-align: center;
+  }
+  .opt-out-link {
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 4px;
+  }
+  .opt-out-link:hover { color: var(--accent); }
+
+  .opt-out-confirm { margin-top: 14px; }
+  .opt-out-confirm[hidden] { display: none; }
+  .opt-out-confirm p {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+    max-width: 42ch;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .opt-out-confirm-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn-small { width: auto; padding: 10px 18px; font-size: 14px; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1.5px solid var(--ink);
+  }
+  .btn-ghost:hover:not(:disabled) { background: var(--paper); transform: none; }
 </style>
 </head>
 <body>
@@ -196,6 +238,24 @@
   <p class="privacy">Used only to send you match alerts for your own listing. Unsubscribe any time by emailing us — we never share it or use it for anything else.</p>
 
   <p class="fallback">or email <a href="mailto:info@testnowcancellationsandswaps.co.uk?subject=Add%20my%20email">info@testnowcancellationsandswaps.co.uk</a> with the subject &ldquo;Add my email&rdquo;</p>
+
+  <div class="opt-out-block" id="opt-out-block">
+    <button type="button" class="opt-out-link" id="opt-out-btn">Stop texts from TestNow</button>
+    <div class="opt-out-confirm" id="opt-out-confirm" hidden>
+      <p>You won't get any more texts from TestNow, including match alerts. Continue?</p>
+      <div class="opt-out-confirm-actions">
+        <button type="button" class="btn btn-small" id="opt-out-yes">Yes, stop texts</button>
+        <button type="button" class="btn btn-small btn-ghost" id="opt-out-no">Cancel</button>
+      </div>
+    </div>
+    <p class="field-error" id="opt-out-error" hidden>Something went wrong — please try again, or email us using the link above.</p>
+  </div>
+
+  <div class="done" id="opt-out-done" style="display:none;">
+    <div class="tick" aria-hidden="true">&#10003;</div>
+    <h2>Done</h2>
+    <p>We won't text you again. You can still use the website any time.</p>
+  </div>
 </div>
 
 <script>
@@ -216,9 +276,18 @@
   const heading = document.getElementById('heading');
   const subheading = document.getElementById('subheading');
 
+  const optOutBlock = document.getElementById('opt-out-block');
+  const optOutBtn = document.getElementById('opt-out-btn');
+  const optOutConfirm = document.getElementById('opt-out-confirm');
+  const optOutYes = document.getElementById('opt-out-yes');
+  const optOutNo = document.getElementById('opt-out-no');
+  const optOutError = document.getElementById('opt-out-error');
+  const optOutDone = document.getElementById('opt-out-done');
+
   if (!leadId || !token) {
     linkError.hidden = false;
     btn.disabled = true;
+    optOutBlock.style.display = 'none';
   } else {
     // Optional friendly greeting — first name only, never anything else.
     // If this fails or the link is bad, the form still works exactly the
@@ -275,6 +344,49 @@
         sendError.hidden = false;
         btn.disabled = false;
         btn.textContent = 'Add my email';
+      });
+  });
+
+  optOutBtn.addEventListener('click', function () {
+    optOutError.hidden = true;
+    optOutBtn.hidden = true;
+    optOutConfirm.hidden = false;
+  });
+
+  optOutNo.addEventListener('click', function () {
+    optOutConfirm.hidden = true;
+    optOutBtn.hidden = false;
+  });
+
+  optOutYes.addEventListener('click', function () {
+    if (!leadId || !token) return;
+    optOutError.hidden = true;
+    optOutYes.disabled = true;
+    optOutNo.disabled = true;
+    optOutYes.textContent = 'Stopping…';
+
+    fetch(SHEET_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'smsOptOut',
+        l: leadId,
+        t: token
+      })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (json) {
+        if (!json || json.result !== 'success') throw new Error((json && json.message) || 'Unknown error');
+        optOutBlock.style.display = 'none';
+        optOutDone.style.display = 'block';
+      })
+      .catch(function () {
+        optOutError.hidden = false;
+        optOutYes.disabled = false;
+        optOutNo.disabled = false;
+        optOutYes.textContent = 'Yes, stop texts';
+        optOutConfirm.hidden = true;
+        optOutBtn.hidden = false;
       });
   });
 </script>
