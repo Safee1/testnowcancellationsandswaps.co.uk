@@ -173,18 +173,35 @@ ${sameRegion.length ? `<h2>Other test centres in ${esc(c.region)}</h2>
   var NEAR = ${JSON.stringify(nearNames)};
   var box = document.getElementById('live');
   function esc(s) { return String(s || '').replace(/[&<>"']/g, function (ch) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]; }); }
+  function daysUntil(iso) {
+    if (!iso || !/^\\d{4}-\\d{2}-\\d{2}$/.test(iso)) return null;
+    var t = new Date(iso + 'T00:00:00');
+    var now = new Date(); now.setHours(0, 0, 0, 0);
+    return Math.round((t - now) / 86400000);
+  }
   fetch(API + '?action=board').then(function (r) { return r.json(); }).then(function (d) {
     var all = (d && d.listings) || [];
     var here = all.filter(function (l) { return l.centre === HERE; });
     var near = all.filter(function (l) { return NEAR.indexOf(l.centre) !== -1; });
     var rows = here.concat(near).slice(0, 12);
+    var summary = '';
+    if (here.length) {
+      var earliest = here.map(function (l) { return l.date; }).filter(Boolean).sort()[0];
+      if (earliest) {
+        var d = daysUntil(earliest);
+        var wk = d !== null ? Math.max(0, Math.round(d / 7)) : null;
+        summary = '<p class="note" style="margin-bottom:10px;"><b>Tests listed at ' + esc(HERE) + ' now: ' + here.length + '</b> · earliest: ' + esc(earliest) + (wk !== null ? ' (' + wk + (wk === 1 ? ' week' : ' weeks') + ' away)' : '') + '</p>';
+      }
+    } else if (near.length) {
+      summary = '<p class="note" style="margin-bottom:10px;">No tests listed at ' + esc(HERE) + ' right now, but ' + near.length + ' nearby. <a href="/?centre=' + encodeURIComponent(HERE) + '#swap-form">List yours</a> and we\\'ll match you as soon as one appears.</p>';
+    }
     if (!rows.length) {
-      box.innerHTML = '<p>No tests listed at ' + esc(HERE) + ' or nearby right now. <b>Be the first:</b> list yours and we\\'ll match you as soon as someone near you joins.</p>';
+      box.innerHTML = (summary || '') + '<p>No tests listed at ' + esc(HERE) + ' or nearby right now. <b>Be the first:</b> list yours and we\\'ll match you as soon as someone near you joins.</p>';
       return;
     }
-    box.innerHTML = '<p class="note" style="margin-bottom:6px;">' + here.length + ' at ' + esc(HERE) + ', ' + near.length + ' nearby. Updated live.</p><ul class="tests">' +
+    box.innerHTML = summary + '<p class="note" style="margin-bottom:6px;">' + here.length + ' at ' + esc(HERE) + ', ' + near.length + ' nearby. Updated live.</p><ul class="tests">' +
       rows.map(function (l) { return '<li><span><b>' + esc(l.centre) + '</b> · ' + esc(l.dateLabel || l.date) + (l.time ? ' · ' + esc(l.time) : '') + '</span>' + (l.status === 'matching' ? '<span class="pill">In a chat already</span>' : '<span class="pill">Available</span>') + '</li>'; }).join('') + '</ul>' +
-      '<p style="margin-top:10px;"><a href="/#board">See every test on the board</a></p>';
+      '<p style="margin-top:10px;"><a href="/test-availability.html">See live availability by centre</a> · <a href="/#board">Browse the full board</a></p>';
   }).catch(function () { box.innerHTML = '<p>Live tests are on the <a href="/#board">main board</a>.</p>'; });
 })();
 </script>`;
@@ -223,7 +240,7 @@ for (const c of bySlug.values()) {
 }
 fs.writeFileSync(path.join(OUT, "index.html"), indexPage(centres));
 
-const core = ["/", "/find-instructor.html", "/instructors.html", "/privacy.html", "/terms.html", "/cookies.html", "/report-concern.html", "/test-centres/"];
+const core = ["/", "/find-instructor.html", "/instructors.html", "/privacy.html", "/terms.html", "/cookies.html", "/report-concern.html", "/test-centres/", "/test-availability.html", "/just-passed.html"];
 const today = new Date().toISOString().slice(0, 10);
 const urls = core.map((u) => SITE + u).concat([...bySlug.keys()].map((k) => `${SITE}/test-centres/${k}.html`));
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` + urls.map((u) => `  <url>\n    <loc>${u}</loc>\n    <lastmod>${today}</lastmod>\n  </url>`).join("\n") + "\n</urlset>\n");

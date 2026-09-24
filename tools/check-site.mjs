@@ -3,7 +3,7 @@
 // Run: node tools/check-site.mjs
 import fs from "node:fs";
 let bad = 0;
-const files = ["index.html", "chat.html", ...fs.readdirSync("test-centres").map((f) => "test-centres/" + f)];
+const files = ["index.html", "chat.html", "test-availability.html", ...fs.readdirSync("test-centres").map((f) => "test-centres/" + f)];
 for (const f of files) {
   const p = fs.readFileSync(f, "utf8");
   for (const m of p.matchAll(/<script>([\s\S]*?)<\/script>/g)) {

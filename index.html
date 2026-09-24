@@ -1482,6 +1482,76 @@
   </div>
 </section>
 
+<!-- LIVE RIGHT NOW STRIP — one small client-side board fetch (cached 5 min in
+     sessionStorage), honest labelling, links through to /test-availability.html -->
+<section class="wrap" id="live-now-strip" hidden style="padding:14px 16px; margin:0 auto 8px; max-width:1080px;">
+  <div style="background:#fff; border:1px solid var(--line,rgba(10,107,54,.18)); border-radius:14px; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;">
+    <p id="live-now-text" style="margin:0; font-size:14.5px; color:#14241b;">Loading live availability…</p>
+    <a href="/test-availability.html" class="btn btn-ghost" style="padding:8px 16px; font-size:13.5px;">See live availability →</a>
+  </div>
+</section>
+<script>
+(function () {
+  try {
+    var API = 'https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec';
+    var CACHE_KEY = 'tn_board_cache_v1';
+    var CACHE_MS = 5 * 60 * 1000;
+    function readCache() {
+      try {
+        var raw = sessionStorage.getItem(CACHE_KEY);
+        if (!raw) return null;
+        var obj = JSON.parse(raw);
+        if (!obj || (Date.now() - obj.t) > CACHE_MS) return null;
+        return obj.v;
+      } catch (e) { return null; }
+    }
+    function writeCache(v) { try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), v: v })); } catch (e) {} }
+    function esc(s) { return String(s || '').replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+    var cached = readCache();
+    var boardPromise = cached ? Promise.resolve(cached) :
+      Promise.all([
+        fetch(API + '?action=board').then(function (r) { return r.json(); }),
+        fetch(API + '?action=stats').then(function (r) { return r.json(); })
+      ]).then(function (r) { var v = { board: r[0], stats: r[1] }; writeCache(v); return v; });
+
+    boardPromise.then(function (data) {
+      var listings = (data.board && data.board.listings) || [];
+      var stats = data.stats || {};
+      if (!listings.length) return; // stay hidden — nothing honest to show
+      var wrap = document.getElementById('live-now-strip');
+      var textEl = document.getElementById('live-now-text');
+
+      var wantCentre = null;
+      try { wantCentre = new URLSearchParams(location.search).get('centre'); } catch (e) {}
+
+      var relevant = wantCentre ? listings.filter(function (l) { return l.centre === wantCentre; }) : listings;
+      var dated = relevant.filter(function (l) { return l.date; }).slice().sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
+
+      function weeksAway(iso) {
+        if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
+        var t = new Date(iso + 'T00:00:00');
+        var now = new Date(); now.setHours(0, 0, 0, 0);
+        var d = Math.round((t - now) / 86400000);
+        return Math.max(0, Math.round(d / 7));
+      }
+
+      if (wantCentre && dated.length) {
+        var w = weeksAway(dated[0].date);
+        textEl.innerHTML = '<b>' + esc(wantCentre) + ':</b> earliest test listed ' + esc(dated[0].dateLabel || dated[0].date) + (w !== null ? ' (' + w + (w === 1 ? ' week' : ' weeks') + ' away)' : '') + ' · ' + relevant.length + ' listed there now.';
+      } else if (dated.length) {
+        var wN = weeksAway(dated[0].date);
+        var newWeek = stats.listingsLast7d != null ? stats.listingsLast7d : null;
+        textEl.innerHTML = '<b>Nationwide:</b> earliest test on the board ' + esc(dated[0].dateLabel || dated[0].date) + (wN !== null ? ' (' + wN + (wN === 1 ? ' week' : ' weeks') + ' away)' : '') + ' · ' + listings.length + ' listed now' + (newWeek !== null ? ', ' + newWeek + ' new this week' : '') + '.';
+      } else {
+        return;
+      }
+      wrap.hidden = false;
+    }).catch(function () {});
+  } catch (e) {}
+})();
+</script>
+
 <!-- MARQUEE -->
 <div class="strip">
   <div class="strip-track">
@@ -1846,6 +1916,7 @@
         <a href="#why">Why us</a>
         <a href="#swap">List a swap</a>
         <a href="test-centres/">Swaps by test centre</a>
+        <a href="test-availability.html">Live test availability</a>
         <a href="just-passed.html">Just passed? What next</a>
         <a href="find-instructor.html">Find an instructor</a>
       <a href="instructors.html">For instructors</a>
