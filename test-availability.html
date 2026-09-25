@@ -146,8 +146,26 @@
     try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), v: v })); } catch (e) {}
   }
 
-  function fetchJSON(action) {
-    return fetch(API + '?action=' + action).then(function (r) { return r.json(); });
+  // 25 Sep: 8s limit + one retry, so a cold backend can never leave the
+  // page stuck on "Loading…".
+  function fetchJSON(action, tries) {
+    tries = tries || 0;
+    var ctrl = window.AbortController ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 8000);
+    return fetch(API + '?action=' + action, ctrl ? { signal: ctrl.signal } : {})
+      .then(function (r) { clearTimeout(timer); return r.json(); })
+      .catch(function (e) { clearTimeout(timer); if (tries < 1) return fetchJSON(action, tries + 1); throw e; });
+  }
+  // Last good data survives across visits (localStorage) and is shown
+  // instantly while fresh data loads.
+  var SNAP_KEY = 'tn_board_snapshot_v1';
+  function readSnap() { try { var o = JSON.parse(localStorage.getItem(SNAP_KEY) || 'null'); return o && o.v ? o : null; } catch (e) { return null; } }
+  function writeSnap(v) { try { localStorage.setItem(SNAP_KEY, JSON.stringify({ t: Date.now(), v: v })); } catch (e) {} }
+  function fmtDateUK(iso) {
+    var m = /^(d{4})-(d{2})-(d{2})$/.exec(iso || ''); if (!m) return iso || '';
+    var d = new Date(+m[1], +m[2] - 1, +m[3]), n = d.getDate();
+    var sfx = (n % 10 == 1 && n != 11) ? 'st' : (n % 10 == 2 && n != 12) ? 'nd' : (n % 10 == 3 && n != 13) ? 'rd' : 'th';
+    return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()] + ' ' + n + sfx + ' ' + ['January','February','March','April','May','June','July','August','September','October','November','December'][d.getMonth()] + ' ' + d.getFullYear();
   }
 
   function loadAll() {
@@ -156,6 +174,7 @@
     return Promise.all([fetchJSON('board'), fetchJSON('stats')]).then(function (r) {
       var v = { board: r[0], stats: r[1] };
       writeCache(v);
+      writeSnap(v);
       return v;
     });
   }
@@ -226,7 +245,7 @@
         var rowHtml = '<tr class="centre-row" data-name="' + esc(centre.toLowerCase()) + '">' +
           '<td class="name-cell" data-label="Centre"><a href="' + CENTRE_PATH + s + '.html">' + esc(centre) + '</a></td>' +
           '<td class="num" data-label="Listed" style="text-align:right;">' + count + '</td>' +
-          '<td data-label="Earliest">' + esc(earliest) + '</td>' +
+          '<td data-label="Earliest">' + esc(fmtDateUK(earliest)) + '</td>' +
           '<td class="num" data-label="Weeks away" style="text-align:right;">' + (wa !== null ? wa : '–') + '</td>' +
           '<td class="num" data-label="Typical wait" style="text-align:right;">' + (medWeeks !== null ? medWeeks + 'w' : '–') + '</td>' +
           '<td data-label=""><a class="badge" href="/?centre=' + encodeURIComponent(centre) + '#swap-form">List / swap</a></td>' +
@@ -242,7 +261,7 @@
 
     // Search/filter
     var search = document.getElementById('centre-search');
-    search.addEventListener('input', function () {
+    search.oninput = function () { // oninput (not addEventListener): render can run twice (snapshot, then fresh)
       var q = search.value.trim().toLowerCase();
       var rows = document.querySelectorAll('#centre-tbody tr.centre-row');
       var regionHeads = document.querySelectorAll('#centre-tbody tr.region-head');
@@ -259,10 +278,13 @@
         }
         h.style.display = anyVisible ? '' : 'none';
       });
-    });
+    };
   }
 
+  var snap = readSnap();
+  if (snap && !readCache()) { try { render(snap.v); } catch (e) {} }
   loadAll().then(render).catch(function () {
+    if (snap) return; // keep showing the last good data rather than an error
     document.getElementById('headline').innerHTML = '';
     document.getElementById('table-wrap').innerHTML = '<div class="err">Live availability couldn\'t load just now. <a href="/test-centres/">Browse test centres</a> instead, or try again shortly.</div>';
   });

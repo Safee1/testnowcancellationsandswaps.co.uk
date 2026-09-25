@@ -187,11 +187,12 @@ ${sameRegion.length ? `<h2>Other test centres in ${esc(c.region)}</h2>
     var rows = here.concat(near).slice(0, 12);
     var summary = '';
     if (here.length) {
-      var earliest = here.map(function (l) { return l.date; }).filter(Boolean).sort()[0];
+      var firstL = here.filter(function (l) { return l.date; }).sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); })[0];
+      var earliest = firstL ? firstL.date : null;
       if (earliest) {
         var d = daysUntil(earliest);
         var wk = d !== null ? Math.max(0, Math.round(d / 7)) : null;
-        summary = '<p class="note" style="margin-bottom:10px;"><b>Tests listed at ' + esc(HERE) + ' now: ' + here.length + '</b> · earliest: ' + esc(earliest) + (wk !== null ? ' (' + wk + (wk === 1 ? ' week' : ' weeks') + ' away)' : '') + '</p>';
+        summary = '<p class="note" style="margin-bottom:10px;"><b>Tests listed at ' + esc(HERE) + ' now: ' + here.length + '</b> · earliest: ' + esc(firstL.dateLabel || earliest) + (wk !== null ? ' (' + wk + (wk === 1 ? ' week' : ' weeks') + ' away)' : '') + '</p>';
       }
     } else if (near.length) {
       summary = '<p class="note" style="margin-bottom:10px;">No tests listed at ' + esc(HERE) + ' right now, but ' + near.length + ' nearby. <a href="/?centre=' + encodeURIComponent(HERE) + '#swap-form">List yours</a> and we\\'ll match you as soon as one appears.</p>';

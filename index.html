@@ -2619,11 +2619,33 @@
     const sec = document.getElementById('board');
     if (sec) sec.style.display = 'none';
   }
+  // 25 Sep: cold-start protection — show the last good board instantly
+  // (localStorage), then refresh with an 8s limit and one retry.
+  const BOARD_SNAP_KEY = 'tn_home_board_snap_v1';
+  function fetchBoardJSON(tries) {
+    const ctrl = window.AbortController ? new AbortController() : null;
+    const timer = setTimeout(() => { if (ctrl) ctrl.abort(); }, 8000);
+    return fetch(SHEET_ENDPOINT + '?action=board', ctrl ? { signal: ctrl.signal } : {})
+      .then(r => { clearTimeout(timer); return r.json(); })
+      .catch(e => { clearTimeout(timer); if ((tries || 0) < 1) return fetchBoardJSON(1); throw e; });
+  }
+  let boardWired = false;
   function loadBoard() {
-    fetch(SHEET_ENDPOINT + '?action=board')
-      .then(r => r.json())
+    let snapShown = false;
+    try {
+      const snap = JSON.parse(localStorage.getItem(BOARD_SNAP_KEY) || 'null');
+      if (snap && Array.isArray(snap.listings) && snap.listings.length) { applyBoard(snap); snapShown = true; }
+    } catch (e) {}
+    fetchBoardJSON(0)
       .then(d => {
         if (d.result !== 'success' || !Array.isArray(d.listings)) throw new Error('bad');
+        try { localStorage.setItem(BOARD_SNAP_KEY, JSON.stringify({ listings: d.listings })); } catch (e) {}
+        applyBoard(d);
+      })
+      .catch(err => { if (snapShown) return; boardFailed(err); });
+  }
+  function applyBoard(d) {
+      {
         BOARD = d.listings;
         // No real listings yet -> hide the whole board section (no fake data shown)
         if (!BOARD.length) { hideBoardSection(); return; }
@@ -2631,14 +2653,19 @@
         const regions = [...new Set(BOARD.map(r => r.region).filter(Boolean))].sort();
         sel.innerHTML = '<option value="">All regions</option>' +
           regions.map(r => '<option>' + r + '</option>').join('');
-        sel.addEventListener('change', () => renderBoard(sel.value));
-        const soonSort = document.getElementById('board-sort-soon');
-        if (soonSort) soonSort.addEventListener('change', () => renderBoard(sel.value));
+        if (!boardWired) {
+          sel.addEventListener('change', () => renderBoard(sel.value));
+          const soonSort = document.getElementById('board-sort-soon');
+          if (soonSort) soonSort.addEventListener('change', () => renderBoard(sel.value));
+          boardWired = true;
+        }
         sortBoardByRegion();
         renderBoard('');
         liveProof.onBoard(); // v92
-      })
-      .catch(() => {
+      }
+  }
+  function boardFailed() {
+      {
         // If it can't load, hide it rather than showing a broken/empty board
         hideBoardSection();
         // v97 (2026-09-11): during the 9–11 Sep backend outage visitors filled
@@ -2651,7 +2678,7 @@
             .then(d => { if (!d || d.result !== 'success') throw new Error('down'); })
             .catch(showBackendNotice);
         }, 4000);
-      });
+      }
   }
 
   function showBackendNotice() {
