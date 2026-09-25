@@ -2490,12 +2490,14 @@
     // the last 7 days (timestamp is baked into the listing id) gets "New".
     const soonSort = document.getElementById('board-sort-soon');
     if (soonSort && soonSort.checked) {
-      rows.sort((a, b) => {
-        const aN = DETECTED_REGION && a.region === DETECTED_REGION ? 0 : 1;
-        const bN = DETECTED_REGION && b.region === DETECTED_REGION ? 0 : 1;
-        if (aN !== bN) return aN - bN;
-        return String(a.date || '9999').localeCompare(String(b.date || '9999'));
-      });
+      // 25 Sep: soonest means soonest across the whole board (date, then
+      // time). The visitor's region is shown as a "Near you" badge instead
+      // of being forced to the top, which hid earlier tests further down.
+      rows.sort((a, b) =>
+        String(a.date || '9999').localeCompare(String(b.date || '9999')) ||
+        String(a.time || '99:99').localeCompare(String(b.time || '99:99')));
+    } else if (DETECTED_REGION) {
+      rows.sort((a, b) => (a.region === DETECTED_REGION ? 0 : 1) - (b.region === DETECTED_REGION ? 0 : 1));
     }
     const soonIds = BOARD.slice().filter(r => r.date).sort((a, b) => String(a.date).localeCompare(String(b.date))).slice(0, 3).map(r => r.id);
     // v93 (2026-09-05): count shows the whole board, with the in-chat share
@@ -2506,7 +2508,7 @@
       '<div class="bcard' + (soonIds.indexOf(r.id) > -1 ? ' soon' : '') + ((soonIds.indexOf(r.id) > -1 || (listingAgeDays(r.id) !== null && listingAgeDays(r.id) <= 7)) ? ' has-badge' : '') + '">' +
         (soonIds.indexOf(r.id) > -1 ? '<span class="bsoon">Soonest</span>' : '') +
         (listingAgeDays(r.id) !== null && listingAgeDays(r.id) <= 7 ? '<span class="bnew">New</span>' : '') +
-        '<div class="bregion">' + esc(r.region) + '</div>' +
+        '<div class="bregion">' + esc(r.region) + (DETECTED_REGION && r.region === DETECTED_REGION ? ' · <b>Near you</b>' : '') + '</div>' +
         '<div class="bcentre">' + esc(r.centre) + '</div>' +
         '<div class="bdate"><span>Date</span><span>' + esc(r.dateLabel || fmtDateUK(r.date)) + '</span></div>' +
         (r.time ? '<div class="bdate"><span>Time</span><span>' + esc(r.time) + '</span></div>' : '') +
