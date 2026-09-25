@@ -2473,7 +2473,7 @@
   // date text only. The board button's data-date keeps the short fmtDate()
   // form ("14 Jun 2026") — it is only a display fallback for the enquiry
   // sheet header when data-date-display is absent; nothing parses it.
-  function fmtDateUK(v){try{var d=null;if(v instanceof Date)d=v;else{var s=String(v||'').trim();var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)d=new Date(+m[1],+m[2]-1,+m[3]);else{var m2=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m2)d=new Date(+m2[3],+m2[2]-1,+m2[1]);else if(s){var t=new Date(s);if(!isNaN(t))d=t;}}}if(!d||isNaN(d))return String(v||'');var n=d.getDate(),sfx=(n%10==1&&n!=11)?'st':(n%10==2&&n!=12)?'nd':(n%10==3&&n!=13)?'rd':'th';return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]+' '+n+sfx+' '+['January','February','March','April','May','June','July','August','September','October','November','December'][d.getMonth()]+' '+d.getFullYear();}catch(e){return String(v||'');}}
+  function fmtDateUK(v){try{var d=null;if(v instanceof Date)d=v;else{var s=String(v||'').trim();var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)d=new Date(+m[1],+m[2]-1,+m[3]);else{var m2=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m2)d=new Date(+m2[3],+m2[2]-1,+m2[1]);else if(s){var t=new Date(s);if(!isNaN(t))d=t;}}}if(!d||isNaN(d))return String(v||'');var n=d.getDate(),sfx=(n%10==1&&n!=11)?'st':(n%10==2&&n!=12)?'nd':(n%10==3&&n!=13)?'rd':'th';return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]+ ' ' + n + ' ' +['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getFullYear();}catch(e){return String(v||'');}}
   function renderBoard(filterRegion) {
     const grid = document.getElementById('board-grid');
     const count = document.getElementById('board-count');

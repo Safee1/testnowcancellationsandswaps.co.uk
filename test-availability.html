@@ -165,7 +165,7 @@
     var m = /^(d{4})-(d{2})-(d{2})$/.exec(iso || ''); if (!m) return iso || '';
     var d = new Date(+m[1], +m[2] - 1, +m[3]), n = d.getDate();
     var sfx = (n % 10 == 1 && n != 11) ? 'st' : (n % 10 == 2 && n != 12) ? 'nd' : (n % 10 == 3 && n != 13) ? 'rd' : 'th';
-    return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()] + ' ' + n + sfx + ' ' + ['January','February','March','April','May','June','July','August','September','October','November','December'][d.getMonth()] + ' ' + d.getFullYear();
+    return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()] + ' ' + n + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()] + ' ' + d.getFullYear();
   }
 
   function loadAll() {
