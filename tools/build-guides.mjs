@@ -160,9 +160,9 @@ const GUIDES = [
 </ol>
 `,
     faq: [
-      ["Is it actually legal to swap driving tests with a stranger?", "Yes. DVSA allows two learners to exchange booked test appointments over the phone, as long as both hold a live booking for the same type of test and confirm the swap themselves when DVSA calls them. Nobody is buying or selling anything — DVSA moves both bookings directly."],
+      ["Is it actually legal to swap driving tests with a stranger?", "Yes. Swaps are done by phoning DVSA on 0300 200 1122, and both learners must hold a live booking for the same type of test. Nobody is buying or selling anything — TestNow just helps you find each other."],
       ["Can a driving instructor get me an earlier test?", "No. Only the learner can request a change or a swap — DVSA won't action one from an instructor. An instructor can help you decide which centres or dates to try, but the call to DVSA has to come from you."],
-      ["Do paid 'test finder' bots actually work?", "They automate the same free cancellation checker anyone can use on gov.uk. Since DVSA's May 2026 crackdown on unofficial booking services, using one also risks your licence and payment details being handled by a site with no DVSA relationship."],
+      ["Do paid 'test finder' bots actually work?", "They automate the same free cancellation checker anyone can use on gov.uk. Using one also means handing your licence number and payment details to a site with no DVSA relationship."],
       ["How often should I check for a cancellation?", "There's no fixed schedule — cancellations appear at random as other learners change or cancel. Checking a few times a week, especially early morning, tends to catch more than checking once."],
     ],
   },

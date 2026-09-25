@@ -123,7 +123,7 @@ function centrePage(c, bySlug, sameRegion) {
   const title = `${c.centre} driving test swap — free, faster than waiting | TestNow`;
   const desc = `Swap your DVSA practical test at ${c.centre} (${c.region}) with another learner. See live tests near ${c.centre}${nearNames[0] ? ", " + nearNames.slice(0, 2).join(" and ") : ""}. Free, anonymous, done by phoning DVSA.`;
   const faq = [
-    [`Can I swap my driving test at ${c.centre}?`, `Yes. DVSA lets two learners swap practical test appointments by phone. List your ${c.centre} test on TestNow and we match you with someone who wants your date and has one you want, at ${c.centre} or a nearby centre.`],
+    [`Can I swap my driving test at ${c.centre}?`, `Yes. Swaps are done by phoning DVSA on 0300 200 1122, and both learners must hold a live booking. List your ${c.centre} test on TestNow and we match you with someone who wants your date and has one you want, at ${c.centre} or a nearby centre.`],
     [`Which centres are near ${c.centre}?`, near.length ? `The nearest centres we match with are ${near.map((n) => n.name + (n.dist ? " (" + n.dist.replace(/^about /, "about ") + ")" : "")).join(", ")}.` : `We match you with learners at ${c.centre} and nearby centres in ${c.region}.`],
     ["Does it cost anything?", "No. TestNow is free for learners. A swap only ever happens by phoning DVSA on 0300 200 1122. If anyone asks you to pay for a test date, it is a scam."],
     ["Is my phone number shared?", "No. You are matched in an anonymous chat and only ever see the other person as a label. Phone numbers, emails and links are removed automatically."],
