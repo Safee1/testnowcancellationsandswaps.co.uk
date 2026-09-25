@@ -1835,7 +1835,7 @@
       </div>
       <div class="form-submit">
         <button type="submit" class="btn btn-primary">Submit my listing <span aria-hidden="true">→</span></button>
-        <small>By submitting, you agree we can contact you about a potential swap. We'll never share your details without your say-so.</small>
+        <small>We'll email and text you about matches for this test, and you can stop texts any time. We'll never share your details without your say-so. See our <a href="privacy.html">Privacy Notice</a>.</small>
       </div>
     </form>
 
@@ -2952,6 +2952,28 @@
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
     d.min = yyyy + '-' + mm + '-' + dd;
+    // 25 Sep: DVSA books up to 24 weeks ahead — cap the picker so a mistyped
+    // year (2062) can't get through.
+    const max = new Date(today.getTime() + 24 * 7 * 86400000);
+    d.max = max.getFullYear() + '-' + String(max.getMonth() + 1).padStart(2, '0') + '-' + String(max.getDate()).padStart(2, '0');
+    // Test times: the backend rejects anything outside 07:00–17:30, so say
+    // so before submit rather than after.
+    const t = document.getElementById('time');
+    if (t) {
+      t.min = '07:00'; t.max = '17:30';
+      t.addEventListener('input', function () {
+        t.setCustomValidity(t.value && (t.value < '07:00' || t.value > '17:30') ? 'DVSA tests run between 07:00 and 17:30 — check the time on your booking.' : '');
+      });
+    }
+    // UK mobile only (07… or +447…), checked before submit.
+    const p = document.getElementById('phone');
+    if (p) {
+      p.addEventListener('input', function () {
+        const digits = p.value.replace(/[^0-9+]/g, '');
+        const ok = /^(07\d{9}|\+447\d{9}|447\d{9})$/.test(digits);
+        p.setCustomValidity(p.value && !ok ? 'Enter a UK mobile number, e.g. 07123 456789.' : '');
+      });
+    }
   })();
 
   // "List another test" — bring the form back, hide the success card
