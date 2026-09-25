@@ -194,6 +194,12 @@
       <p class="field-error" id="phone-error" hidden>That doesn't look like a full UK mobile number — check and try again.</p>
     </div>
 
+    <div class="field">
+      <label for="remove-email">Email on your listing</label>
+      <input id="remove-email" name="email" type="email" autocomplete="email" placeholder="you@example.com">
+      <p style="margin:6px 0 0;font-size:13px;opacity:.75;">The email you listed with. This stops anyone else removing your test. Leave it blank only if you didn't give us an email.</p>
+    </div>
+
     <div class="confirm-row">
       <input type="checkbox" id="confirm-box">
       <label for="confirm-box">I understand this removes my listing</label>
@@ -254,6 +260,7 @@
       body: JSON.stringify({
         action: 'removeListing',
         phone: phoneInput.value,
+        email: (document.getElementById('remove-email') || {}).value || '',
         confirm: 'REMOVE',
         website: form.website ? form.website.value : '', // honeypot
         formLoadedAt: PAGE_LOADED_AT
