@@ -279,7 +279,7 @@ function search(){
       var feat = (window.__tnFeatured && window.__tnFeatured.featuredIds) || [];
       list.forEach(function(it){ it.__f = feat.indexOf(String(it.id)) !== -1; });
       list.sort(function(a, b){ return (b.__f ? 1 : 0) - (a.__f ? 1 : 0); });
-      if (!list.length) { statusEl.textContent = "No instructors listed for " + region + " yet — check back soon."; return; }
+      if (!list.length) { statusEl.innerHTML = "No instructors listed for " + esc(region) + " yet. <b>Are you a driving instructor?</b> <a href=\"instructors.html?utm_source=findinstructor_empty&utm_medium=site&utm_campaign=directory\">List yourself free &rarr;</a><br>Learners: <a href=\"/#swap-form\">list your test</a> and we can pass your details to a local instructor."; return; }
       statusEl.textContent = list.length + " instructor" + (list.length>1?"s":"") + " covering " + region + ":";
       grid.innerHTML = list.map(function(it){
         var rows = "";

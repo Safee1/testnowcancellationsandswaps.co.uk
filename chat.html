@@ -388,7 +388,7 @@
         if (d.gateRequired && d.youAre !== 'MOD') { showGate('set', d); return; }
         afterSession(d);
       })
-      .catch(() => { metaText.textContent = 'Could not open chat.'; composer.style.display = 'none'; completeBtn.style.display = 'none'; abInner.innerHTML = ''; });
+      .catch(() => { metaText.textContent = 'Could not open chat.'; statusPill.textContent = 'Link not valid'; statusPill.style.background = 'rgba(245,240,230,.08)'; composer.style.display = 'none'; completeBtn.style.display = 'none'; abInner.innerHTML = ''; });
   }
 
   // Everything that used to run straight after a successful chatSession —
