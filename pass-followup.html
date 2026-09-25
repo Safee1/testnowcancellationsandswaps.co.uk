@@ -69,7 +69,8 @@
   const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec";
   const qs = new URLSearchParams(location.search);
   const TK = qs.get('tk') || '';
-  const OUTCOME = (qs.get('r') === 'passed') ? 'passed' : 'failed';
+  // 25 Sep: r is optional. With no r (the one-link SMS), the page asks.
+  let OUTCOME = qs.get('r') === 'passed' ? 'passed' : (qs.get('r') === 'failed' ? 'failed' : '');
   const card = document.getElementById('card');
 
   function render(html) { card.innerHTML = html; }
@@ -126,6 +127,17 @@
     }
   }
 
+  function renderChoice() {
+    render(
+      '<h1>How did your driving test go?</h1>' +
+      '<p>Tap one — it takes a second.</p>' +
+      '<button class="btn btn-primary" id="choosePassed">I passed 🎉</button>' +
+      '<button class="btn btn-primary" id="chooseFailed" style="margin-top:10px">Not this time</button>'
+    );
+    document.getElementById('choosePassed').addEventListener('click', function () { OUTCOME = 'passed'; submitOutcome(); });
+    document.getElementById('chooseFailed').addEventListener('click', function () { OUTCOME = 'failed'; submitOutcome(); });
+  }
+
   function renderConfirm() {
     var isPassed = OUTCOME === 'passed';
     render(
@@ -166,6 +178,7 @@
       .then(function (json) {
         if (json.result !== 'success' || !json.valid) return renderInvalid();
         if (json.outcome) return renderFinal(json.outcome, json.offers || []);
+        if (!OUTCOME) return renderChoice();
         renderConfirm();
       })
       .catch(function () { renderError('Could not reach TestNow — check your connection and try again.'); });
