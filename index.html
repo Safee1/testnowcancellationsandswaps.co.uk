@@ -2159,7 +2159,7 @@
     btn.textContent = 'Checking…';
 
     const phoneVal = form.phone.value;
-    fetch(SHEET_ENDPOINT + '?action=checkphone&p=' + encodeURIComponent(phoneVal))
+    fetch(SHEET_ENDPOINT + '?action=checkphone&p=' + encodeURIComponent(phoneVal) + '&em=' + encodeURIComponent((form.email && form.email.value || '').trim()))
       .then(r => r.json())
       .then(res => {
         if (res && res.exists) {
