@@ -1803,7 +1803,7 @@
           </select>
         </div>
         <div class="field full">
-          <label for="wanted-centre">Preferred test centre</label>
+          <label for="wanted-centre">Preferred test centre <span style="font-weight:400;color:#5b6b61;">(or any centre in the region)</span></label>
           <select id="wanted-centre" name="wanted-centre" required disabled>
             <option value="">Pick your region first</option>
           </select>
@@ -2318,14 +2318,16 @@
       regions.map(r => '<option>' + r + '</option>').join('');
   }
 
-  function fillCentreSelect(sel, region, placeholder) {
+  function fillCentreSelect(sel, region, placeholder, anyFirst) {
     if (!region || !byRegion[region]) {
       sel.innerHTML = '<option value="">' + placeholder + '</option>';
       sel.disabled = true;
       return;
     }
     const centres = byRegion[region].map(c => c.centre).sort();
-    sel.innerHTML = '<option value="">Choose…</option>' +
+    // 26 Sep: preferred centre offers "Any centre in this region" first (stored
+    // as "Any"; the matcher then matches on region, not one centre + 3 nearest).
+    sel.innerHTML = (anyFirst ? '<option value="Any" selected>Any centre in ' + region + '</option>' : '<option value="">Choose…</option>') +
       centres.map(c => '<option>' + c + '</option>').join('');
     sel.disabled = false;
   }
@@ -2446,7 +2448,7 @@
     const ownRegion = document.getElementById('region').value;
     const effectiveRegion = (wantedRegionVal === 'Same' || !wantedRegionVal) ? ownRegion : wantedRegionVal;
     fillCentreSelect(document.getElementById('wanted-centre'), effectiveRegion,
-      effectiveRegion ? 'Choose…' : 'Pick your region first');
+      effectiveRegion ? 'Choose…' : 'Pick your region first', true);
   }
 
   // Wire cascades

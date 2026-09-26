@@ -266,9 +266,12 @@ window.__tnFeatured = null;
 fetch("/featured.json", { cache: "no-store" }).then(function(r){ return r.json(); })
   .then(function(j){ window.__tnFeatured = j; }).catch(function(){});
 
+var searchedRegion = null; // 26 Sep: change + Search click both call search() — don't fetch the same region twice
 function search(){
   var region = document.getElementById('region').value;
-  if (!region) { statusEl.textContent = "Please choose your region first."; grid.innerHTML=""; return; }
+  if (!region) { statusEl.textContent = "Please choose your region first."; grid.innerHTML=""; searchedRegion = null; return; }
+  if (region === searchedRegion) return;
+  searchedRegion = region;
   statusEl.textContent = "Searching…"; grid.innerHTML = "";
   fetch(ENDPOINT + "?action=directory&region=" + encodeURIComponent(region))
     .then(function(r){ return r.json(); })
