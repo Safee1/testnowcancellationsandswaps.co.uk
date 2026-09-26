@@ -285,8 +285,17 @@
   const optOutDone = document.getElementById('opt-out-done');
 
   if (!leadId || !token) {
+    // 26 Sep: no valid link → nothing on this page can work, so don't show a
+    // typeable box next to an error. Say exactly what to do instead.
     linkError.hidden = false;
     btn.disabled = true;
+    btn.style.display = 'none';
+    var emailField = document.querySelector('#add-email-form .field');
+    if (emailField) emailField.style.display = 'none';
+    heading.textContent = 'This link isn\'t valid';
+    var sub = document.getElementById('subheading');
+    if (sub) sub.textContent = 'It may have expired or already been used — we can still sort it for you by email.';
+    linkError.textContent = 'Email info@testnowcancellationsandswaps.co.uk from the address you want added, with the subject "Add my email" and the mobile number on your listing — or "Stop texts" if you no longer want texts from TestNow.';
     optOutBlock.style.display = 'none';
   } else {
     // Optional friendly greeting — first name only, never anything else.

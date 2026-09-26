@@ -371,6 +371,8 @@
 
   if (!SID || !TK) {
     metaText.textContent = 'Invalid chat link.';
+    // 26 Sep: the pill was still the green "Open" next to this message
+    statusPill.textContent = 'Link not valid'; statusPill.style.background = 'rgba(160,40,40,.12)'; statusPill.style.color = '#7a1f1f';
     composer.style.display = 'none'; completeBtn.style.display = 'none'; abInner.innerHTML = '';
   } else { loadCentres(); initSession(); }
 

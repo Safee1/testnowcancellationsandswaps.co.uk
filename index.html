@@ -1509,12 +1509,21 @@
     function writeCache(v) { try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), v: v })); } catch (e) {} }
     function esc(s) { return String(s || '').replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
+    // 26 Sep: one shared request per action for the whole page — the board
+    // and stats loaders further down reuse these instead of fetching again
+    // (the homepage was hitting ?action=board and ?action=stats twice each).
+    window.tnShared = window.tnShared || function (action) {
+      var m = window.__tnShared = window.__tnShared || {};
+      if (!m[action]) {
+        m[action] = fetch(API + '?action=' + action).then(function (r) { return r.json(); })
+          .catch(function (e) { delete m[action]; throw e; });
+      }
+      return m[action];
+    };
     var cached = readCache();
     var boardPromise = cached ? Promise.resolve(cached) :
-      Promise.all([
-        fetch(API + '?action=board').then(function (r) { return r.json(); }),
-        fetch(API + '?action=stats').then(function (r) { return r.json(); })
-      ]).then(function (r) { var v = { board: r[0], stats: r[1] }; writeCache(v); return v; });
+      Promise.all([tnShared('board'), tnShared('stats')])
+        .then(function (r) { var v = { board: r[0], stats: r[1] }; writeCache(v); return v; });
 
     boardPromise.then(function (data) {
       var listings = (data.board && data.board.listings) || [];
@@ -2623,6 +2632,13 @@
   // (localStorage), then refresh with an 8s limit and one retry.
   const BOARD_SNAP_KEY = 'tn_home_board_snap_v1';
   function fetchBoardJSON(tries) {
+    // 26 Sep: reuse the live-now strip's in-flight board request when there is
+    // one (same 8s limit, then fall back to a fresh fetch with retry).
+    const shared = (!tries && window.__tnShared && window.__tnShared.board) ? window.__tnShared.board : null;
+    if (shared) {
+      return Promise.race([shared, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 8000))])
+        .catch(() => fetchBoardJSON(1));
+    }
     const ctrl = window.AbortController ? new AbortController() : null;
     const timer = setTimeout(() => { if (ctrl) ctrl.abort(); }, 8000);
     return fetch(SHEET_ENDPOINT + '?action=board', ctrl ? { signal: ctrl.signal } : {})
@@ -2828,7 +2844,7 @@
       timer = setTimeout(show, 5000);
     }
 
-    fetch(SHEET_ENDPOINT + '?action=stats').then(r => r.json()).then(d => {
+    (window.tnShared ? window.tnShared('stats') : fetch(SHEET_ENDPOINT + '?action=stats').then(r => r.json())).then(d => {
       if (d && d.result === 'success') { STATS = d; showStats(); if (boardReady) toast(); }
     }).catch(() => {});
 
@@ -2983,13 +2999,21 @@
     // year (2062) can't get through.
     const max = new Date(today.getTime() + 24 * 7 * 86400000);
     d.max = max.getFullYear() + '-' + String(max.getMonth() + 1).padStart(2, '0') + '-' + String(max.getDate()).padStart(2, '0');
-    // Test times: the backend rejects anything outside 07:00–17:30, so say
-    // so before submit rather than after.
+    // 26 Sep: DVSA doesn't run tests on Sundays — a Sunday date is a typo,
+    // and one was sitting as the homepage "earliest test". Backend rejects too.
+    d.addEventListener('input', function () {
+      let sunday = false;
+      if (d.value) { const p = d.value.split('-'); const dt = new Date(+p[0], +p[1] - 1, +p[2]); sunday = !isNaN(dt) && dt.getDay() === 0; }
+      d.setCustomValidity(sunday ? 'DVSA doesn\'t run tests on Sundays — check the date on your booking.' : '');
+    });
+    // Test times: the backend rejects anything outside 07:00–19:00 (evening
+    // tests exist — the form offers "Evening or weekend"), so say so before
+    // submit rather than after.
     const t = document.getElementById('time');
     if (t) {
-      t.min = '07:00'; t.max = '17:30';
+      t.min = '07:00'; t.max = '19:00';
       t.addEventListener('input', function () {
-        t.setCustomValidity(t.value && (t.value < '07:00' || t.value > '17:30') ? 'DVSA tests run between 07:00 and 17:30 — check the time on your booking.' : '');
+        t.setCustomValidity(t.value && (t.value < '07:00' || t.value > '19:00') ? 'DVSA tests run between 07:00 and 19:00 — check the time on your booking.' : '');
       });
     }
     // UK mobile only (07… or +447…), checked before submit.

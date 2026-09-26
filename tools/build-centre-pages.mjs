@@ -184,6 +184,10 @@ ${sameRegion.length ? `<h2>Other test centres in ${esc(c.region)}</h2>
     var all = (d && d.listings) || [];
     var here = all.filter(function (l) { return l.centre === HERE; });
     var near = all.filter(function (l) { return NEAR.indexOf(l.centre) !== -1; });
+    // 26 Sep: soonest first within "here" and within "near" (was sheet order —
+    // Hornchurch showed 21 Oct, 5 Jan, 29 Oct).
+    var byDateTime = function (a, b) { return String((a.date || '') + ' ' + (a.time || '')).localeCompare(String((b.date || '') + ' ' + (b.time || ''))); };
+    here.sort(byDateTime); near.sort(byDateTime);
     var rows = here.concat(near).slice(0, 12);
     var summary = '';
     if (here.length) {

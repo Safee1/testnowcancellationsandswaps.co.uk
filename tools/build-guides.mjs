@@ -75,6 +75,9 @@ ${HEAD_TRACKING}
 <meta name="description" content="${esc(desc)}">
 <link rel="canonical" href="${url}">
 <meta property="og:type" content="article">
+<meta property="article:published_time" content="${DATE}T09:00:00+01:00">
+<meta property="article:modified_time" content="${DATE}T09:00:00+01:00">
+<meta property="article:author" content="TestNow">
 <meta property="og:site_name" content="TestNow Cancellations &amp; Swaps">
 <meta property="og:title" content="${esc(ogTitle || title)}">
 <meta property="og:description" content="${esc(ogDesc || desc)}">
@@ -118,6 +121,12 @@ function faqLd(faq) {
 }
 
 const DATE = "2026-09-24";
+// House date style: "Thu 24 Sep 2026"
+function fmtUK(iso) {
+  const d = new Date(iso + "T12:00:00Z");
+  const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  return `${DAYS[d.getUTCDay()]} ${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+}
 
 const GUIDES = [
   {
@@ -376,6 +385,7 @@ function guideBody(g) {
   return `
 <nav class="crumbs"><a href="/">TestNow</a> › <a href="/guides/">Guides</a> › ${esc(g.nav)}</nav>
 <h1>${esc(g.h1)}</h1>
+<p class="byline" style="font-size:14px;color:#5b6b61;margin:-6px 0 14px;">Published <time datetime="${DATE}">${fmtUK(DATE)}</time> · by TestNow</p>
 <p class="lede">${g.lede}</p>
 ${g.body}
 <h2>Questions</h2>
