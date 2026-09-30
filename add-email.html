@@ -284,9 +284,9 @@
   const optOutError = document.getElementById('opt-out-error');
   const optOutDone = document.getElementById('opt-out-done');
 
-  if (!leadId || !token) {
-    // 26 Sep: no valid link → nothing on this page can work, so don't show a
-    // typeable box next to an error. Say exactly what to do instead.
+  // 26 Sep: no valid link → nothing on this page can work, so don't show a
+  // typeable box next to an error. Say exactly what to do instead.
+  function showInvalidLink() {
     linkError.hidden = false;
     btn.disabled = true;
     btn.style.display = 'none';
@@ -297,13 +297,19 @@
     if (sub) sub.textContent = 'It may have expired or already been used — we can still sort it for you by email.';
     linkError.textContent = 'Email info@testnowcancellationsandswaps.co.uk from the address you want added, with the subject "Add my email" and the mobile number on your listing — or "Stop texts" if you no longer want texts from TestNow.';
     optOutBlock.style.display = 'none';
+  }
+
+  if (!leadId || !token) {
+    showInvalidLink();
   } else {
-    // Optional friendly greeting — first name only, never anything else.
-    // If this fails or the link is bad, the form still works exactly the
-    // same; the real check happens server-side on submit.
+    // Friendly greeting (first name only) — and, 30 Sep, the same call tells
+    // us if the link is bad, so a mangled link gets the clear message up
+    // front instead of an error after typing. A network failure keeps the
+    // form (the real check still happens server-side on submit).
     fetch(SHEET_ENDPOINT + '?action=addEmailInfo&l=' + encodeURIComponent(leadId) + '&t=' + encodeURIComponent(token))
       .then(function (r) { return r.json(); })
       .then(function (json) {
+        if (json && json.result === 'error') { showInvalidLink(); return; }
         if (json && json.result === 'success' && json.firstName) {
           heading.textContent = 'Add your email, ' + json.firstName;
         }
