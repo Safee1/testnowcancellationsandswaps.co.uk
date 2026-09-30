@@ -207,12 +207,22 @@ function esc(s){
 function fmtDateUK(v){try{var d=null;if(v instanceof Date)d=v;else{var s=String(v||'').trim();var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)d=new Date(+m[1],+m[2]-1,+m[3]);else{var m2=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m2)d=new Date(+m2[3],+m2[2]-1,+m2[1]);else if(s){var t=new Date(s);if(!isNaN(t))d=t;}}}if(!d||isNaN(d))return String(v||'');var n=d.getDate(),sfx=(n%10==1&&n!=11)?'st':(n%10==2&&n!=12)?'nd':(n%10==3&&n!=13)?'rd':'th';return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]+ ' ' + n + ' ' +['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getFullYear();}catch(e){return String(v||'');}
 }
 
+function showBadLink(m){
+  var h=document.querySelector('h1'); if(h) h.textContent='Dashboard link not valid';
+  var p=document.querySelector('.masknote'); if(p) p.style.display='none';
+  var e=document.getElementById('err'); e.style.display='';
+  e.textContent=m+' ';
+  var a=document.createElement('a'); a.href='instructors.html'; a.textContent='Go to the instructor page'; e.appendChild(a);
+}
 function load() {
-  if (!TK) { showErr("This page needs your personal dashboard link. Check the email/confirmation you got when you registered."); return; }
+  if (!TK) { showBadLink("This page needs your personal dashboard link. Check the email you got when you registered."); return; }
   fetch(ENDPOINT + '?action=leadsBoard&tk=' + encodeURIComponent(TK))
     .then(function(r){ return r.json(); })
     .then(function(d){
-      if (d.result !== 'success') { showErr(d.message || "Couldn't load your dashboard."); return; }
+      if (d.result !== 'success') {
+        if (/invalid token|not active/i.test(d.message || '')) { showBadLink("This dashboard link isn't valid or your account isn't active."); return; }
+        showErr(d.message || "Couldn't load your dashboard."); return;
+      }
       document.getElementById('topbar').style.display = '';
       document.getElementById('who').textContent = d.instructor.name;
       var grid = document.getElementById('grid');
