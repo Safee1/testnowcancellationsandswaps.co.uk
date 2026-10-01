@@ -315,6 +315,14 @@
   const ONLINE_WINDOW = 22000;
   const PING_EVERY = 8000;
 
+  // Every backend call gets a 20s ceiling: a hung request (flaky mobile data,
+  // Apps Script cold start) used to freeze the poll loop and the first load forever.
+  function tfetch(url, opts) {
+    if (typeof AbortController === 'undefined') return fetch(url, opts);
+    const ac = new AbortController(); const t = setTimeout(function () { ac.abort(); }, 20000);
+    return fetch(url, Object.assign({}, opts || {}, { signal: ac.signal })).finally(function () { clearTimeout(t); });
+  }
+
   const qs = new URLSearchParams(location.search);
   const SID = qs.get('cs') || qs.get('sid') || '';
   const TK = qs.get('tk') || '';
@@ -378,7 +386,7 @@
 
   // ---------- session ----------
   function initSession() {
-    fetch(SHEET_ENDPOINT + '?action=chatSession&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK) + gateQs() + deviceQs())
+    tfetch(SHEET_ENDPOINT + '?action=chatSession&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK) + gateQs() + deviceQs())
       .then(r => r.json())
       .then(d => {
         if (d.result !== 'success') {
@@ -390,7 +398,16 @@
         if (d.gateRequired && d.youAre !== 'MOD') { showGate('set', d); return; }
         afterSession(d);
       })
-      .catch(() => { metaText.textContent = 'Could not open chat.'; statusPill.textContent = 'Link not valid'; statusPill.style.background = 'rgba(245,240,230,.08)'; composer.style.display = 'none'; completeBtn.style.display = 'none'; abInner.innerHTML = ''; });
+      .catch(() => {
+        // Network/500/empty body/timeout is NOT an invalid link: say so and offer a retry.
+        metaText.textContent = 'Connection problem'; statusPill.textContent = 'Offline'; statusPill.style.background = 'rgba(245,240,230,.08)';
+        if (!document.getElementById('retryCard')) {
+          const c = gcard('<div class="g-text">⚠ <b>Couldn\'t reach the chat just now.</b> Check your signal, then tap retry. Your link is fine.</div>'); c.id = 'retryCard';
+          const b = document.createElement('button'); b.className = 'g-btn'; b.textContent = 'Try again';
+          b.onclick = function () { c.remove(); metaText.textContent = 'Connecting…'; initSession(); };
+          const w = document.createElement('div'); w.className = 'g-controls'; w.appendChild(b); c.appendChild(w);
+        }
+      });
   }
 
   // Everything that used to run straight after a successful chatSession —
@@ -455,7 +472,7 @@
       if (!/^[0-9]{8}$/.test(v)) { err.textContent = 'Your booking reference is 8 digits, numbers only. Please check it.'; return; }
       btn.disabled = true; inp.disabled = true;
       if (mode === 'verify') { gateTries++; saveGate(v); c.remove(); metaText.textContent = 'Connecting…'; initSession(); return; }
-      fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatGateSet', sid: SID, tk: TK, ref: v, cid: CID, ua: String(navigator.userAgent || '').slice(0, 80) }) })
+      tfetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatGateSet', sid: SID, tk: TK, ref: v, cid: CID, ua: String(navigator.userAgent || '').slice(0, 80) }) })
         .then(r => r.json()).then(j => {
           if (j.result === 'success') { if (j.gate !== 'off') saveGate(v); c.remove(); afterSession(d); return; }
           btn.disabled = false; inp.disabled = false;
@@ -468,7 +485,7 @@
   }
 
   function loadCentres() {
-    fetch(SHEET_ENDPOINT + '?action=centres').then(r => r.json()).then(d => {
+    tfetch(SHEET_ENDPOINT + '?action=centres').then(r => r.json()).then(d => {
       if (d.result === 'success' && Array.isArray(d.centres)) {
         centresData = d.centres;
         centresData.forEach(it => { movesMap[it.centre] = (it.moves || []).map(x => String(x).split(' - ')[0].trim()).filter(Boolean); });
@@ -525,7 +542,7 @@
   // behaviour, not the same bug.
   function pingLoop(force) {
     if (!POLLING || (document.hidden && !force)) return;
-    fetch(SHEET_ENDPOINT + '?action=chatPing&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK) + gateQs())
+    tfetch(SHEET_ENDPOINT + '?action=chatPing&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK) + gateQs())
       .then(r => r.json())
       .then(d => {
         if (d.result === 'success') {
@@ -552,12 +569,12 @@
   // no argument and stays correctly gated by POLLING.
   function pollMessages(force) {
     if ((!POLLING && !force) || (document.hidden && !force)) return;
-    fetch(SHEET_ENDPOINT + '?action=chatMessages&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK) + gateQs() + '&since=' + LAST_INDEX)
+    tfetch(SHEET_ENDPOINT + '?action=chatMessages&cs=' + encodeURIComponent(SID) + '&tk=' + encodeURIComponent(TK) + gateQs() + '&since=' + LAST_INDEX)
       .then(r => r.json())
       .then(d => {
         if (d.result === 'success' && Array.isArray(d.messages)) {
           if (d.messages.length) idleStreak = 0; else idleStreak++;
-          d.messages.forEach(m => { handleIncoming(m); LAST_INDEX = Math.max(LAST_INDEX, m.idx + 1); });
+          d.messages.forEach(m => { if (typeof m.idx === 'number' && m.idx < LAST_INDEX) return; handleIncoming(m); LAST_INDEX = Math.max(LAST_INDEX, m.idx + 1); });
           if (d.status && d.status !== 'open' && SESSION_STATUS === 'open') { SESSION_STATUS = d.status; setClosedUI(); }
         } else { idleStreak++; }
         if (!firstPollDone) { firstPollDone = true; if (!flowStarted) { flowStarted = true; flowKickoff(); } }
@@ -678,7 +695,7 @@
     }).finally(() => { sendBtn.disabled = false; input.focus(); });
   }
   function postRaw(text) {
-    return fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatSend', sid: SID, tk: TK, g: GATE, text: text }) })
+    return tfetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatSend', sid: SID, tk: TK, g: GATE, text: text }) })
       .then(r => r.json()).then(j => {
         // Sending means the conversation is active — drop any idle backoff so
         // the other learner's reply still lands within the fast interval.
@@ -703,8 +720,8 @@
     const now = Date.now();
     if (now - lastQuickSendAt < QUICK_COOLDOWN) return;
     lastQuickSendAt = now;
-    postRaw(text);
-    if (btn) {
+    postRaw(text).then(ok => { if (!ok) { lastQuickSendAt = 0; showLocalError('⚠ That didn\'t send — please tap it again.'); if (btn) { btn.disabled = false; btn.textContent = btn.getAttribute('data-l') || btn.textContent; } } });
+    if (btn) { btn.setAttribute('data-l', btn.textContent);
       const old = btn.textContent;
       btn.disabled = true; btn.textContent = 'Sent ✓';
       setTimeout(function () { btn.disabled = false; btn.textContent = old; }, QUICK_COOLDOWN);
@@ -745,7 +762,7 @@
       const v = (inp.value || '').trim();
       if (!v || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { err.textContent = 'That doesn\'t look like a valid email.'; return; }
       btn.disabled = true; skip.disabled = true;
-      fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatSetEmail', sid: SID, tk: TK, g: GATE, email: v }) })
+      tfetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatSetEmail', sid: SID, tk: TK, g: GATE, email: v }) })
         .then(r => r.json())
         .then(function (j) {
           if (j.result !== 'success') { err.textContent = 'Could not save — you can skip, it\'ll just ask again next time.'; btn.disabled = false; skip.disabled = false; return; }
@@ -1083,7 +1100,7 @@
     if (yes) yes.onclick = function () {
       if (SESSION_STATUS !== 'open') { m.classList.remove('show'); return; }
       yes.disabled = true;
-      fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, g: GATE, outcome: 'admin_closed' }) })
+      tfetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, g: GATE, outcome: 'admin_closed' }) })
         .then(r => r.json()).then(j => {
           yes.disabled = false; m.classList.remove('show');
           if (j.result !== 'success') showLocalError('⚠ Could not close the chat — please try again.');
@@ -1109,7 +1126,7 @@
         const outcome = b.getAttribute('data-outcome') || '';
         postRaw('🏁 Outcome: ' + msg);
         setTimeout(function () {
-          fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, g: GATE, outcome: outcome }) })
+          tfetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, g: GATE, outcome: outcome }) })
             .then(r => r.json()).then(j => {
               if (j.result !== 'success') showLocalError('⚠ Could not close the chat — please tap Finish again.');
             }).catch(() => showLocalError('⚠ Could not close the chat — please tap Finish again.'));
@@ -1192,7 +1209,7 @@
         if (reportSent) { modal.classList.remove('show'); return; }
         const code = b.getAttribute('data-reason');
         modal.querySelectorAll('.outcome-btn').forEach(function (x) { x.disabled = true; });
-        fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatReport', sid: SID, tk: TK, g: GATE, reason: code }) })
+        tfetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatReport', sid: SID, tk: TK, g: GATE, reason: code }) })
           .then(r => r.json()).then(j => {
             modal.classList.remove('show');
             if (j.result === 'success') {
@@ -1232,7 +1249,7 @@
     const otherWrap = document.getElementById('declineOtherWrap');
     if (otherWrap) otherWrap.style.display = 'none';
     if (SESSION_STATUS !== 'open') return;
-    fetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, g: GATE, outcome: 'declined', reason: reason || '' }) })
+    tfetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, g: GATE, outcome: 'declined', reason: reason || '' }) })
       .then(r => r.json()).then(j => { if (j.result !== 'success') showLocalError('⚠ Could not close the chat — please try again.'); })
       .catch(() => showLocalError('⚠ Could not close the chat — please try again.'));
   }
