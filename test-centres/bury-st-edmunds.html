@@ -117,7 +117,8 @@
     // Hornchurch showed 21 Oct, 5 Jan, 29 Oct).
     var byDateTime = function (a, b) { return String((a.date || '') + ' ' + (a.time || '')).localeCompare(String((b.date || '') + ' ' + (b.time || ''))); };
     here.sort(byDateTime); near.sort(byDateTime);
-    var rows = here.concat(near).slice(0, 12);
+    // 3 Oct: one merged list, soonest first (here-then-near still showed Hornchurch 5 Jan before Goodmayes 2 Dec).
+    var rows = here.concat(near).sort(byDateTime).slice(0, 12);
     var summary = '';
     if (here.length) {
       var firstL = here.filter(function (l) { return l.date; }).sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); })[0];
