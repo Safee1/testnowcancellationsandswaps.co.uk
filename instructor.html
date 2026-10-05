@@ -29,8 +29,11 @@
   })();
 
   gtag('js', new Date());
-  gtag('config', 'AW-18364427323');
-  gtag('config', 'G-THEHZYLS0C'); // GA4 — same consent gate as the Ads tag above, nothing extra needed
+  // The page URL carries the instructor's private dashboard token (?t=...), so never
+  // send the query string to Google (consent-denied pings still include the URL).
+  var tnCleanLoc = { page_location: location.origin + location.pathname, page_referrer: '' };
+  gtag('config', 'AW-18364427323', tnCleanLoc);
+  gtag('config', 'G-THEHZYLS0C', tnCleanLoc); // GA4 — same consent gate as the Ads tag above, nothing extra needed
 </script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18364427323"></script>
 <meta charset="UTF-8">
