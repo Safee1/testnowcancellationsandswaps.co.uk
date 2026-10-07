@@ -179,7 +179,7 @@ const GUIDES = [
     slug: "driving-test-cancellation-scams",
     nav: "Spot a scam",
     title: "Driving test cancellation scams: how they work and how to report them | TestNow",
-    desc: "Nobody can legally sell you a DVSA driving test date. How cancellation-selling and fake 'test finder' scams work, the red flags, and how to report one to Action Fraud and DVSA.",
+    desc: "Nobody can legally sell you a DVSA driving test date. How cancellation-selling and fake 'test finder' scams work, the red flags, and how to report one to Report Fraud and DVSA.",
     h1: "Driving test cancellation scams — what to watch for",
     lede: "If someone is offering to sell you a driving test date, it isn't a real DVSA booking. Here's how the scam works and what to do if you've been targeted.",
     body: `
@@ -211,7 +211,7 @@ const GUIDES = [
 
 <h2>How to report a scam</h2>
 <ol class="steps">
-  <li><b>Action Fraud</b> — the UK's national reporting centre for fraud and cyber crime: <a href="https://www.actionfraud.police.uk/" target="_blank" rel="noopener">actionfraud.police.uk</a> or 0300 123 2040.</li>
+  <li><b>Report Fraud</b> (formerly Action Fraud) — the national reporting service for fraud and cyber crime in England, Wales and Northern Ireland: <a href="https://www.reportfraud.police.uk/" target="_blank" rel="noopener">reportfraud.police.uk</a> or 0300 123 2040. In Scotland, call Police Scotland on 101.</li>
   <li><b>DVSA</b> — report unofficial booking services or suspected fraud directly to DVSA via <a href="https://www.gov.uk/contact-dvsa" target="_blank" rel="noopener">gov.uk/contact-dvsa</a>.</li>
   <li><b>The platform it happened on</b> — report the account or listing to Facebook, Instagram, TikTok or WhatsApp so others don't fall for the same one.</li>
   <li>If you've shared card details, contact your bank immediately to flag the transaction.</li>
@@ -221,7 +221,7 @@ const GUIDES = [
     faq: [
       ["Can someone legally sell me their driving test slot?", "No. A DVSA test booking belongs to the learner who booked it and can only be moved by DVSA itself, with both people confirming by phone. Any exchange of money for a 'slot' outside that process is not a real transfer and is very likely a scam."],
       ["Is it a scam if a website says it can book me an earlier test for a fee?", "Since DVSA's May 2026 rules, only the learner can book or manage their own driving test — third-party booking services are explicitly against DVSA's terms. A paid site offering to do this for you is, at minimum, breaking those rules, and often has no real access to your booking at all."],
-      ["I've already paid someone for a test date — what should I do?", "Contact your bank straightaway to see if the payment can be recovered or disputed, then report it to Action Fraud (actionfraud.police.uk or 0300 123 2040) and to DVSA via gov.uk/contact-dvsa."],
+      ["I've already paid someone for a test date — what should I do?", "Contact your bank straightaway to see if the payment can be recovered or disputed, then report it to Report Fraud (reportfraud.police.uk or 0300 123 2040; Police Scotland on 101 in Scotland) and to DVSA via gov.uk/contact-dvsa."],
       ["How is TestNow different from a scam 'test finder'?", "TestNow never charges learners, never handles payments, and never touches your DVSA account. It's a board where learners list the test they have and find another learner to swap with — the swap itself always happens on a direct call to DVSA, with both of you confirming it yourselves."],
     ],
   },
@@ -269,7 +269,7 @@ const GUIDES = [
 `,
     faq: [
       ["Do I need my licence number to swap?", "You'll need your booking reference and DVSA will verify your identity on the call, in line with their standard security checks — have your licence details to hand in case they're asked for."],
-      ["How much notice does DVSA need for a swap?", "DVSA generally asks for the request to reach them at least 10 full working days before the earlier of the two tests, so agree your swap with plenty of time to spare."],
+      ["How much notice does DVSA need for a swap?", "DVSA generally asks for the request to reach them at least 10 full working days before the earlier of the two tests, so agree your swap with plenty of time to spare. GOV.UK also limits a car test to 2 changes, so check how many you have used (<a href=\"https://www.gov.uk/change-driving-test\" target=\"_blank\" rel=\"noopener\">gov.uk/change-driving-test</a>)."],
       ["Can I swap a car test for a motorcycle test?", "No. Both bookings need to be for the same type of test."],
       ["Does TestNow charge for a swap?", "No. Listing your test, matching and chatting with another learner is completely free. The swap itself is a normal DVSA phone call — DVSA doesn't charge for it either."],
     ],
@@ -287,7 +287,7 @@ const GUIDES = [
 
 <h2>Where to check the official figures</h2>
 <p>DVSA publishes driving test waiting times by test centre as an official dataset on gov.uk. Because these figures are updated periodically by DVSA rather than in real time, always check the current release on gov.uk directly rather than relying on an old screenshot or a third-party summary:</p>
-<div class="card"><a href="https://www.gov.uk/government/statistics/driving-test-statistics-drt" target="_blank" rel="noopener">gov.uk — Driving test statistics (DRT)</a> — DVSA's official waiting time and pass rate data by test centre.</div>
+<div class="card"><a href="https://www.gov.uk/government/statistical-data-sets/driving-test-and-theory-test-data-cars" target="_blank" rel="noopener">gov.uk — Driving test statistics (DRT)</a> — DVSA's official waiting time and pass rate data by test centre.</div>
 
 <h2>TestNow's board isn't the official figures — here's what it is</h2>
 <p>Our <a href="/test-availability.html">live test availability page</a> and <a href="/test-centres/">test centre pages</a> show tests that learners have actually listed on TestNow, looking to swap — not DVSA's booking system and not an official wait-time measure. Think of it as a live snapshot of who's currently looking to move their date at each centre, useful alongside the official DVSA figures, not instead of them.</p>

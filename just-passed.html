@@ -142,7 +142,7 @@
   fetch(API + '?action=offers').then(function (r) { return r.json(); }).then(function (d) {
     var offers = (d && d.offers) || [];
     if (!offers.length) {
-      box.innerHTML = '<p>We\'re partnering with UK insurers and comparison sites for new drivers, and offers will appear here as they go live. Until then, compare a few places yourself and get quotes for more than one car before you buy.</p>';
+      box.innerHTML = '<p>We may add partner offers from UK insurers and comparison sites for new drivers later; any will be clearly labelled. Until then, compare a few places yourself and get quotes for more than one car before you buy.</p>';
       document.getElementById('offers-note').style.display = 'none';
       return;
     }

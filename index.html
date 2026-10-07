@@ -1455,7 +1455,7 @@
       </a>
       <div class="hero-stats" id="hero-stats" hidden aria-label="Live numbers">
         <div><strong id="st-live">–</strong><span>tests listed now</span></div>
-        <div><strong><em id="st-matches">–</em></strong><span>matches made</span></div>
+        <div><strong><em id="st-matches">–</em></strong><span>matches found</span></div>
         <div><strong id="st-learners">–</strong><span>learners using it</span></div>
       </div>
     </div>
@@ -1538,21 +1538,22 @@
       var relevant = wantCentre ? listings.filter(function (l) { return l.centre === wantCentre; }) : listings;
       var dated = relevant.filter(function (l) { return l.date; }).slice().sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
 
+      function awayTxt(d) { return d <= 0 ? 'today' : d === 1 ? 'tomorrow' : d < 7 ? 'in ' + d + ' days' : (Math.round(d / 7)) + (Math.round(d / 7) === 1 ? ' week' : ' weeks') + ' away'; }
       function weeksAway(iso) {
         if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
         var t = new Date(iso + 'T00:00:00');
         var now = new Date(); now.setHours(0, 0, 0, 0);
         var d = Math.round((t - now) / 86400000);
-        return Math.max(0, Math.round(d / 7));
+        return Math.max(0, d);
       }
 
       if (wantCentre && dated.length) {
         var w = weeksAway(dated[0].date);
-        textEl.innerHTML = '<b>' + esc(wantCentre) + ':</b> earliest test listed ' + esc(dated[0].dateLabel || dated[0].date) + (w !== null ? ' (' + w + (w === 1 ? ' week' : ' weeks') + ' away)' : '') + ' · ' + relevant.length + ' listed there now.';
+        textEl.innerHTML = '<b>' + esc(wantCentre) + ':</b> earliest test listed ' + esc(dated[0].dateLabel || dated[0].date) + (w !== null ? ' (' + awayTxt(w) + ')' : '') + ' · ' + relevant.length + ' listed there now.';
       } else if (dated.length) {
         var wN = weeksAway(dated[0].date);
         var newWeek = stats.listingsLast7d != null ? stats.listingsLast7d : null;
-        textEl.innerHTML = '<b>Nationwide:</b> earliest test on the board ' + esc(dated[0].dateLabel || dated[0].date) + (wN !== null ? ' (' + wN + (wN === 1 ? ' week' : ' weeks') + ' away)' : '') + ' · ' + listings.length + ' listed now' + (newWeek !== null ? ', ' + newWeek + ' new this week' : '') + '.';
+        textEl.innerHTML = '<b>Nationwide:</b> earliest test on the board ' + esc(dated[0].dateLabel || dated[0].date) + (wN !== null ? ' (' + awayTxt(wN) + ')' : '') + ' · ' + listings.length + ' listed now' + (newWeek !== null ? ', ' + newWeek + ' new this week' : '') + '.';
       } else {
         return;
       }
@@ -2769,10 +2770,10 @@
       countUp(document.getElementById('st-matches'), matches);
       countUp(document.getElementById('st-learners'), learners);
       const sc1 = document.getElementById('sc-line1');
-      if (sc1) sc1.innerHTML = '<em>' + live + '</em> tests listed · ' + matches + ' matches made';
+      if (sc1) sc1.innerHTML = '<em>' + live + '</em> tests listed · ' + matches + ' matches found';
       // Marquee: swap the generic "All UK test centres" for the real match count
       document.querySelectorAll('.strip-track > span').forEach(s => {
-        s.innerHTML = s.innerHTML.replace('All UK test centres', matches + ' matches made so far');
+        s.innerHTML = s.innerHTML.replace('All UK test centres', matches + ' matches found so far');
       });
     }
 
