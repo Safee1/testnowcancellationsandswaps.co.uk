@@ -2998,6 +2998,30 @@
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const dd = String(today.getDate()).padStart(2, '0');
     d.min = yyyy + '-' + mm + '-' + dd;
+    // 7 Oct: DVSA needs 10 full working days' notice to change a car test, so a
+    // test sooner than that can't be swapped (backend v136 hides/rejects it too).
+    // First eligible date = first day with >= 10 working days (Mon-Fri, not a
+    // bank holiday) strictly between today and it.
+    const BH = { '2026-12-25': 1, '2026-12-28': 1, '2027-01-01': 1, '2027-03-26': 1, '2027-03-29': 1, '2027-05-03': 1, '2027-05-31': 1 };
+    const iso = function (x) { return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); };
+    const firstEligible = (function () {
+      const day = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      let n = 0;
+      for (let i = 0; i < 60; i++) {
+        day.setDate(day.getDate() + 1);
+        if (n >= 10 && day.getDay() !== 0 && !BH[iso(day)]) return iso(day);
+        if (day.getDay() !== 0 && day.getDay() !== 6 && !BH[iso(day)]) n++;
+      }
+      return null;
+    })();
+    if (firstEligible) {
+      d.min = firstEligible;
+      const hint = document.createElement('p');
+      hint.className = 'field-hint';
+      hint.style.cssText = 'margin:6px 0 0;font-size:13px;color:#555;';
+      hint.textContent = 'DVSA needs 10 full working days’ notice, so tests sooner than ' + firstEligible.split('-').reverse().join('/') + ' can’t be swapped.';
+      d.insertAdjacentElement('afterend', hint);
+    }
     // 25 Sep: DVSA books up to 24 weeks ahead — cap the picker so a mistyped
     // year (2062) can't get through.
     const max = new Date(today.getTime() + 24 * 7 * 86400000);
@@ -3007,7 +3031,8 @@
     d.addEventListener('input', function () {
       let sunday = false;
       if (d.value) { const p = d.value.split('-'); const dt = new Date(+p[0], +p[1] - 1, +p[2]); sunday = !isNaN(dt) && dt.getDay() === 0; }
-      d.setCustomValidity(sunday ? 'DVSA doesn\'t run tests on Sundays — check the date on your booking.' : '');
+      const tooSoon = !sunday && d.value && d.min && d.value < d.min;
+      d.setCustomValidity(sunday ? 'DVSA doesn\'t run tests on Sundays — check the date on your booking.' : (tooSoon ? 'DVSA needs 10 full working days’ notice, so a test this soon can’t be swapped.' : ''));
     });
     // Test times: the backend rejects anything outside 07:00–19:00 (evening
     // tests exist — the form offers "Evening or weekend"), so say so before
