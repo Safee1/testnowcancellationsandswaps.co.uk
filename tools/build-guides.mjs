@@ -148,7 +148,7 @@ const GUIDES = [
 <p>You can change your own test date directly on gov.uk, free, as long as you give DVSA at least <b>three working days'</b> notice and you're within your remaining change limit (two changes are currently allowed on a booking before you have to cancel and rebook from scratch). Do this yourself — never hand your licence number and payment details to a paid "test finder" site to do it for you.</p>
 
 <h2>4. Swap with another learner going the other way</h2>
-<p>If someone else has an earlier test they don't want and would happily take your later date, DVSA can swap you over the phone on <b>0300 200 1122</b> (option 2, Mon–Fri, 8am–5pm) — as long as you're both booked for the same type of test and your centres meet DVSA's location rule. The hard part is finding that other learner. That's what TestNow is for: it's a free board where learners post the test they have and what they'd swap it for, and matches you automatically.</p>
+<p>If someone else has an earlier test they don't want and would happily take your later date, DVSA can swap you over the phone on <b>0300 200 1122</b> (option 2, Mon–Fri, 8am–5pm) — as long as you're both booked for exactly the same type of test and your centres meet DVSA's location rule. The hard part is finding that other learner. That's what TestNow is for: it's a free board where learners post the test they have and what they'd swap it for, and matches you automatically.</p>
 <a class="cta" href="/#swap-form">List your test — free</a>
 <p class="note">Full step-by-step: <a href="/guides/swap-driving-test-date.html">how a learner-to-learner swap works</a>.</p>
 
@@ -241,8 +241,10 @@ const GUIDES = [
   <ul>
     <li>A live DVSA practical test booking of your own (a swap exchanges two existing bookings — it can't create a new one).</li>
     <li>Your booking reference number.</li>
-    <li>The same type of test as the learner you're swapping with (car for car, motorcycle for motorcycle, and so on).</li>
-    <li>A centre that satisfies DVSA's location rule for the swap.</li>
+    <li>Exactly the same type of test as the learner you're swapping with: weekday (£62) with weekday, evening/weekend/bank holiday (£75) with the same, and extra-time or extended tests only with the same kind.</li>
+    <li>At least 1 of your 2 allowed changes left (a swap counts as one), and the same for them.</li>
+    <li>Your instructor's confirmation that you'll be ready and they're available on the new date.</li>
+    <li>A centre that satisfies DVSA's location rule for both of you: the same centre, one of your three nearest, or the centre you first booked at.</li>
     <li>A learner who wants your date and centre, and has one you want.</li>
   </ul>
 </div>
@@ -251,10 +253,20 @@ const GUIDES = [
 <ol class="steps">
   <li><b>Find a match.</b> This is the hard part done alone — you need someone with a test they don't want who'd happily take yours. <a href="/#swap-form">List your test on TestNow</a> and we match you automatically with learners who fit, or browse the <a href="/#board">live board</a> and request a swap directly.</li>
   <li><b>Agree the exact details.</b> Confirm the precise date, time and centre each of you is taking on, in a chat where neither of you sees the other's real name or phone number.</li>
-  <li><b>One of you calls DVSA.</b> Phone <b>0300 200 1122</b> and choose option 2 (Monday–Friday, 8am–5pm). Swaps can't be requested online, by email, webchat or text — it has to be this call, and DVSA generally asks for at least 10 full working days' notice before the earlier of the two tests.</li>
-  <li><b>DVSA verifies you both.</b> The DVSA agent runs security checks with the caller, then puts them on hold and rings the other learner on the number held against their booking to confirm they agree too.</li>
-  <li><b>DVSA moves both bookings.</b> Once you've both confirmed, DVSA updates both appointments during that same call. There's no separate confirmation email — your next DVSA reminder will show the new details.</li>
+  <li><b>Both of you call DVSA, separately, on the same day.</b> Phone <b>0300 200 1122</b> and choose option 2 (Monday–Friday, 8am–5pm). Swaps can't be requested online, by email, webchat or text. Request it at least 10 full working days before the earlier of the two tests (Monday to Saturday count as working days; Sundays and public holidays don't).</li>
+  <li><b>DVSA matches the two requests.</b> Learner 1 calls first and DVSA records the request (and won't say whether it worked). Learner 2 then calls the same day and DVSA completes the swap.</li>
+  <li><b>DVSA moves both bookings.</b> There's no separate confirmation email — your next DVSA reminder will show the new details.</li>
 </ol>
+
+<h2>On the day</h2>
+<div class="card">
+  <ul>
+    <li>Learner 1 calls DVSA first. Learner 2 calls the same day, and should ring by <b>4pm</b> — later and there may not be time to finish.</li>
+    <li>The request expires at the end of the day, and DVSA won't tell learner 1 whether it worked. If either test changes after learner 1's call, the request is void. Learner 1 can call again to withdraw consent.</li>
+    <li>Have ready: your own licence number and booking reference, the <b>other</b> learner's booking reference, the card you booked with (not needed if your instructor booked before 12 May 2026), the date, time and centre of both tests, and details of any previous tests. DVSA never asks for your full card number or security code.</li>
+    <li>Swap booking references with each other, but never give them your licence number, theory certificate number, address, phone, email or card details.</li>
+  </ul>
+</div>
 
 <h2>What TestNow does — and doesn't do</h2>
 <div class="card warm">
@@ -268,9 +280,9 @@ const GUIDES = [
 <p>Match speed depends on how many other learners near your centre also want to swap. Being flexible about which of your three nearest centres you'd accept — see <a href="/guides/change-driving-test-centre.html">changing your test centre</a> — widens your options considerably. You can also check DVSA's own cancellation list on gov.uk in parallel; see our guide to <a href="/guides/how-to-get-an-earlier-driving-test.html">getting an earlier test</a> for every legitimate route.</p>
 `,
     faq: [
-      ["Do I need my licence number to swap?", "You'll need your booking reference and DVSA will verify your identity on the call, in line with their standard security checks — have your licence details to hand in case they're asked for."],
-      ["How much notice does DVSA need for a swap?", "DVSA generally asks for the request to reach them at least 10 full working days before the earlier of the two tests, so agree your swap with plenty of time to spare. GOV.UK also limits a car test to 2 changes, so check how many you have used (<a href=\"https://www.gov.uk/change-driving-test\" target=\"_blank\" rel=\"noopener\">gov.uk/change-driving-test</a>)."],
-      ["Can I swap a car test for a motorcycle test?", "No. Both bookings need to be for the same type of test."],
+      ["Do I need my licence number to swap?", "You'll need your own licence number for your call to DVSA, but never give it to the other learner. You only exchange booking references."],
+      ["How much notice does DVSA need for a swap?", "DVSA needs the request at least 10 full working days before the earlier of the two tests (Monday to Saturday count; Sundays and public holidays don't), so agree your swap with plenty of time to spare. A swap counts as one of your 2 allowed changes (both learners need at least 1 left), so check how many you have used (<a href=\"https://www.gov.uk/change-driving-test\" target=\"_blank\" rel=\"noopener\">gov.uk/change-driving-test</a>)."],
+      ["Can I swap a car test for a motorcycle test?", "No. The test type has to match exactly: weekday with weekday, evening/weekend/bank holiday with the same, and extra-time or extended tests only with the same kind."],
       ["Does TestNow charge for a swap?", "No. Listing your test, matching and chatting with another learner is completely free. The swap itself is a normal DVSA phone call — DVSA doesn't charge for it either."],
     ],
   },

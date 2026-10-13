@@ -1783,6 +1783,7 @@
             <option value="weekday">Weekday (£62)</option>
             <option value="weekend">Evening or weekend (£75)</option>
           </select>
+          <p class="field-hint" style="margin:6px 0 0;font-size:13px;color:#555;">Extra-time and extended tests can only swap with the same type. We only match weekday and weekend today.</p>
         </div>
 
         <div class="form-step-head"><span class="form-step-num"><strong>03</strong>What you want instead</span></div>
@@ -1877,7 +1878,7 @@
       </details>
       <details>
         <summary>Are there any limits on swapping?</summary>
-        <p>Yes, DVSA sets them. You need to give at least 10 full working days' notice, and you can change a car test up to 2 times. So a test that's less than 10 working days away can't be swapped, and neither can one where either learner has used both changes. Details are on <a href="https://www.gov.uk/change-driving-test" rel="noopener">GOV.UK</a>.</p>
+        <p>Yes, DVSA sets them. You need to give at least 10 full working days' notice (Monday to Saturday count; Sundays and public holidays don't), and you can change a car test up to 2 times. So a test that's less than 10 working days away can't be swapped, and neither can one where either learner has used both changes. Details are on <a href="https://www.gov.uk/change-driving-test" rel="noopener">GOV.UK</a>.</p>
       </details>
       <details>
         <summary>Why is this free? What's the catch?</summary>
@@ -3004,7 +3005,7 @@
     d.min = yyyy + '-' + mm + '-' + dd;
     // 7 Oct: DVSA needs 10 full working days' notice to change a car test, so a
     // test sooner than that can't be swapped (backend v136 hides/rejects it too).
-    // First eligible date = first day with >= 10 working days (Mon-Fri, not a
+    // First eligible date = first day with >= 10 working days (Mon-Sat, not a
     // bank holiday) strictly between today and it.
     const BH = { '2026-12-25': 1, '2026-12-28': 1, '2027-01-01': 1, '2027-03-26': 1, '2027-03-29': 1, '2027-05-03': 1, '2027-05-31': 1 };
     const iso = function (x) { return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0'); };
@@ -3014,7 +3015,7 @@
       for (let i = 0; i < 60; i++) {
         day.setDate(day.getDate() + 1);
         if (n >= 13 && day.getDay() !== 0 && !BH[iso(day)]) return iso(day);
-        if (day.getDay() !== 0 && day.getDay() !== 6 && !BH[iso(day)]) n++;
+        if (day.getDay() !== 0 && !BH[iso(day)]) n++;
       }
       return null;
     })();
@@ -3023,7 +3024,7 @@
       const hint = document.createElement('p');
       hint.className = 'field-hint';
       hint.style.cssText = 'margin:6px 0 0;font-size:13px;color:#555;';
-      hint.textContent = 'DVSA needs 10 full working days’ notice and matching takes a few days, so we list tests from ' + firstEligible.split('-').reverse().join('/') + ' onwards.';
+      hint.textContent = 'DVSA needs 10 full working days’ notice (Monday to Saturday count) and matching takes a few days, so we list tests from ' + firstEligible.split('-').reverse().join('/') + ' onwards.';
       d.insertAdjacentElement('afterend', hint);
     }
     // 25 Sep: DVSA books up to 24 weeks ahead — cap the picker so a mistyped

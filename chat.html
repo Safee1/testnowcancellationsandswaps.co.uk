@@ -837,7 +837,7 @@
 
   function stepCentre() {
     awaiting = true;
-    const c = gcard('<div class="g-text"><b>Step 4 of 6 — Test centre.</b> Which test centre is your test at?<span class="g-warn">DVSA rules: you can only swap with the same centre, one of your 3 nearest, or your original booked centre.</span></div>');
+    const c = gcard('<div class="g-text"><b>Step 4 of 6 — Test centre.</b> Which test centre is your test at?<span class="g-warn">DVSA rules: you can only swap with the same centre, one of your 3 nearest, or the centre you first booked at. This must be true for both of you.</span></div>');
     const wrap = document.createElement('div'); wrap.className = 'g-controls';
     const err = document.createElement('div'); err.className = 'g-err';
     const btn = document.createElement('button'); btn.className = 'g-btn'; btn.textContent = 'Next';
@@ -995,7 +995,7 @@
       if (bothReady && otherOnline && refsShared) {
         if (!callStepsShown) { callStepsShown = true; showCallStepsForA(); }
         html += '<div class="ab-go">📞 It\'s your job to call DVSA — do it now</div>';
-        html += '<div class="ab-sub">You\'re both online and ready. Call below; DVSA then rings ' + escapeHtml(OTHER_HANDLE) + '. ' + (warnFlag ? '⚠️ See the heads-up in the chat first.' : '') + '</div>';
+        html += '<div class="ab-sub">You\'re both online and ready. Call below; then ' + escapeHtml(OTHER_HANDLE) + ' must call DVSA the same day (by 4pm ideally). ' + (warnFlag ? '⚠️ See the heads-up in the chat first.' : '') + '</div>';
         html += '<div class="ab-ref"><div class="l">Read this booking reference to DVSA</div><div class="n">' + escapeHtml(otherRef) + '</div></div>';
         html += '<button class="ab-btn small" id="copyRefBtn">📋 Copy reference</button>';
         html += '<button class="ab-btn" id="callBtn">📞 Call DVSA — 0300 200 1122</button>';
@@ -1017,13 +1017,13 @@
       }
     } else {
       if (callingAnnounced) {
-        html += '<div class="ab-go">📞 They\'re calling DVSA now — stay by your phone!</div>';
-        html += '<div class="ab-sub">DVSA will ring YOU on your booking number within a few minutes. If you miss the call, the swap can\'t complete. Pick up and confirm you agree to the swap.</div>';
+        html += '<div class="ab-go">📞 They\'re calling DVSA now — your turn next, same day!</div>';
+        html += '<div class="ab-sub">Once they have called, you must call DVSA yourself on 0300 200 1122 (option 2) the same day, ideally by 4pm. The request expires at the end of the day.</div>';
       } else if (bothReady && otherOnline) {
         if (!callStepsShown) { callStepsShown = true; showCallStepsForB(); }
         // v80 PATCH (Feature 1): "the other learner" -> OTHER_HANDLE.
         html += '<div class="ab-go">⏳ Ready — wait for ' + escapeHtml(OTHER_HANDLE) + ' to call</div>';
-        html += '<div class="ab-sub">They\'ll phone DVSA, then DVSA rings YOU on your booking number. Keep your phone free and stay on this page. ' + (warnFlag ? '⚠️ See the heads-up in the chat first.' : '') + '</div>';
+        html += '<div class="ab-sub">They\'ll phone DVSA first, then you call DVSA yourself the same day (ideally by 4pm). Stay on this page. ' + (warnFlag ? '⚠️ See the heads-up in the chat first.' : '') + '</div>';
         html += '<button class="ab-btn small" id="hereBtn">👋 Nudge them to call</button>';
       } else {
         // v80 PATCH (Feature 1): "the other learner" -> OTHER_HANDLE (escaped).
@@ -1056,8 +1056,8 @@
   // cards -> escapeHtml(OTHER_HANDLE) — both functions only ever run after
   // a session has loaded (called from renderActionBar/callBtn handling
   // above), so OTHER_HANDLE is always populated by this point.
-  function showCallStepsForA() { gcard('<div class="g-text">📞 <b>You\'re the caller.</b> Here\'s what happens:<ol style="margin:8px 0 0 18px;line-height:1.6;"><li>Call DVSA on <b>0300 200 1122</b>, option 1 (Mon–Fri, 8am–5pm).</li><li>Pass security checks and say you want to swap tests.</li><li>Give them <b>' + escapeHtml(OTHER_HANDLE) + '\'s booking reference</b> (shown in the bar below).</li><li>DVSA puts you on hold and phones ' + escapeHtml(OTHER_HANDLE) + ' to confirm.</li><li>Once they agree, DVSA completes the swap. Write down your new test details.</li></ol><div style="margin-top:8px;font-size:13px;color:var(--muted);">If it doesn\'t go through, it\'s usually: a failed security check, the date/time/centre given wrong, ' + escapeHtml(OTHER_HANDLE) + ' not answering their phone, or both test changes already used.</div></div>', true); }
-  function showCallStepsForB() { gcard('<div class="g-text">⏳ <b>You wait — ' + escapeHtml(OTHER_HANDLE) + ' calls.</b> Here\'s what happens:<ol style="margin:8px 0 0 18px;line-height:1.6;"><li>They call DVSA and start the swap.</li><li>DVSA will phone <b>you</b> on the number saved on your booking — keep your line free.</li><li>Pass DVSA\'s security checks and confirm you agree.</li><li>DVSA completes it. Write down your new test details.</li></ol><div style="margin-top:8px;font-size:13px;color:var(--muted);">If it doesn\'t go through, it\'s usually: a failed security check, the date/time/centre given wrong, you not answering your phone, or both test changes already used.</div></div>', true); }
+  function showCallStepsForA() { gcard('<div class="g-text">📞 <b>You call first.</b> Both of you must call DVSA <b>separately, on the same day</b>:<ol style="margin:8px 0 0 18px;line-height:1.6;"><li>Call DVSA on <b>0300 200 1122</b>, option 2 (Mon–Fri, 8am–5pm).</li><li>Pass security checks and say you want to swap tests with another learner.</li><li>Give them <b>' + escapeHtml(OTHER_HANDLE) + '\'s booking reference</b> (shown in the bar below) and your own test details.</li><li>DVSA records your request but won\'t tell you if it worked yet. It expires at the end of today.</li><li>' + escapeHtml(OTHER_HANDLE) + ' then calls DVSA the same day (ideally by 4pm) and DVSA completes the swap.</li></ol><div style="margin-top:8px;font-size:13px;color:var(--muted);">Don\'t change either test after you call, or the request is void. If it doesn\'t go through, it\'s usually: a failed security check, the date/time/centre given wrong, ' + escapeHtml(OTHER_HANDLE) + ' not calling the same day, or both test changes already used. Never share your licence number, address, phone, email or card details in this chat.</div></div>', true); }
+  function showCallStepsForB() { gcard('<div class="g-text">⏳ <b>You call second — after ' + escapeHtml(OTHER_HANDLE) + '.</b> Both of you must call DVSA <b>separately, on the same day</b>:<ol style="margin:8px 0 0 18px;line-height:1.6;"><li>Wait until ' + escapeHtml(OTHER_HANDLE) + ' says they have called.</li><li>Then call DVSA yourself on <b>0300 200 1122</b>, option 2 (Mon–Fri, 8am–5pm) — <b>ideally by 4pm</b>, or there may not be time to finish that day.</li><li>Give them <b>' + escapeHtml(OTHER_HANDLE) + '\'s booking reference</b> and your own details.</li><li>DVSA completes the swap. Write down your new test details.</li></ol><div style="margin-top:8px;font-size:13px;color:var(--muted);">The request expires at the end of the day. Don\'t change either test after the first call, or it is void. Never share your licence number, address, phone, email or card details in this chat.</div></div>', true); }
 
   // ---------- standard wiring ----------
   sendBtn.addEventListener('click', sendMessage);
