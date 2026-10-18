@@ -1781,9 +1781,12 @@
           <select id="test-type" name="test-type" required>
             <option value="">Choose…</option>
             <option value="weekday">Weekday (£62)</option>
-            <option value="weekend">Evening or weekend (£75)</option>
+            <option value="weekend">Evening, weekend or bank holiday (£75)</option>
+            <option value="extra-time">Extra-time test (disability, health condition or learning difficulty)</option>
+            <option value="extended-weekday">Extended test for disqualified drivers, weekday (£124)</option>
+            <option value="extended-evening">Extended test for disqualified drivers, evening or weekend (£150)</option>
           </select>
-          <p class="field-hint" style="margin:6px 0 0;font-size:13px;color:#555;">Extra-time and extended tests can only swap with the same type. We only match weekday and weekend today.</p>
+          <p class="field-hint" style="margin:6px 0 0;font-size:13px;color:#555;">DVSA only swaps the same type of test, so we only match you with someone who has the same type as you.</p>
         </div>
 
         <div class="form-step-head"><span class="form-step-num"><strong>03</strong>What you want instead</span></div>
@@ -2538,7 +2541,7 @@
         // class (not .binstructor, a different concept/badge slot; not
         // .btag, absolutely positioned top-right on mobile, see the
         // .binstructor CSS comment for why a second badge can't share it).
-        (r.testType === 'weekday' ? '<span class="btesttype">Weekday</span>' : (r.testType === 'weekend' ? '<span class="btesttype">Weekend</span>' : '')) +
+        (function (tt) { var L = { weekday: 'Weekday', weekend: 'Weekend', 'extra-time': 'Extra-time', 'extended-weekday': 'Extended', 'extended-evening': 'Extended evening' }; return L.hasOwnProperty(tt) ? '<span class="btesttype">' + L[tt] + '</span>' : ''; })(r.testType) +
         // v93 (2026-09-05): chip for listings already in an open chat (backend
         // v92 status field). Button stays — see .bmatching CSS comment.
         (r.status === 'matching' ? '<span class="bmatching" title="This learner is already talking to someone, but nothing is agreed yet — you can still ask">In a chat already</span>' : '') +
