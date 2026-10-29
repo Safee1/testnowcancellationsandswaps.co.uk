@@ -2,3 +2,6 @@ User-agent: *
 Allow: /
 
 Sitemap: https://testnowcancellationsandswaps.co.uk/sitemap.xml
+
+# Plain-language description of the site for AI assistants
+# https://testnowcancellationsandswaps.co.uk/llms.txt

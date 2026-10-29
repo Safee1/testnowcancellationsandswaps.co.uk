@@ -92,7 +92,7 @@ ${HEAD_TRACKING}
 <meta name="description" content="${esc(desc)}">
 <link rel="canonical" href="${canonical}">
 <meta property="og:type" content="website"><meta property="og:site_name" content="TestNow Cancellations & Swaps">
-<meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${canonical}">
+<meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${canonical}"><meta property="og:type" content="website"><meta property="og:site_name" content="TestNow Cancellations &amp; Swaps"><meta property="og:image" content="${SITE}/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(title)}"><meta name="twitter:description" content="${esc(desc)}"><meta name="twitter:image" content="${SITE}/og-image.png">
 <link rel="icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 ${CSS}
 ${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join("\n")}
@@ -104,11 +104,34 @@ ${body}
 </main>
 <footer><div class="wrap">
   <p>TestNow is a free, independent service for UK learner drivers. It is not DVSA. Every swap is completed by phoning DVSA on 0300 200 1122 — nobody can sell you a test date.</p>
-  <p style="margin-top:10px;"><a href="/">Home</a><a href="/test-centres/">All test centres</a><a href="/guides/">Guides</a><a href="/find-instructor.html">Find an instructor</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/report-concern.html">Report a concern</a></p>
+  <p style="margin-top:10px;"><a href="/">Home</a><a href="/test-centres/">All test centres</a><a href="/guides/">Guides</a>${REGION_LINKS}<a href="/find-instructor.html">Find an instructor</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/report-concern.html">Report a concern</a></p>
 </div></footer>
 </body>
 </html>
 `;
+}
+
+let REGION_LINKS = ""; // filled once the centre list is loaded: one crawlable link per region hub on every page
+
+function regionPage(region, list, allRegions) {
+  const r = slug(region);
+  const url = `${SITE}/test-centres/${r}/`;
+  const sorted = [...list].sort((a, b) => a.centre.localeCompare(b.centre));
+  const body = `
+<nav class="crumbs"><a href="/">TestNow</a> › <a href="/test-centres/">Test centres</a> › ${esc(region)}</nav>
+<h1>Driving test swaps in ${esc(region)}</h1>
+<p class="lede">${sorted.length} DVSA practical test centres in ${esc(region)}. Pick yours to see live tests nearby and list your own for a free swap with another learner. Swaps are completed by phoning DVSA on 0300 200 1122 — nobody can sell you a date.</p>
+<a class="cta" href="/#swap-form">List my test — free</a><a class="cta ghost" href="/#board">Browse all tests</a>
+<h2>Test centres in ${esc(region)}</h2>
+<div class="grid">${sorted.map((c) => `<a href="/test-centres/${slug(c.centre)}.html">${esc(c.centre)}</a>`).join("")}</div>
+<h2>Other regions</h2>
+<div class="grid">${allRegions.filter((x) => x !== region).map((x) => `<a href="/test-centres/${slug(x)}/">${esc(x)}</a>`).join("")}</div>
+<p class="note" style="margin-top:18px;">Tip: you can list the centres you would accept as well as your own, so a swap with a nearby centre in ${esc(region)} counts too.</p>`;
+  const jsonld = [{ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "TestNow", item: SITE + "/" },
+    { "@type": "ListItem", position: 2, name: "Test centres", item: SITE + "/test-centres/" },
+    { "@type": "ListItem", position: 3, name: region, item: url } ] }];
+  return { dir: r, html: shell({ title: `Driving test swaps in ${region} — ${sorted.length} DVSA centres | TestNow`, desc: `Swap your practical driving test at any of the ${sorted.length} DVSA test centres in ${region}. Free, anonymous matching with another learner; the swap is made by phoning DVSA.`, canonical: url, body, jsonld }) };
 }
 
 function centrePage(c, bySlug, sameRegion) {
@@ -132,14 +155,16 @@ function centrePage(c, bySlug, sameRegion) {
     { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
       { "@type": "ListItem", position: 1, name: "TestNow", item: SITE + "/" },
       { "@type": "ListItem", position: 2, name: "Test centres", item: SITE + "/test-centres/" },
-      { "@type": "ListItem", position: 3, name: c.centre, item: url } ] },
+      { "@type": "ListItem", position: 3, name: c.region, item: SITE + "/test-centres/" + slug(c.region) + "/" },
+      { "@type": "ListItem", position: 4, name: c.centre, item: url } ] },
     { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faq.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) },
   ];
   const listHref = `/?centre=${encodeURIComponent(c.centre)}#swap-form`;
   const body = `
-<nav class="crumbs"><a href="/">TestNow</a> › <a href="/test-centres/">Test centres</a> › <a href="/test-centres/#${slug(c.region)}">${esc(c.region)}</a> › ${esc(c.centre)}</nav>
+<nav class="crumbs"><a href="/">TestNow</a> › <a href="/test-centres/">Test centres</a> › <a href="/test-centres/${slug(c.region)}/">${esc(c.region)}</a> › ${esc(c.centre)}</nav>
 <h1>Swap your driving test at ${esc(c.centre)}</h1>
 <p class="lede">Got a practical test at ${esc(c.centre)} that's too far away, or too soon? Swap it with another learner who wants yours. Free, anonymous, and done properly through DVSA.</p>
+<p class="note">${esc(c.centre)} is a DVSA practical test centre in ${esc(c.region)}.${near.length ? ` The centres we treat as nearby are ${near.map((x) => esc(x.name) + (x.dist ? " (" + esc(x.dist) + ")" : "")).join(", ")}, so a learner at any of them can be matched with you.` : ""} Waiting times at ${esc(c.centre)} change week to week — the live list below shows what learners have actually put up for swap right now, which is a better guide than any published average.</p>
 <a class="cta" href="${listHref}">List my ${esc(c.centre)} test — free</a><a class="cta ghost" href="/#board">Browse all tests</a>
 <p class="note">Takes about a minute. We text or email you the moment there's a match.</p>
 
@@ -224,7 +249,7 @@ function indexPage(centres) {
 <h1>Swap your driving test at any UK test centre</h1>
 <p class="lede">Pick your DVSA practical test centre to see live tests nearby and list yours for a free swap. ${centres.length} centres across ${regions.length} regions.</p>
 <a class="cta" href="/#swap-form">List my test — free</a>
-${regions.map((r) => `<h2 id="${slug(r)}">${esc(r)}</h2><div class="grid">${byRegion[r].sort((a, b) => a.centre.localeCompare(b.centre)).map((c) => `<a href="/test-centres/${slug(c.centre)}.html">${esc(c.centre)}</a>`).join("")}</div>`).join("\n")}`;
+${regions.map((r) => `<h2 id="${slug(r)}"><a href="/test-centres/${slug(r)}/" style="text-decoration:none;color:inherit;">${esc(r)}</a></h2><div class="grid">${byRegion[r].sort((a, b) => a.centre.localeCompare(b.centre)).map((c) => `<a href="/test-centres/${slug(c.centre)}.html">${esc(c.centre)}</a>`).join("")}</div>`).join("\n")}`;
   const jsonld = [{ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
     { "@type": "ListItem", position: 1, name: "TestNow", item: SITE + "/" },
     { "@type": "ListItem", position: 2, name: "Test centres", item: SITE + "/test-centres/" } ] }];
@@ -236,21 +261,37 @@ const centres = (await loadCentres()).filter((c) => c && c.centre && c.region);
 // One page per centre (first region wins); the index lists it under every region.
 const bySlug = new Map();
 for (const c of centres) if (!bySlug.has(slug(c.centre))) bySlug.set(slug(c.centre), c);
+const REGIONS = [...new Set(centres.map((c) => c.region))].sort();
+REGION_LINKS = REGIONS.map((r) => `<a href="/test-centres/${slug(r)}/">${esc(r)}</a>`).join("");
+// previous sitemap lastmod + "did the bytes change" so an unchanged page keeps its old lastmod
+const oldLastmod = new Map();
+try { for (const m of fs.readFileSync(path.join(ROOT, "sitemap.xml"), "utf8").matchAll(/<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)) oldLastmod.set(m[1], m[2]); } catch {}
+const unchanged = new Set();
+const writeIfChanged = (file, html, url) => { let prev = null; try { prev = fs.readFileSync(file, "utf8"); } catch {} if (prev === html) unchanged.add(url); else fs.writeFileSync(file, html); };
 fs.mkdirSync(OUT, { recursive: true });
-for (const f of fs.readdirSync(OUT)) if (f.endsWith(".html")) fs.unlinkSync(path.join(OUT, f));
 for (const c of bySlug.values()) {
   const same = centres.filter((o) => o.region === c.region && o.centre !== c.centre)
     .filter((o, i, arr) => arr.findIndex((x) => x.centre === o.centre) === i)
     .sort((a, b) => a.centre.localeCompare(b.centre));
   const p = centrePage(c, bySlug, same);
-  fs.writeFileSync(path.join(OUT, p.file), p.html);
+  writeIfChanged(path.join(OUT, p.file), p.html, `${SITE}/test-centres/${p.file}`);
 }
-fs.writeFileSync(path.join(OUT, "index.html"), indexPage(centres));
+// drop pages for centres that no longer exist
+const keep = new Set([...bySlug.keys()].map((k) => k + ".html").concat(["index.html"]));
+for (const f of fs.readdirSync(OUT)) if (f.endsWith(".html") && !keep.has(f)) fs.unlinkSync(path.join(OUT, f));
+writeIfChanged(path.join(OUT, "index.html"), indexPage(centres), SITE + "/test-centres/");
+for (const r of REGIONS) {
+  const list = centres.filter((c) => c.region === r).filter((o, i, arr) => arr.findIndex((x) => x.centre === o.centre) === i);
+  const rp = regionPage(r, list, REGIONS);
+  fs.mkdirSync(path.join(OUT, rp.dir), { recursive: true });
+  writeIfChanged(path.join(OUT, rp.dir, "index.html"), rp.html, `${SITE}/test-centres/${rp.dir}/`);
+}
 
 const core = ["/", "/find-instructor.html", "/instructors.html", "/privacy.html", "/terms.html", "/cookies.html", "/report-concern.html", "/test-centres/", "/test-availability.html", "/just-passed.html", "/guides/",
   "/guides/how-to-get-an-earlier-driving-test.html", "/guides/driving-test-cancellation-scams.html", "/guides/swap-driving-test-date.html",
   "/guides/driving-test-waiting-times.html", "/guides/change-driving-test-centre.html", "/guides/what-to-do-after-passing-your-driving-test.html"];
 const today = new Date().toISOString().slice(0, 10);
-const urls = core.map((u) => SITE + u).concat([...bySlug.keys()].map((k) => `${SITE}/test-centres/${k}.html`));
-fs.writeFileSync(path.join(ROOT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` + urls.map((u) => `  <url>\n    <loc>${u}</loc>\n    <lastmod>${today}</lastmod>\n  </url>`).join("\n") + "\n</urlset>\n");
+const urls = core.map((u) => SITE + u).concat(REGIONS.map((r) => `${SITE}/test-centres/${slug(r)}/`)).concat([...bySlug.keys()].map((k) => `${SITE}/test-centres/${k}.html`));
+const lastmodFor = (u) => (unchanged.has(u) && oldLastmod.get(u)) ? oldLastmod.get(u) : today;
+fs.writeFileSync(path.join(ROOT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` + urls.map((u) => `  <url>\n    <loc>${u}</loc>\n    <lastmod>${lastmodFor(u)}</lastmod>\n  </url>`).join("\n") + "\n</urlset>\n");
 console.log(`built ${bySlug.size} centre pages + index; sitemap has ${urls.length} urls`);

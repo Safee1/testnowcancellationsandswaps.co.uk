@@ -1,0 +1,26 @@
+# TestNow Cancellations & Swaps
+
+> A free UK service that matches learner drivers who want to swap their DVSA practical driving test dates with each other. Learners list their current test (centre, date, time) and the dates or centres they would accept instead; when two listings fit, both get an anonymous chat link and one of them phones DVSA on 0300 200 1122 to make the swap. No test date is ever bought or sold.
+
+Operated by RDS HUB LTD (company number 16285288), trading as TestNow. Registered UK trade mark TEST NOW UK (UK00004311901). TestNow is independent and is not DVSA or any part of government.
+
+Key facts
+- Free for learners: no fee to list, match or swap. Anyone asking a learner to pay for a test date is a scam.
+- A swap can only be completed by DVSA; both learners must hold a live booking and the new date must be far enough away for DVSA to change it (10 working days, Monday to Saturday; TestNow keeps an extra buffer).
+- Matching is like-for-like on test type (standard weekday, evening/weekend, extra-time, extended test for disqualified drivers) and on the centres each learner says they would accept.
+- Learners are anonymous to each other: chat shows only a label, and phone numbers, emails and links are removed automatically.
+- Also offers a free "find an instructor" directory where approved driving instructors (ADIs) list themselves, and a live board of tests currently up for swap.
+- Coverage: every DVSA practical test centre in England, Scotland and Wales (about 320 centres), with a page per centre and per region.
+
+Pages
+- Home, live board and listing form: https://testnowcancellationsandswaps.co.uk/
+- Test centres (every centre, by region): https://testnowcancellationsandswaps.co.uk/test-centres/
+- Live test availability by centre: https://testnowcancellationsandswaps.co.uk/test-availability.html
+- Guides (how to get an earlier test, swapping, scams, waiting times, changing centre, after passing): https://testnowcancellationsandswaps.co.uk/guides/
+- Find a driving instructor: https://testnowcancellationsandswaps.co.uk/find-instructor.html
+- For instructors (free registration): https://testnowcancellationsandswaps.co.uk/instructors.html
+- Just passed? What next: https://testnowcancellationsandswaps.co.uk/just-passed.html
+- Privacy: https://testnowcancellationsandswaps.co.uk/privacy.html
+- Terms: https://testnowcancellationsandswaps.co.uk/terms.html
+
+Contact: info@testnowcancellationsandswaps.co.uk

@@ -2065,8 +2065,8 @@
   "region": "Scotland",
   "moves": [
    "Huntly - about 37 miles away",
-   "Grantown-On-Spey - about 38 miles away",
-   "Inverurie - about 40 miles away"
+   "Inverurie - about 40 miles away",
+   "Aberdeen South (Cove) - about 46 miles away"
   ]
  },
  {
@@ -2208,9 +2208,9 @@
   "centre": "Dunoon",
   "region": "Scotland",
   "moves": [
-   "Greenock - about 7 miles away",
-   "Paisley - about 23 miles away",
-   "Glasgow (Shieldhall) - about 27 miles away"
+   "Greenock - about 7 miles away (this route includes a ferry)",
+   "Paisley - about 24 miles away (this route includes a ferry)",
+   "Inveraray - about 39 miles away"
   ]
  },
  {
@@ -2370,9 +2370,9 @@
   "centre": "Greenock",
   "region": "Scotland",
   "moves": [
-   "Dunoon - about 7 miles away",
-   "Rothesay - about 16 miles away",
-   "Paisley - about 17 miles away"
+   "Paisley - about 17 miles away",
+   "Dumbarton - about 20 miles away",
+   "Glasgow Shieldhall - about 22 miles"
   ]
  },
  {
