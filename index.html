@@ -1188,6 +1188,9 @@
   .board-share { margin:18px 0 0; text-align:center; }
   .board-share .share-row { justify-content:center; }
   .board-share p { margin:0 0 6px; font-size:15px; }
+  .match-bar { position:sticky; top:0; z-index:60; background:#C3135F; color:#fff; padding:12px 16px; display:flex; gap:12px; align-items:center; justify-content:center; flex-wrap:wrap; font-size:15px; box-shadow:0 2px 10px rgba(0,0,0,.15); }
+  .match-bar a.go { background:#fff; color:#C3135F; font-weight:700; padding:8px 16px; border-radius:999px; text-decoration:none; }
+  .match-bar button { background:transparent; border:0; color:#fff; font-size:20px; cursor:pointer; line-height:1; padding:4px 8px; }
   .form-success .again {
     display: inline-block;
     margin-top: 22px;
@@ -2304,8 +2307,22 @@
       // Fires once, only after the listing has actually been submitted
       // (this callback only runs once the fetch to the backend completes) —
       // never on page load, never on button click alone.
-      if (typeof gtag === 'function') {
-        gtag('event', 'conversion', {'send_to': 'AW-18364427323/1EBdCKOIjdocELvY67RE'});
+      // v148 (29 Oct): store the opaque lead id so the site can show "you have a match" next visit
+      try { if (json.leadId) localStorage.setItem('tn_lead_id', String(json.leadId)); } catch (e) {}
+      // Enhanced Conversions for leads: SHA-256 of the normalised email, set as
+      // user_data before the conversion fires. Consent Mode is not bypassed —
+      // gtag drops user_data when ad_user_data is denied.
+      var fireConversion = function () {
+        if (typeof gtag === 'function') gtag('event', 'conversion', {'send_to': 'AW-18364427323/1EBdCKOIjdocELvY67RE'});
+      };
+      var emailForEc = String((form.email && form.email.value) || '').trim().toLowerCase();
+      if (emailForEc && window.crypto && crypto.subtle && window.TextEncoder) {
+        crypto.subtle.digest('SHA-256', new TextEncoder().encode(emailForEc)).then(function (buf) {
+          var hex = Array.prototype.map.call(new Uint8Array(buf), function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+          if (typeof gtag === 'function') gtag('set', 'user_data', { sha256_email_address: hex });
+        }).catch(function () {}).then(fireConversion);
+      } else {
+        fireConversion();
       }
       btn.textContent = 'Submitted ✓';
       btn.style.background = 'var(--accent)';
@@ -3155,6 +3172,28 @@
       row.appendChild(nb);
     }
   });
+})();
+</script>
+<script>
+// "You have a match" bar (29 Oct): a learner who ignored the email/text finds
+// their open chat here. Keyed by the opaque lead id saved at listing time;
+// nothing personal travels in the URL. Dismiss hides it for this session only.
+(function () {
+  var lead = ''; try { lead = localStorage.getItem('tn_lead_id') || ''; } catch (e) {}
+  if (!lead || !/^L[0-9]{10,16}_[a-z0-9]{3,8}$/.test(lead)) return;
+  var API = 'https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec';
+  fetch(API + '?action=matchStatus&lead=' + encodeURIComponent(lead)).then(function (r) { return r.json(); }).then(function (d) {
+    if (!d || !d.matched || !d.url) return;
+    var key = 'tn_matchbar_' + (d.url.split('cs=')[1] || '').split('&')[0];
+    try { if (sessionStorage.getItem(key)) return; } catch (e) {}
+    var bar = document.createElement('div'); bar.className = 'match-bar'; bar.setAttribute('role', 'status');
+    bar.innerHTML = '<span>🎉 <b>You have a match' + (d.context ? ' (' + d.context.replace(/[<>]/g, '') + ')' : '') + '.</b> Your private chat is waiting.</span>';
+    var a = document.createElement('a'); a.className = 'go'; a.href = d.url; a.textContent = 'Open my chat'; bar.appendChild(a);
+    var x = document.createElement('button'); x.type = 'button'; x.setAttribute('aria-label', 'Hide'); x.textContent = '×';
+    x.onclick = function () { bar.remove(); try { sessionStorage.setItem(key, '1'); } catch (e) {} };
+    bar.appendChild(x);
+    document.body.insertBefore(bar, document.body.firstChild);
+  }).catch(function () {});
 })();
 </script>
 </body>
