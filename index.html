@@ -807,9 +807,10 @@
     box-shadow: 8px 8px 0 var(--ink);
   }
   @media (max-width: 720px) { .form-wrap { padding: 36px 24px; } }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
-  @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
-  .field { display: flex; flex-direction: column; gap: 8px; }
+  .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+  @media (max-width: 600px) { .form-grid { grid-template-columns: minmax(0, 1fr); } }
+  .field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  .field input, .field select, .field textarea { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }
   .field.full { grid-column: 1 / -1; }
 
   /* Form step groups — the 12 fields read as three chunks (you / your
