@@ -175,6 +175,7 @@
     .composer button:active, .complete-btn:active, .g-btn:active, .ab-btn:active, .chip:active { transform: none; }
   }
 </style>
+<script src="/assets/attribution.js"></script>
 </head>
 <body>
 
@@ -371,6 +372,12 @@
   let prepShown = false, callStepsShown = false, swapIntoShown = false;
   let motivatorShown = false, endShown = false, aCallCardShown = false, bCallCardShown = false;
 
+  function showInvalidLink() {
+    metaText.textContent = 'Invalid chat link.';
+    statusPill.textContent = 'Link not valid'; statusPill.style.background = 'rgba(160,40,40,.12)'; statusPill.style.color = '#7a1f1f';
+    composer.style.display = 'none'; completeBtn.style.display = 'none'; abInner.innerHTML = '';
+    if (!document.getElementById('badLinkCard')) { const c = gcard('<div class="g-text">This chat link isn\u0027t valid. Open the latest link from your TestNow email or text — if it still fails, the chat has been removed.</div>'); c.id = 'badLinkCard'; }
+  }
   if (!SID || !TK) {
     metaText.textContent = 'Invalid chat link.';
     // 26 Sep: the pill was still the green "Open" next to this message
@@ -387,6 +394,8 @@
           // v99: the door (backend v104)
           if (d.message === 'gate') { showGate('verify', null); return; }
           if (d.message === 'expired') { showExpired(); return; }
+          // 29 Oct: a definitive "session not found" / bad token is an INVALID LINK, not a network blip — never tell the user "your link is fine".
+          if (/not found|invalid|token|forbidden/i.test(String(d.message || ''))) { showInvalidLink(); return; }
           throw new Error(d.message || 'failed');
         }
         if (d.gateRequired && d.youAre !== 'MOD') { showGate('set', d); return; }

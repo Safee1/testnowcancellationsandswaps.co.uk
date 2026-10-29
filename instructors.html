@@ -201,6 +201,7 @@
     .ibtn:active:not(:disabled), .cookiebar-btns button:active { transform: none; }
   }
 </style>
+<script src="/assets/attribution.js"></script>
 </head>
 <body>
 
@@ -288,11 +289,17 @@
           <input type="checkbox" id="idir" checked style="width:auto;"> Show me in the free public &ldquo;find an instructor&rdquo; directory
         </label>
       </div>
+      <div class="field" style="margin-top:8px;">
+        <label style="display:flex;gap:8px;align-items:flex-start;font-weight:400;">
+          <input type="checkbox" id="imkt" style="width:auto;margin-top:3px;"> Also email or text me TestNow news and offers for instructors (optional, unsubscribe any time)
+        </label>
+      </div>
       <button class="ibtn" id="isubmit" type="button">Register free <span aria-hidden="true">&nbsp;&rarr;</span></button>
       <div class="imsg" id="imsg"></div>
     </div>
 
     <p style="margin-top:26px;font-size:13.5px;color:rgba(31,41,35,.75);">We handle your data as set out in our <a href="privacy.html">Privacy Notice</a>. By registering you agree that we may text and email you about learner requests in the regions you cover. If you choose to join our instructors-only community group, other members of that group will be able to see your name and mobile number. Registering doesn't commit you to anything.</p>
+    <p style="margin-top:8px;font-size:12.5px;color:rgba(31,41,35,.65);">Data controller: RDS HUB LTD trading as TestNow, company no. 16285288. We keep your registration while your profile is active and for 12 months after you ask us to remove it (contact and enquiry records only, to answer any dispute), then delete it. Marketing messages are only sent if you tick the box above, and you can withdraw that at any time.</p>
 
     <section id="featured-offer" hidden style="margin-top:28px;padding:20px;border:2px solid #f5b301;border-radius:14px;background:#fffaf0;">
       <h2 style="margin:0 0 6px;font-size:1.25rem;">Get featured: <span id="feat-price"></span></h2>
@@ -403,6 +410,9 @@ document.getElementById('isubmit').addEventListener('click', function(){
   var transmission = document.getElementById('itrans').value.trim();
   var experience = document.getElementById('iexp').value.trim();
   var directory = document.getElementById('idir').checked;
+  var marketingOptIn = !!(document.getElementById('imkt') && document.getElementById('imkt').checked);
+  var source = ''; try { source = sessionStorage.getItem('tn_source') || ''; } catch (e) {}
+  if (!source) { try { var ls = JSON.parse(localStorage.getItem('tn_source_ls') || 'null'); if (ls && ls.v && ls.t && (Date.now() - ls.t) < 30*24*60*60*1000) source = ls.v; } catch (e) {} }
 
   msg.className = 'imsg';
   if (!name || !email || !phone) { msg.className='imsg err'; msg.textContent='Please fill in your name, email and mobile.'; return; }
@@ -414,7 +424,7 @@ document.getElementById('isubmit').addEventListener('click', function(){
   fetch(ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ action: 'instructorSignup', name: name, school: school, email: email, phone: phone, regions: regions, style: style, car: car, transmission: transmission, experience: experience, directory: directory })
+    body: JSON.stringify({ action: 'instructorSignup', name: name, school: school, email: email, phone: phone, regions: regions, style: style, car: car, transmission: transmission, experience: experience, directory: directory, marketingOptIn: marketingOptIn, source: source || 'direct' })
   })
   .then(function(r){ return r.json(); })
   .then(function(d){
