@@ -1253,7 +1253,11 @@
     if (otherWrap) otherWrap.style.display = 'none';
     if (SESSION_STATUS !== 'open') return;
     tfetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, g: GATE, outcome: 'declined', reason: reason || '' }) })
-      .then(r => r.json()).then(j => { if (j.result !== 'success') showLocalError('⚠ Could not close the chat — please try again.'); })
+      .then(r => r.json()).then(j => {
+        if (j.result === 'success') return;
+        if (j.message === 'too_soon') showLocalError('⏳ Please give the other person a little longer — most swaps take a day or two. You can decline this match from ' + (j.declineOpensAt || 'in 48 hours') + '. If anything feels wrong, tap Report.');
+        else showLocalError('⚠ Could not close the chat — please try again.');
+      })
       .catch(() => showLocalError('⚠ Could not close the chat — please try again.'));
   }
 
