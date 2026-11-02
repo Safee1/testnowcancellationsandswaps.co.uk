@@ -332,6 +332,7 @@
   const CID = (function () { try { let c = localStorage.getItem('tn_cid'); if (!c) { c = Math.random().toString(36).slice(2, 10) + Date.now().toString(36); localStorage.setItem('tn_cid', c); } return c; } catch (e) { return ''; } })();
   let GATE = ''; try { GATE = localStorage.getItem('tn_gate_' + SID) || ''; } catch (e) {}
   let gateTries = 0;
+  let gateLockedMsg = ''; // 2 Nov (backend v154): the door locks a session side for an hour after 5 wrong references
   function gateQs() { return GATE ? '&g=' + encodeURIComponent(GATE) : ''; }
   function saveGate(v) { GATE = v; try { localStorage.setItem('tn_gate_' + SID, v); } catch (e) {} }
   function deviceQs() { return '&cid=' + encodeURIComponent(CID) + '&ua=' + encodeURIComponent(String(navigator.userAgent || '').slice(0, 80)); }
@@ -392,7 +393,7 @@
       .then(d => {
         if (d.result !== 'success') {
           // v99: the door (backend v104)
-          if (d.message === 'gate') { showGate('verify', null); return; }
+          if (d.message === 'gate') { gateLockedMsg = (d.gate === 'locked') ? String(d.notice || 'Too many tries. Please try again in an hour.') : ''; showGate('verify', null); return; }
           if (d.message === 'expired') { showExpired(); return; }
           // 29 Oct: a definitive "session not found" / bad token is an INVALID LINK, not a network blip — never tell the user "your link is fine".
           if (/not found|invalid|token|forbidden/i.test(String(d.message || ''))) { showInvalidLink(); return; }
@@ -467,7 +468,8 @@
     const btn = document.createElement('button'); btn.className = 'g-btn'; btn.textContent = 'Open my chat';
     const err = document.createElement('div'); err.className = 'g-err';
     const mismatch = 'That doesn\'t match the reference this chat was opened with. If it\'s definitely yours, email info@testnowcancellationsandswaps.co.uk from the address you listed with and we\'ll reset it.';
-    if (mode === 'verify' && gateTries > 0) err.textContent = mismatch;
+    if (mode === 'verify' && gateLockedMsg) err.textContent = gateLockedMsg;
+    else if (mode === 'verify' && gateTries > 0) err.textContent = mismatch;
     btn.onclick = function () {
       err.textContent = '';
       const v = inp.value.replace(/\s+/g, '');
