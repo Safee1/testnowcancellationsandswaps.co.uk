@@ -2308,7 +2308,9 @@
       // (this callback only runs once the fetch to the backend completes) —
       // never on page load, never on button click alone.
       // v148 (29 Oct): store the opaque lead id so the site can show "you have a match" next visit
-      try { if (json.leadId) localStorage.setItem('tn_lead_id', String(json.leadId)); } catch (e) {}
+      // v153 (2 Nov): the lead id is public (board card id) so it is not enough on its own; the backend also
+      // returns a per-lead matchKey that only this browser gets and the match bar must send with it.
+      try { if (json.leadId) { localStorage.setItem('tn_lead_id', String(json.leadId)); if (json.matchKey) localStorage.setItem('tn_match_key', String(json.matchKey)); else localStorage.removeItem('tn_match_key'); } } catch (e) {}
       // Enhanced Conversions for leads: SHA-256 of the normalised email, set as
       // user_data before the conversion fires. Consent Mode is not bypassed —
       // gtag drops user_data when ad_user_data is denied.
@@ -3184,10 +3186,11 @@
 // their open chat here. Keyed by the opaque lead id saved at listing time;
 // nothing personal travels in the URL. Dismiss hides it for this session only.
 (function () {
-  var lead = ''; try { lead = localStorage.getItem('tn_lead_id') || ''; } catch (e) {}
-  if (!lead || !/^L[0-9]{10,16}_[a-z0-9]{3,8}$/.test(lead)) return;
+  var lead = '', mk = ''; try { lead = localStorage.getItem('tn_lead_id') || ''; mk = localStorage.getItem('tn_match_key') || ''; } catch (e) {}
+  // 2 Nov: needs the per-lead key too (listings made before this change have none, so no bar for them).
+  if (!lead || !mk || !/^L[0-9]{10,16}_[a-z0-9]{3,8}$/.test(lead) || !/^[A-Za-z0-9_-]{22}$/.test(mk)) return;
   var API = 'https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec';
-  fetch(API + '?action=matchStatus&lead=' + encodeURIComponent(lead)).then(function (r) { return r.json(); }).then(function (d) {
+  fetch(API + '?action=matchStatus&lead=' + encodeURIComponent(lead) + '&k=' + encodeURIComponent(mk)).then(function (r) { return r.json(); }).then(function (d) {
     if (!d || !d.matched || !d.url) return;
     var key = 'tn_matchbar_' + (d.url.split('cs=')[1] || '').split('&')[0];
     try { if (sessionStorage.getItem(key)) return; } catch (e) {}
