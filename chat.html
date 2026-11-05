@@ -462,12 +462,12 @@
   function showGate(mode, d) {
     metaText.textContent = mode === 'set' ? 'One quick check' : 'Your booking reference';
     composer.style.display = 'none'; completeBtn.style.display = 'none'; abInner.innerHTML = '';
-    const c = gcard('<div class="g-text">🔐 <b>' + (mode === 'set' ? 'First, your booking reference.' : 'Welcome back — your booking reference?') + '</b> Enter the <b>8-digit DVSA booking reference</b> for the test you listed. Only you know it, so a shared or screenshotted link can\'t open your chat as you.' + (mode === 'set' ? ' You\'ll need it for the swap anyway.' : '') + '<span class="g-warn">Share ONLY this. Never your licence number, payment card, address, phone or email.</span></div>');
+    const c = gcard('<div class="g-text">🔐 <b>' + (mode === 'set' ? 'First, your booking reference.' : 'Welcome back — your booking reference?') + '</b> Enter the <b>8-digit DVSA booking reference</b> for the test you listed. Only you know it, so a shared or screenshotted link can\'t open your chat as you.' + (mode === 'set' ? ' DVSA needs this reference to move any booking, so you\'ll need it for the swap anyway. It is free to use.' : '') + '<span class="g-warn">Share ONLY this. Never your licence number, payment card, address, phone or email.</span></div>');
     const wrap = document.createElement('div'); wrap.className = 'g-controls';
     const inp = document.createElement('input'); inp.type = 'text'; inp.setAttribute('inputmode', 'numeric'); inp.maxLength = 8; inp.placeholder = 'e.g. 68194673'; inp.setAttribute('autocomplete', 'off');
     const btn = document.createElement('button'); btn.className = 'g-btn'; btn.textContent = 'Open my chat';
     const err = document.createElement('div'); err.className = 'g-err';
-    const mismatch = 'That doesn\'t match the reference this chat was opened with. If it\'s definitely yours, email info@testnowcancellationsandswaps.co.uk from the address you listed with and we\'ll reset it.';
+    const mismatch = 'That doesn\'t match the reference this chat was opened with. If it\'s definitely yours, email info@testnowcancellationsandswaps.co.uk from the address you listed with and we\'ll reset it. Tip: it is on your DVSA booking confirmation email.';
     if (mode === 'verify' && gateLockedMsg) err.textContent = gateLockedMsg;
     else if (mode === 'verify' && gateTries > 0) err.textContent = mismatch;
     btn.onclick = function () {
