@@ -553,6 +553,10 @@
         if (d.result === 'success') {
           const seen = (YOU_ARE === 'A') ? d.bSeen : d.aSeen;
           otherOnline = !!(seen && d.now && (d.now - seen < ONLINE_WINDOW));
+          // v157: say so while the other person has never opened the chat
+          if (YOU_ARE !== 'MOD' && SESSION_STATUS === 'open') {
+            metaText.textContent = 'You are ' + (YOUR_HANDLE || (YOU_ARE === 'A' ? 'Learner A' : 'Learner B')) + ' · ' + OTHER_HANDLE + (seen ? '' : ' · waiting for them to open the chat (we have already notified them; your link stays valid)');
+          }
           otherDot.className = 'dot' + (otherOnline ? ' on' : '');
           renderActionBar();
         }
