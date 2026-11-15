@@ -709,6 +709,7 @@
         // Sending means the conversation is active — drop any idle backoff so
         // the other learner's reply still lands within the fast interval.
         if (j.result === 'success') wakePolling();
+        if (j.result === 'success' && j.dup) showLocalError('✓ You already sent that, so no need to repeat it. They will see it, and we email them a reminder.');
         // v95: backend v101 refuses anything that isn't a button phrase or a
         // guided-flow signal — say so plainly instead of a generic "didn't send".
         if (j.result === 'error' && j.message === 'free_text_disabled') showLocalError('🔒 ' + (j.hint || 'Typing is switched off in this chat — use the buttons.'));
@@ -1166,6 +1167,13 @@
       ['🔁 Used both changes', 'I\'ve used both my test changes already.'],
       ['🕐 Free later today', 'I\'ll be free later today.'],
       ['📆 Free tomorrow', 'I\'ll be free tomorrow.'],
+      // v160: scheduling replies (must match the backend allowlist exactly)
+      ['👍 OK, tomorrow', 'OK, let\'s do it tomorrow 👍'],
+      ['🕐 What time suits you?', 'What time suits you?'],
+      ['🌅 Morning suits me', 'Morning suits me.'],
+      ['🌇 Afternoon suits me', 'Afternoon suits me.'],
+      ['🔒 DVSA line closed now', 'DVSA\'s phone line is closed now. It opens again on the next weekday morning.'],
+      ['💬 I\'ll message when ready', 'I\'ll message here when I\'m ready to call.'],
       ['👀 Still there?', 'Are you still there?'],
       ['✅ All done my side', 'All done on my side ✅'],
       ['🙏 Thank you', 'Thank you! 🙏']
