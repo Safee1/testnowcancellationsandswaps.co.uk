@@ -1,0 +1,2188 @@
+{
+ "_meta": {
+  "title": "Driving test and theory test data: cars - DRT122A Practical car pass rates by gender, month and DTC (car driving test by test centre)",
+  "url": "https://assets.publishing.service.gov.uk/media/6a3be0d430b491f55b3c48ac/drt122a-car-driving-test-by-test-centre.ods",
+  "landingPage": "https://www.gov.uk/government/statistical-data-sets/driving-test-and-theory-test-data-cars",
+  "period": "April 2025 to March 2026",
+  "licence": "Open Government Licence v3.0",
+  "retrieved": "15 November 2026",
+  "notes": "Pass rate = DVSA published total (all genders) annual figure for the test centre, rounded to 1 decimal place. Test categories B and B1. DVSA excludes centres with only one examiner. No addresses, postcodes or waiting times in this source file."
+ },
+ "Basildon": {
+  "passRate": 49.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8359,
+  "testsPassed": 4106,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bedford": {
+  "passRate": 53.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8854,
+  "testsPassed": 4756,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bishops Stortford": {
+  "passRate": 51.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6409,
+  "testsPassed": 3290,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bletchley": {
+  "passRate": 51.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9415,
+  "testsPassed": 4845,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bury St Edmunds": {
+  "passRate": 46.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8702,
+  "testsPassed": 4019,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Cambridge (Brookmount Court)": {
+  "passRate": 53.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 13689,
+  "testsPassed": 7366,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Chelmsford": {
+  "passRate": 55.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9107,
+  "testsPassed": 5044,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Clacton-on-Sea": {
+  "passRate": 48.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4840,
+  "testsPassed": 2334,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Colchester": {
+  "passRate": 50.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7756,
+  "testsPassed": 3925,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Ipswich": {
+  "passRate": 62.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 11466,
+  "testsPassed": 7143,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Kings Lynn": {
+  "passRate": 51.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6694,
+  "testsPassed": 3477,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Leighton Buzzard (Stanbridge Road)": {
+  "passRate": 49.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7667,
+  "testsPassed": 3825,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Letchworth": {
+  "passRate": 57.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5243,
+  "testsPassed": 3015,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Lowestoft (Mobbs Way)": {
+  "passRate": 43.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7603,
+  "testsPassed": 3292,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Luton": {
+  "passRate": 39.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7759,
+  "testsPassed": 3041,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Norwich (Peachman Way)": {
+  "passRate": 61.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 12541,
+  "testsPassed": 7740,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Peterborough": {
+  "passRate": 52.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 10551,
+  "testsPassed": 5569,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Southend-on-Sea": {
+  "passRate": 47,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7526,
+  "testsPassed": 3537,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "St Albans": {
+  "passRate": 50.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7336,
+  "testsPassed": 3721,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Stevenage": {
+  "passRate": 55.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4622,
+  "testsPassed": 2557,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Tilbury": {
+  "passRate": 50.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5083,
+  "testsPassed": 2560,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Watford": {
+  "passRate": 46.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 12939,
+  "testsPassed": 5983,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Ashfield": {
+  "passRate": 57.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8144,
+  "testsPassed": 4666,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Boston": {
+  "passRate": 50.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4784,
+  "testsPassed": 2427,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Chesterfield": {
+  "passRate": 56.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6605,
+  "testsPassed": 3712,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Derby (Alvaston)": {
+  "passRate": 51.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8086,
+  "testsPassed": 4186,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Grantham (Somerby)": {
+  "passRate": 57.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7318,
+  "testsPassed": 4237,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Grimsby Coldwater": {
+  "passRate": 42.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5361,
+  "testsPassed": 2292,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Hinckley": {
+  "passRate": 46.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4866,
+  "testsPassed": 2258,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Kettering": {
+  "passRate": 49.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 11876,
+  "testsPassed": 5829,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Leicester (Cannock Street)": {
+  "passRate": 40.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 14198,
+  "testsPassed": 5708,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Leicester (Wigston)": {
+  "passRate": 51.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 18868,
+  "testsPassed": 9666,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Lincoln": {
+  "passRate": 52.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6192,
+  "testsPassed": 3225,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Loughborough": {
+  "passRate": 42.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5502,
+  "testsPassed": 2330,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Louth": {
+  "passRate": 53.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 740,
+  "testsPassed": 399,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Melton Mowbray": {
+  "passRate": 69.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 1984,
+  "testsPassed": 1382,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Northampton": {
+  "passRate": 52.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 13539,
+  "testsPassed": 7050,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Nottingham (Chilwell)": {
+  "passRate": 49.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9415,
+  "testsPassed": 4697,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Nottingham (Colwick)": {
+  "passRate": 46.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 15150,
+  "testsPassed": 7032,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Skegness": {
+  "passRate": 55.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 2078,
+  "testsPassed": 1162,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Wellingborough": {
+  "passRate": 60,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 1450,
+  "testsPassed": 870,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Worksop": {
+  "passRate": 55.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5975,
+  "testsPassed": 3296,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Barnet (London)": {
+  "passRate": 49.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 12397,
+  "testsPassed": 6182,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Belvedere (London)": {
+  "passRate": 40.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4245,
+  "testsPassed": 1720,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Borehamwood (London)": {
+  "passRate": 50.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7195,
+  "testsPassed": 3652,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Brentwood (London)": {
+  "passRate": 48.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5791,
+  "testsPassed": 2809,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bromley (London)": {
+  "passRate": 52.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 13228,
+  "testsPassed": 6997,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Chertsey (London)": {
+  "passRate": 52.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9082,
+  "testsPassed": 4804,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Chingford (London)": {
+  "passRate": 39.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 13120,
+  "testsPassed": 5234,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Enfield (Brancroft Way)": {
+  "passRate": 46.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 362,
+  "testsPassed": 167,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Enfield (Innova Business Park)": {
+  "passRate": 53.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8412,
+  "testsPassed": 4536,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Erith (London)": {
+  "passRate": 51.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5809,
+  "testsPassed": 3000,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Goodmayes (London)": {
+  "passRate": 43.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 21374,
+  "testsPassed": 9338,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Greenford (Horsenden Lane)": {
+  "passRate": 41.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7222,
+  "testsPassed": 2992,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Hendon (London)": {
+  "passRate": 51.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 11086,
+  "testsPassed": 5695,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Hornchurch (London)": {
+  "passRate": 46.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8694,
+  "testsPassed": 4022,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Isleworth (Fleming Way)": {
+  "passRate": 50.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 12687,
+  "testsPassed": 6388,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Loughton (London)": {
+  "passRate": 47,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7376,
+  "testsPassed": 3465,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Mill Hill (London)": {
+  "passRate": 51.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9797,
+  "testsPassed": 5038,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Mitcham (London)": {
+  "passRate": 47,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 15046,
+  "testsPassed": 7076,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Morden (London)": {
+  "passRate": 51,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 15770,
+  "testsPassed": 8036,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Pinner (London)": {
+  "passRate": 49.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 14367,
+  "testsPassed": 7143,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Sidcup (London)": {
+  "passRate": 58.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 14318,
+  "testsPassed": 8405,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Slough (London)": {
+  "passRate": 50.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 10509,
+  "testsPassed": 5343,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Southall (London)": {
+  "passRate": 44.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8543,
+  "testsPassed": 3827,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Tolworth (London)": {
+  "passRate": 53.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 10164,
+  "testsPassed": 5447,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Tottenham": {
+  "passRate": 48.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9844,
+  "testsPassed": 4812,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Uxbridge (London)": {
+  "passRate": 52.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6051,
+  "testsPassed": 3163,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Wanstead (London)": {
+  "passRate": 44.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8258,
+  "testsPassed": 3670,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "West Wickham (London)": {
+  "passRate": 51.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 12249,
+  "testsPassed": 6320,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Wood Green (London)": {
+  "passRate": 46.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 11379,
+  "testsPassed": 5326,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Yeading (London)": {
+  "passRate": 52.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6735,
+  "testsPassed": 3555,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Alnwick": {
+  "passRate": 55.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 1282,
+  "testsPassed": 712,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Berwick-On-Tweed": {
+  "passRate": 53.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 666,
+  "testsPassed": 359,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Blyth": {
+  "passRate": 50.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6973,
+  "testsPassed": 3551,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Darlington": {
+  "passRate": 47.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 12183,
+  "testsPassed": 5740,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Durham": {
+  "passRate": 53.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9451,
+  "testsPassed": 5027,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Gateshead": {
+  "passRate": 37.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9512,
+  "testsPassed": 3568,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Gosforth": {
+  "passRate": 48.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 10531,
+  "testsPassed": 5100,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Hartlepool": {
+  "passRate": 51,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5847,
+  "testsPassed": 2984,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Hexham": {
+  "passRate": 53,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 1388,
+  "testsPassed": 735,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Middlesbrough": {
+  "passRate": 47.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8854,
+  "testsPassed": 4221,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Northallerton": {
+  "passRate": 60.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3244,
+  "testsPassed": 1958,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Sunderland": {
+  "passRate": 51.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 10436,
+  "testsPassed": 5338,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Atherton (Manchester)": {
+  "passRate": 44.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 13035,
+  "testsPassed": 5779,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Barrow In Furness": {
+  "passRate": 69.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 1699,
+  "testsPassed": 1183,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Blackburn with Darwen": {
+  "passRate": 46.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 12205,
+  "testsPassed": 5688,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Blackpool": {
+  "passRate": 51.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8948,
+  "testsPassed": 4633,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bolton (Manchester)": {
+  "passRate": 51.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 11570,
+  "testsPassed": 5996,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bredbury (Manchester)": {
+  "passRate": 56,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 10636,
+  "testsPassed": 5953,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bury (Manchester)": {
+  "passRate": 46.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7024,
+  "testsPassed": 3255,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Buxton": {
+  "passRate": 58.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4904,
+  "testsPassed": 2878,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Carlisle": {
+  "passRate": 58.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3518,
+  "testsPassed": 2065,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Carlisle LGV (Cars)": {
+  "passRate": 44.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 47,
+  "testsPassed": 21,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Chadderton": {
+  "passRate": 46.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 15988,
+  "testsPassed": 7475,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Cheetham Hill (Manchester)": {
+  "passRate": 44.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 10207,
+  "testsPassed": 4565,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Chester": {
+  "passRate": 47.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9212,
+  "testsPassed": 4360,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Chorley": {
+  "passRate": 52.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5415,
+  "testsPassed": 2860,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Crewe": {
+  "passRate": 43.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4994,
+  "testsPassed": 2187,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Heysham": {
+  "passRate": 59.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3692,
+  "testsPassed": 2187,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Kendal (Oxenholme Road)": {
+  "passRate": 65.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 2231,
+  "testsPassed": 1453,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Macclesfield": {
+  "passRate": 51.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4509,
+  "testsPassed": 2341,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Nelson": {
+  "passRate": 51.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5955,
+  "testsPassed": 3081,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Norris Green (Liverpool)": {
+  "passRate": 37.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 13472,
+  "testsPassed": 5099,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Northwich": {
+  "passRate": 57.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3529,
+  "testsPassed": 2032,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Preston": {
+  "passRate": 56.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9194,
+  "testsPassed": 5174,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Rochdale (Manchester)": {
+  "passRate": 48.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 11563,
+  "testsPassed": 5584,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Sale (Manchester)": {
+  "passRate": 51.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 10921,
+  "testsPassed": 5613,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Southport (Liverpool)": {
+  "passRate": 56.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7949,
+  "testsPassed": 4493,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Speke (Liverpool)": {
+  "passRate": 40.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8159,
+  "testsPassed": 3308,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "St Helens (Liverpool)": {
+  "passRate": 40.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 14174,
+  "testsPassed": 5803,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Steeton": {
+  "passRate": 52.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4784,
+  "testsPassed": 2524,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Upton": {
+  "passRate": 52.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 10772,
+  "testsPassed": 5667,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Wallasey": {
+  "passRate": 54.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 968,
+  "testsPassed": 526,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Warrington": {
+  "passRate": 55.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7550,
+  "testsPassed": 4193,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "West Didsbury (Manchester)": {
+  "passRate": 47.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 17806,
+  "testsPassed": 8496,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Widnes": {
+  "passRate": 42.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6846,
+  "testsPassed": 2922,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Workington": {
+  "passRate": 61.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 2998,
+  "testsPassed": 1857,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Ashford (Kent)": {
+  "passRate": 46.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5475,
+  "testsPassed": 2530,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Aylesbury": {
+  "passRate": 49.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5255,
+  "testsPassed": 2589,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Banbury": {
+  "passRate": 41.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9069,
+  "testsPassed": 3741,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Basingstoke": {
+  "passRate": 56.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5009,
+  "testsPassed": 2844,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Burgess Hill": {
+  "passRate": 45.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 11237,
+  "testsPassed": 5111,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Canterbury": {
+  "passRate": 45.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4670,
+  "testsPassed": 2138,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Chichester": {
+  "passRate": 61.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6672,
+  "testsPassed": 4109,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Crawley": {
+  "passRate": 42.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 11305,
+  "testsPassed": 4831,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Eastbourne": {
+  "passRate": 55.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6031,
+  "testsPassed": 3342,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Farnborough": {
+  "passRate": 59.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 10482,
+  "testsPassed": 6258,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Folkestone": {
+  "passRate": 42.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7818,
+  "testsPassed": 3313,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Gillingham": {
+  "passRate": 56.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 14886,
+  "testsPassed": 8389,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Greenham": {
+  "passRate": 56.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3931,
+  "testsPassed": 2220,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Guildford": {
+  "passRate": 57.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4542,
+  "testsPassed": 2592,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Hastings (Ore)": {
+  "passRate": 52.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3892,
+  "testsPassed": 2039,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Herne Bay": {
+  "passRate": 55.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 10674,
+  "testsPassed": 5970,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "High Wycombe": {
+  "passRate": 51.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3534,
+  "testsPassed": 1821,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Lee On The Solent": {
+  "passRate": 63.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8502,
+  "testsPassed": 5374,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Maidstone": {
+  "passRate": 60.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8053,
+  "testsPassed": 4850,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Newport (Isle of Wight)": {
+  "passRate": 54.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3616,
+  "testsPassed": 1958,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Oxford (Cowley)": {
+  "passRate": 50.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5419,
+  "testsPassed": 2741,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Portsmouth": {
+  "passRate": 52.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 13518,
+  "testsPassed": 7141,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Reading": {
+  "passRate": 55.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9237,
+  "testsPassed": 5118,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Redhill Aerodrome": {
+  "passRate": 53.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5408,
+  "testsPassed": 2916,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Sevenoaks": {
+  "passRate": 59,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6740,
+  "testsPassed": 3978,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Southampton (Maybush)": {
+  "passRate": 50.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 10480,
+  "testsPassed": 5273,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Tunbridge Wells": {
+  "passRate": 64.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5726,
+  "testsPassed": 3695,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Winchester": {
+  "passRate": 52.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4602,
+  "testsPassed": 2404,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Worthing": {
+  "passRate": 59.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8495,
+  "testsPassed": 5076,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Barnstaple": {
+  "passRate": 51.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5562,
+  "testsPassed": 2859,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bodmin": {
+  "passRate": 47.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6392,
+  "testsPassed": 3034,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bristol (Avonmouth)": {
+  "passRate": 55.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9400,
+  "testsPassed": 5214,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bristol (Kingswood)": {
+  "passRate": 51.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 14863,
+  "testsPassed": 7719,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Camborne": {
+  "passRate": 40.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6271,
+  "testsPassed": 2549,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Cheltenham": {
+  "passRate": 43.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5161,
+  "testsPassed": 2231,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Chippenham": {
+  "passRate": 56.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9629,
+  "testsPassed": 5435,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Dorchester": {
+  "passRate": 69,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4353,
+  "testsPassed": 3002,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Exeter": {
+  "passRate": 46.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8679,
+  "testsPassed": 4061,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Gloucester": {
+  "passRate": 47.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7420,
+  "testsPassed": 3545,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Launceston": {
+  "passRate": 46.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3991,
+  "testsPassed": 1849,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Newton Abbot": {
+  "passRate": 53.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6591,
+  "testsPassed": 3547,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Penzance": {
+  "passRate": 46.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 507,
+  "testsPassed": 236,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Plymouth": {
+  "passRate": 40.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 11167,
+  "testsPassed": 4546,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Poole": {
+  "passRate": 53.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 10375,
+  "testsPassed": 5538,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Salisbury": {
+  "passRate": 48.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6630,
+  "testsPassed": 3215,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Swindon": {
+  "passRate": 51.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 12857,
+  "testsPassed": 6567,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Taunton": {
+  "passRate": 59.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8259,
+  "testsPassed": 4915,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Trowbridge": {
+  "passRate": 55.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3074,
+  "testsPassed": 1698,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Weston-super-Mare": {
+  "passRate": 61,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4443,
+  "testsPassed": 2711,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Yeovil": {
+  "passRate": 63.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7493,
+  "testsPassed": 4752,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Birmingham (Garretts Green)": {
+  "passRate": 44.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 22480,
+  "testsPassed": 9980,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Birmingham (Kings Heath)": {
+  "passRate": 46.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9072,
+  "testsPassed": 4242,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Birmingham (Kingstanding)": {
+  "passRate": 48.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 16133,
+  "testsPassed": 7829,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Birmingham (Shirley)": {
+  "passRate": 56.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9385,
+  "testsPassed": 5309,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Birmingham (South Yardley)": {
+  "passRate": 42.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 14471,
+  "testsPassed": 6199,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Burton on Trent": {
+  "passRate": 54.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7273,
+  "testsPassed": 3981,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Coventry": {
+  "passRate": 40,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 13771,
+  "testsPassed": 5510,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Dudley": {
+  "passRate": 45.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 13721,
+  "testsPassed": 6200,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Featherstone": {
+  "passRate": 36.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 13193,
+  "testsPassed": 4807,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Hereford": {
+  "passRate": 58.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4110,
+  "testsPassed": 2416,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Lichfield": {
+  "passRate": 53,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5944,
+  "testsPassed": 3153,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Ludlow": {
+  "passRate": 58.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5051,
+  "testsPassed": 2966,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Nuneaton": {
+  "passRate": 53.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6764,
+  "testsPassed": 3600,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Oswestry": {
+  "passRate": 52.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 1851,
+  "testsPassed": 969,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Redditch": {
+  "passRate": 51.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4483,
+  "testsPassed": 2304,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Rugby": {
+  "passRate": 51.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6664,
+  "testsPassed": 3425,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Shrewsbury": {
+  "passRate": 51,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5064,
+  "testsPassed": 2582,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Stafford": {
+  "passRate": 45.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5365,
+  "testsPassed": 2459,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Stoke-on-Trent (Cobridge)": {
+  "passRate": 40.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8413,
+  "testsPassed": 3413,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Stoke-on-Trent (Newcastle-Under-Lyme)": {
+  "passRate": 41.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6646,
+  "testsPassed": 2768,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Telford": {
+  "passRate": 48.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4963,
+  "testsPassed": 2429,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Warwick (Wedgenock House)": {
+  "passRate": 48.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 15070,
+  "testsPassed": 7313,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Wednesbury": {
+  "passRate": 35,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7508,
+  "testsPassed": 2626,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Wolverhampton": {
+  "passRate": 34.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 11561,
+  "testsPassed": 3961,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Worcester": {
+  "passRate": 51.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 11590,
+  "testsPassed": 6019,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Barnsley": {
+  "passRate": 58.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7737,
+  "testsPassed": 4530,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bradford (Heaton)": {
+  "passRate": 56.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8354,
+  "testsPassed": 4690,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bradford (Thornbury)": {
+  "passRate": 47.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 10831,
+  "testsPassed": 5172,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bridlington": {
+  "passRate": 55.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3027,
+  "testsPassed": 1681,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Doncaster": {
+  "passRate": 53.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7334,
+  "testsPassed": 3903,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Halifax": {
+  "passRate": 45,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5845,
+  "testsPassed": 2629,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Heckmondwike": {
+  "passRate": 45.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5471,
+  "testsPassed": 2505,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Horsforth": {
+  "passRate": 49.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 12466,
+  "testsPassed": 6193,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Huddersfield": {
+  "passRate": 49.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 10563,
+  "testsPassed": 5198,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Hull": {
+  "passRate": 47.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9706,
+  "testsPassed": 4652,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Knaresborough": {
+  "passRate": 58.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8301,
+  "testsPassed": 4860,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Leeds (Fearnville)": {
+  "passRate": 51.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4676,
+  "testsPassed": 2422,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Malton": {
+  "passRate": 64.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 876,
+  "testsPassed": 563,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Pontefract": {
+  "passRate": 46.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5544,
+  "testsPassed": 2602,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Rotherham": {
+  "passRate": 53.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9134,
+  "testsPassed": 4854,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Scarborough": {
+  "passRate": 45.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3595,
+  "testsPassed": 1620,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Scunthorpe": {
+  "passRate": 45.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6103,
+  "testsPassed": 2773,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Sheffield (Handsworth)": {
+  "passRate": 44.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9788,
+  "testsPassed": 4316,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Sheffield (Middlewood Road)": {
+  "passRate": 48.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 10442,
+  "testsPassed": 5085,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Skipton": {
+  "passRate": 57.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3197,
+  "testsPassed": 1831,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Wakefield": {
+  "passRate": 45.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 11653,
+  "testsPassed": 5291,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Walton LGV": {
+  "passRate": 59.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 1894,
+  "testsPassed": 1132,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Whitby": {
+  "passRate": 56.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 557,
+  "testsPassed": 316,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "York": {
+  "passRate": 54.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9416,
+  "testsPassed": 5125,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Aberdeen North": {
+  "passRate": 48.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3906,
+  "testsPassed": 1881,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Aberdeen South (Cove)": {
+  "passRate": 52.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4858,
+  "testsPassed": 2546,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Aberfeldy": {
+  "passRate": 68.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 149,
+  "testsPassed": 102,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Airdrie": {
+  "passRate": 47.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4599,
+  "testsPassed": 2180,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Alness": {
+  "passRate": 63.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 783,
+  "testsPassed": 494,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Arbroath": {
+  "passRate": 67.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 605,
+  "testsPassed": 408,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Ayr": {
+  "passRate": 57.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 2189,
+  "testsPassed": 1258,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Banff": {
+  "passRate": 57.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 280,
+  "testsPassed": 161,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Benbecula Island": {
+  "passRate": 72.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 107,
+  "testsPassed": 78,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bishopbriggs": {
+  "passRate": 49.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6186,
+  "testsPassed": 3080,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Brodick (Isle of Arran)": {
+  "passRate": 67.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 55,
+  "testsPassed": 37,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Buckie": {
+  "passRate": 51.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 268,
+  "testsPassed": 137,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Callander": {
+  "passRate": 49.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 335,
+  "testsPassed": 167,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Campbeltown": {
+  "passRate": 71.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 109,
+  "testsPassed": 78,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Castle Douglas": {
+  "passRate": 53.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 549,
+  "testsPassed": 293,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Cumnock": {
+  "passRate": 67.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 760,
+  "testsPassed": 512,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Dumbarton": {
+  "passRate": 52.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 1659,
+  "testsPassed": 876,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Dumfries": {
+  "passRate": 53.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 2267,
+  "testsPassed": 1223,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Dundee": {
+  "passRate": 57.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3742,
+  "testsPassed": 2144,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Dunfermline (Vine)": {
+  "passRate": 36.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5529,
+  "testsPassed": 2012,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Dunoon": {
+  "passRate": 71.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 193,
+  "testsPassed": 138,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Duns": {
+  "passRate": 70.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 171,
+  "testsPassed": 120,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "East Kilbride": {
+  "passRate": 57.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 1976,
+  "testsPassed": 1140,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Edinburgh (Currie)": {
+  "passRate": 41.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6202,
+  "testsPassed": 2577,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Edinburgh (Musselburgh)": {
+  "passRate": 49.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6850,
+  "testsPassed": 3387,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Elgin": {
+  "passRate": 42.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 2934,
+  "testsPassed": 1240,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Forfar": {
+  "passRate": 60.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 667,
+  "testsPassed": 402,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Fort William": {
+  "passRate": 65.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 374,
+  "testsPassed": 245,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Fraserburgh": {
+  "passRate": 64,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 531,
+  "testsPassed": 340,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Gairloch": {
+  "passRate": 73.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 49,
+  "testsPassed": 36,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Galashiels": {
+  "passRate": 47.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 2241,
+  "testsPassed": 1063,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Girvan": {
+  "passRate": 72,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 250,
+  "testsPassed": 180,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Glasgow (Anniesland)": {
+  "passRate": 44.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6170,
+  "testsPassed": 2736,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Glasgow (Baillieston)": {
+  "passRate": 47.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 10428,
+  "testsPassed": 4947,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Glasgow (Shieldhall)": {
+  "passRate": 39.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7019,
+  "testsPassed": 2803,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Golspie": {
+  "passRate": 71,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 93,
+  "testsPassed": 66,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Grangemouth": {
+  "passRate": 50.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3761,
+  "testsPassed": 1906,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Grantown-On-Spey": {
+  "passRate": 56.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 137,
+  "testsPassed": 78,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Greenock": {
+  "passRate": 41.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3547,
+  "testsPassed": 1479,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Haddington": {
+  "passRate": 57.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 2195,
+  "testsPassed": 1263,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Hamilton": {
+  "passRate": 42,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 6112,
+  "testsPassed": 2567,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Hawick": {
+  "passRate": 64.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 415,
+  "testsPassed": 267,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Huntly": {
+  "passRate": 63.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 245,
+  "testsPassed": 156,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Inveraray": {
+  "passRate": 69.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 124,
+  "testsPassed": 86,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Inverness (Longman Drive)": {
+  "passRate": 45.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 3252,
+  "testsPassed": 1491,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Inverurie": {
+  "passRate": 61.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 749,
+  "testsPassed": 464,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Irvine": {
+  "passRate": 55.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4941,
+  "testsPassed": 2752,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Isle of Skye (Portree)": {
+  "passRate": 57,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 128,
+  "testsPassed": 73,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Kelso": {
+  "passRate": 59.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 434,
+  "testsPassed": 257,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Kingussie": {
+  "passRate": 59.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 93,
+  "testsPassed": 55,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Kirkcaldy": {
+  "passRate": 50.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4313,
+  "testsPassed": 2194,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Kyle of Lochalsh": {
+  "passRate": 57.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 136,
+  "testsPassed": 78,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Lanark": {
+  "passRate": 58.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 1914,
+  "testsPassed": 1112,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Lerwick": {
+  "passRate": 67.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 379,
+  "testsPassed": 257,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Livingston": {
+  "passRate": 55.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 2997,
+  "testsPassed": 1669,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Lochgilphead": {
+  "passRate": 56.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 140,
+  "testsPassed": 79,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Mallaig": {
+  "passRate": 64.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 53,
+  "testsPassed": 34,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Montrose": {
+  "passRate": 70,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 621,
+  "testsPassed": 435,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Newton Stewart": {
+  "passRate": 65.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 225,
+  "testsPassed": 148,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Oban": {
+  "passRate": 66.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 322,
+  "testsPassed": 213,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Orkney": {
+  "passRate": 55.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 320,
+  "testsPassed": 179,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Paisley": {
+  "passRate": 48.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 7912,
+  "testsPassed": 3847,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Peebles": {
+  "passRate": 58.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 685,
+  "testsPassed": 403,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Perth (Arran Road)": {
+  "passRate": 48.8,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 2642,
+  "testsPassed": 1290,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Peterhead": {
+  "passRate": 53.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 2628,
+  "testsPassed": 1399,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Pitlochry": {
+  "passRate": 73.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 146,
+  "testsPassed": 107,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Rothesay": {
+  "passRate": 52,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 125,
+  "testsPassed": 65,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Stirling": {
+  "passRate": 43,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 2747,
+  "testsPassed": 1182,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Stornoway": {
+  "passRate": 66.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 344,
+  "testsPassed": 229,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Stranraer": {
+  "passRate": 71.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 215,
+  "testsPassed": 153,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Thurso": {
+  "passRate": 63,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 162,
+  "testsPassed": 102,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Ullapool": {
+  "passRate": 61.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 49,
+  "testsPassed": 30,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Wick": {
+  "passRate": 59.4,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 239,
+  "testsPassed": 142,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Abergavenny": {
+  "passRate": 64.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5924,
+  "testsPassed": 3805,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Aberystwyth (Park Avenue)": {
+  "passRate": 55.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 1529,
+  "testsPassed": 843,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bala": {
+  "passRate": 61.6,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 607,
+  "testsPassed": 374,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bangor": {
+  "passRate": 62.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4032,
+  "testsPassed": 2509,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Barry": {
+  "passRate": 57,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 2244,
+  "testsPassed": 1280,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Brecon": {
+  "passRate": 58.7,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 1490,
+  "testsPassed": 875,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Bridgend": {
+  "passRate": 53.3,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 5990,
+  "testsPassed": 3193,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Cardiff (Llanishen)": {
+  "passRate": 46.5,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 16401,
+  "testsPassed": 7634,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Cardigan": {
+  "passRate": 41,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 1192,
+  "testsPassed": 489,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Carmarthen": {
+  "passRate": 54.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 2746,
+  "testsPassed": 1488,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Llanelli": {
+  "passRate": 51,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4380,
+  "testsPassed": 2233,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Llantrisant": {
+  "passRate": 54,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 9909,
+  "testsPassed": 5352,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Merthyr Tydfil": {
+  "passRate": 51.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4446,
+  "testsPassed": 2275,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Monmouth": {
+  "passRate": 51,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 1283,
+  "testsPassed": 654,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Newport (Gwent)": {
+  "passRate": 48.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 8227,
+  "testsPassed": 4021,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Newtown": {
+  "passRate": 58,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 2256,
+  "testsPassed": 1309,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Pembroke Dock": {
+  "passRate": 50.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 1769,
+  "testsPassed": 887,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Pwllheli": {
+  "passRate": 68.1,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 737,
+  "testsPassed": 502,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Rhyl": {
+  "passRate": 56.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4011,
+  "testsPassed": 2284,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Swansea": {
+  "passRate": 48.2,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 12375,
+  "testsPassed": 5970,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ },
+ "Wrexham": {
+  "passRate": 51.9,
+  "passRatePeriod": "April 2025 to March 2026",
+  "testsConducted": 4819,
+  "testsPassed": 2501,
+  "source": "DVSA DRT122A, Practical car pass rates by gender, month and test centre (Total tests, annual total row)"
+ }
+}

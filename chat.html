@@ -1138,7 +1138,18 @@
         setTimeout(function () {
           tfetch(SHEET_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'chatClose', sid: SID, tk: TK, g: GATE, outcome: outcome }) })
             .then(r => r.json()).then(j => {
-              if (j.result !== 'success') showLocalError('⚠ Could not close the chat — please tap Finish again.');
+              if (j.result !== 'success') { showLocalError('⚠ Could not close the chat — please tap Finish again.'); return; }
+              // Completed swap only: one share card. Fixed text and link, no personal data.
+              if (outcome === 'completed' && !document.getElementById('swapShareCopy')) {
+                const shareUrl = 'https://testnowcancellationsandswaps.co.uk/?utm_source=share-swapdone&utm_medium=share';
+                const shareText = 'I just swapped my driving test date for free on TestNow. No fee, done through DVSA: ' + shareUrl;
+                const card = gcard('<div class="g-text">🎉 <b>Swap done.</b> It only worked because another learner listed their test. Pass it on.</div>' +
+                  '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">' +
+                  '<a class="g-btn" style="display:inline-flex;align-items:center;text-decoration:none;" href="https://wa.me/?text=' + encodeURIComponent(shareText) + '" target="_blank" rel="noopener">Share on WhatsApp</a>' +
+                  '<button type="button" class="g-btn alt" id="swapShareCopy">Copy link</button></div>', true, 'cheer');
+                const copyBtn = card.querySelector('#swapShareCopy');
+                if (copyBtn) copyBtn.onclick = function () { copyText(shareUrl, copyBtn); };
+              }
             }).catch(() => showLocalError('⚠ Could not close the chat — please tap Finish again.'));
         }, 350);
         modal.classList.remove('show');

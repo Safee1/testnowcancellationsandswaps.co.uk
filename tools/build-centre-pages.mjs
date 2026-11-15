@@ -143,8 +143,16 @@ function centrePage(c, bySlug, sameRegion) {
     return { name: name.trim(), dist: (dist || "").trim(), href: target ? `/test-centres/${slug(name.trim())}.html` : "" };
   });
   const nearNames = near.map((n) => n.name);
-  const title = `${c.centre} driving test swap — free, faster than waiting | TestNow`;
-  const desc = `Swap your DVSA practical test at ${c.centre}${c.centre.includes("(") ? "" : " (" + c.region + ")"} with another learner. See live tests near ${c.centre}${nearNames[0] ? ", " + nearNames.slice(0, 2).join(" and ") : ""}. Free, anonymous, done by phoning DVSA.`;
+  // Title: longest form that fits in 60 characters (counted before HTML escaping).
+  const title = [
+    `${c.centre} driving test swaps & earlier dates | TestNow`,
+    `${c.centre} driving test swaps & earlier dates`,
+    `${c.centre} driving test swaps | TestNow`,
+    `${c.centre} driving test swaps`,
+  ].find((t, i, arr) => t.length <= 60 || i === arr.length - 1);
+  // Description: kept under 155 characters; the DVSA tail is dropped for long centre names.
+  const descBase = `Swap your ${c.centre} driving test date with another learner. Free for learners. An alternative to waiting for a cancellation.`;
+  const desc = (descBase + " You swap by phoning DVSA.").length < 155 ? descBase + " You swap by phoning DVSA." : descBase;
   const faq = [
     [`Can I swap my driving test at ${c.centre}?`, `Yes. Swaps are done by phoning DVSA on 0300 200 1122, and both learners must hold a live booking. List your ${c.centre} test on TestNow and we match you with someone who wants your date and has one you want, at ${c.centre} or a nearby centre.`],
     [`Which centres are near ${c.centre}?`, near.length ? `The nearest centres we match with are ${near.map((n) => n.name + (n.dist ? " (" + n.dist.replace(/^about /, "about ") + ")" : "")).join(", ")}.` : `We match you with learners at ${c.centre} and nearby centres in ${c.region}.`],
@@ -162,8 +170,8 @@ function centrePage(c, bySlug, sameRegion) {
   const listHref = `/?centre=${encodeURIComponent(c.centre)}#swap-form`;
   const body = `
 <nav class="crumbs"><a href="/">TestNow</a> › <a href="/test-centres/">Test centres</a> › <a href="/test-centres/${slug(c.region)}/">${esc(c.region)}</a> › ${esc(c.centre)}</nav>
-<h1>Swap your driving test at ${esc(c.centre)}</h1>
-<p class="lede">Got a practical test at ${esc(c.centre)} that's too far away, or too soon? Swap it with another learner who wants yours. Free, anonymous, and done properly through DVSA.</p>
+<h1>${esc(c.centre)} driving test swaps</h1>
+<p class="lede"><b>Swap your driving test at ${esc(c.centre)}.</b> Got a practical test at ${esc(c.centre)} that's too far away, or too soon? Swap it with another learner who wants yours. Free, anonymous, and done properly through DVSA.</p>
 <p class="note">${esc(c.centre)} is a DVSA practical test centre in ${esc(c.region)}.${near.length ? ` The centres we treat as nearby are ${near.map((x) => esc(x.name) + (x.dist ? " (" + esc(x.dist) + ")" : "")).join(", ")}, so a learner at any of them can be matched with you.` : ""} Waiting times at ${esc(c.centre)} change week to week — the live list below shows what learners have actually put up for swap right now, which is a better guide than any published average.</p>
 <a class="cta" href="${listHref}">List my ${esc(c.centre)} test — free</a><a class="cta ghost" href="/#board">Browse all tests</a>
 <p class="note">Takes about a minute. We text or email you the moment there's a match.</p>
@@ -189,6 +197,9 @@ ${faq.map(([q, a]) => `<details><summary>${esc(q)}</summary><p style="margin-top
 
 ${sameRegion.length ? `<h2>Other test centres in ${esc(c.region)}</h2>
 <div class="grid">${sameRegion.map((o) => `<a href="/test-centres/${slug(o.centre)}.html">${esc(o.centre)}</a>`).join("")}</div>` : ""}
+
+<h2>Looking for a cancellation at ${esc(c.centre)}?</h2>
+<p>TestNow does not find cancellations. DVSA shows cancelled slots in its own change-your-test service on GOV.UK. A swap is a different route: you trade dates with another learner who wants yours, and DVSA makes the change when you both phone 0300 200 1122.</p>
 
 <a class="cta" href="${listHref}">List my ${esc(c.centre)} test — free</a>
 
