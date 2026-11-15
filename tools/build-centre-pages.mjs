@@ -77,6 +77,11 @@ const CSS = `<link rel="preconnect" href="https://fonts.googleapis.com"><link re
   .grid { columns:2 220px; column-gap:24px; } .grid a { display:block; padding:4px 0; break-inside:avoid; }
   details { background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin:8px 0; }
   summary { font-weight:600; cursor:pointer; }
+  .facts p { margin:8px 0; }
+  .alert-form label { display:block; font-weight:600; margin-bottom:8px; }
+  .alert-form input[type=email] { width:100%; max-width:420px; font:inherit; padding:12px; border:1.5px solid var(--line); border-radius:10px; background:#fff; min-height:44px; }
+  .alert-form button.cta { border:0; cursor:pointer; font:inherit; font-weight:600; margin-top:10px; }
+  .alert-form .hp { position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
   footer { margin:40px 0 0; padding:24px 0 40px; border-top:1px solid var(--line); font-size:13px; color:var(--muted); }
   footer a { color:var(--muted); margin-right:12px; }
 </style>`;
@@ -111,6 +116,76 @@ ${body}
 `;
 }
 
+const FACTS_RAW = JSON.parse(fs.readFileSync(path.join(ROOT, "tools", "centre-facts.json"), "utf8"));
+const FACTS_META = FACTS_RAW._meta || {};
+const FACTS = Object.fromEntries(Object.entries(FACTS_RAW).filter(([k, v]) => k !== "_meta" && v && typeof v.passRate === "number"));
+const factVals = Object.values(FACTS);
+const factsWithCounts = Object.entries(FACTS_RAW).filter(([k, v]) => k !== "_meta" && v && typeof v.testsPassed === "number" && typeof v.testsConducted === "number");
+const sumConducted = factsWithCounts.reduce((a, [, v]) => a + v.testsConducted, 0);
+const AVG = sumConducted > 0 ? (factsWithCounts.reduce((a, [, v]) => a + v.testsPassed, 0) / sumConducted) * 100 : null;
+const AVG_N = factsWithCounts.length;
+const fmtRate = (n) => n.toFixed(1) + "%";
+const fmtNum = (n) => Number(n).toLocaleString("en-GB");
+const CITY_NAMES = ["Birmingham", "Manchester", "Liverpool", "Glasgow"];
+// a centre belongs to a city when its name is "<City>", starts "<City> (" or ends "(<City>)"
+const cityOfName = (name) => CITY_NAMES.find((cn) => name === cn || name.startsWith(cn + " (") || name.endsWith("(" + cn + ")")) || "";
+const CITIES = new Map(); // city -> { city, region, list }, filled once the centre list is loaded
+
+function factsBlock(c, near) {
+  const f = FACTS[c.centre];
+  if (!f || AVG === null) return "";
+  const period = f.passRatePeriod || FACTS_META.period;
+  const first = `${esc(c.centre)} had a car driving test pass rate of ${fmtRate(f.passRate)} in ${esc(period)}${f.testsConducted ? `, from ${fmtNum(f.testsConducted)} tests` : ""}.`;
+  const r1 = Number(f.passRate.toFixed(1)), a1 = Number(AVG.toFixed(1));
+  const rel = r1 > a1 ? "above the" : r1 < a1 ? "below the" : "the same as the";
+  let cmp = `That is ${rel} overall pass rate of ${fmtRate(AVG)} across the ${fmtNum(AVG_N)} test centres we list with DVSA figures.`;
+  const nb = near.filter((n) => FACTS[n.name]);
+  if (nb.length) cmp += ` Nearby, ${nb.map((n) => esc(n.name) + " had " + fmtRate(FACTS[n.name].passRate)).join(", ")}.`;
+  const url = FACTS_META.url || FACTS_META.landingPage || "";
+  return `<section class="facts card" id="about-centre">
+<h2 style="margin-top:0;">About ${esc(c.centre)} test centre</h2>
+<p>${first}</p>
+<p>${cmp}</p>
+<p class="note">Source: DVSA, ${url ? `<a href="${esc(url)}" rel="noopener">${esc(FACTS_META.title)}</a>` : esc(FACTS_META.title)}, ${esc(FACTS_META.period)}. Contains public sector information licensed under the Open Government Licence v3.0.</p>
+</section>`;
+}
+
+function cityPage(city, region, list) {
+  const d = slug(city);
+  const url = `${SITE}/test-centres/${d}/`;
+  const sorted = [...list].sort((a, b) => a.centre.localeCompare(b.centre));
+  const withData = sorted.filter((c) => FACTS[c.centre]);
+  const names = sorted.map((c) => c.centre);
+  const nameList = names.length > 1 ? names.slice(0, -1).join(", ") + " and " + names[names.length - 1] : names[0];
+  const period = FACTS_META.period || "";
+  let rates = "";
+  if (withData.length >= 2 && period) {
+    const by = [...withData].sort((a, b) => FACTS[a.centre].passRate - FACTS[b.centre].passRate);
+    const lo = by[0], hi = by[by.length - 1];
+    rates = ` In ${period}, car driving test pass rates across ${withData.length === sorted.length ? "these centres" : `the ${withData.length} of these centres with DVSA figures`} ran from ${fmtRate(FACTS[lo.centre].passRate)} at ${lo.centre} to ${fmtRate(FACTS[hi.centre].passRate)} at ${hi.centre}, and the figure for each is shown below.`;
+  } else if (withData.length === 1 && period) {
+    rates = ` In ${period}, ${withData[0].centre} had a car driving test pass rate of ${fmtRate(FACTS[withData[0].centre].passRate)}.`;
+  }
+  const intro = `There are ${sorted.length} DVSA practical test centres for ${city} on our list: ${nameList}.${rates} A swap does not have to stay at one centre. Two learners can swap between different centres if both agree and DVSA allows it. TestNow is a free board where you list your booked test and see who might swap with you. We do not find cancellations. The swap itself is made by phoning DVSA on 0300 200 1122. Choose your centre below to see live tests and list yours.`;
+  const wc = intro.trim().split(/\s+/).length;
+  if (wc < 120 || wc > 180) throw new Error(`${city} intro is ${wc} words, needs 120 to 180`);
+  const body = `
+<nav class="crumbs"><a href="/">TestNow</a> › <a href="/test-centres/">Test centres</a> › <a href="/test-centres/${slug(region)}/">${esc(region)}</a> › ${esc(city)}</nav>
+<h1>Driving test swaps in ${esc(city)}</h1>
+<p class="lede">${esc(intro)}</p>
+<a class="cta" href="/#swap-form">List my test — free</a><a class="cta ghost" href="/#board">Browse all tests</a>
+<h2>Test centres in ${esc(city)}</h2>
+<ul class="near">${sorted.map((c) => `<li><a href="/test-centres/${slug(c.centre)}.html">${esc(c.centre)}</a>${FACTS[c.centre] ? ` <span class="pill">${fmtRate(FACTS[c.centre].passRate)} pass rate, ${esc(FACTS[c.centre].passRatePeriod || period)}</span>` : ""}</li>`).join("")}</ul>
+${withData.length ? `<p class="note">Source: DVSA, <a href="${esc(FACTS_META.url || FACTS_META.landingPage || "")}" rel="noopener">${esc(FACTS_META.title)}</a>, ${esc(period)}. Contains public sector information licensed under the Open Government Licence v3.0.</p>` : ""}
+<p class="note" style="margin-top:14px;">More in this region: <a href="/test-centres/${slug(region)}/">all ${esc(region)} test centres</a>.</p>`;
+  const jsonld = [{ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [
+    { "@type": "ListItem", position: 1, name: "TestNow", item: SITE + "/" },
+    { "@type": "ListItem", position: 2, name: "Test centres", item: SITE + "/test-centres/" },
+    { "@type": "ListItem", position: 3, name: region, item: SITE + "/test-centres/" + slug(region) + "/" },
+    { "@type": "ListItem", position: 4, name: city, item: url } ] }];
+  return { dir: d, html: shell({ title: `Driving test swaps in ${city} | TestNow`, desc: `Swap your practical driving test at any of the ${sorted.length} DVSA test centres for ${city}. Free matching with another learner; the swap is made by phoning DVSA.`, canonical: url, body, jsonld }) };
+}
+
 let REGION_LINKS = ""; // filled once the centre list is loaded: one crawlable link per region hub on every page
 
 function regionPage(region, list, allRegions) {
@@ -124,6 +199,8 @@ function regionPage(region, list, allRegions) {
 <a class="cta" href="/#swap-form">List my test — free</a><a class="cta ghost" href="/#board">Browse all tests</a>
 <h2>Test centres in ${esc(region)}</h2>
 <div class="grid">${sorted.map((c) => `<a href="/test-centres/${slug(c.centre)}.html">${esc(c.centre)}</a>`).join("")}</div>
+${[...CITIES.values()].filter((x) => x.region === region).length ? `<h2>Cities in ${esc(region)}</h2>
+<div class="grid">${[...CITIES.values()].filter((x) => x.region === region).map((x) => `<a href="/test-centres/${slug(x.city)}/">Driving test swaps in ${esc(x.city)}</a>`).join("")}</div>` : ""}
 <h2>Other regions</h2>
 <div class="grid">${allRegions.filter((x) => x !== region).map((x) => `<a href="/test-centres/${slug(x)}/">${esc(x)}</a>`).join("")}</div>
 <p class="note" style="margin-top:18px;">Tip: you can list the centres you would accept as well as your own, so a swap with a nearby centre in ${esc(region)} counts too.</p>`;
@@ -167,12 +244,15 @@ function centrePage(c, bySlug, sameRegion) {
       { "@type": "ListItem", position: 4, name: c.centre, item: url } ] },
     { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faq.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) },
   ];
+  const cityName = CITIES.has(cityOfName(c.centre)) ? cityOfName(c.centre) : "";
   const listHref = `/?centre=${encodeURIComponent(c.centre)}#swap-form`;
   const body = `
 <nav class="crumbs"><a href="/">TestNow</a> › <a href="/test-centres/">Test centres</a> › <a href="/test-centres/${slug(c.region)}/">${esc(c.region)}</a> › ${esc(c.centre)}</nav>
 <h1>${esc(c.centre)} driving test swaps</h1>
 <p class="lede"><b>Swap your driving test at ${esc(c.centre)}.</b> Got a practical test at ${esc(c.centre)} that's too far away, or too soon? Swap it with another learner who wants yours. Free, anonymous, and done properly through DVSA.</p>
 <p class="note">${esc(c.centre)} is a DVSA practical test centre in ${esc(c.region)}.${near.length ? ` The centres we treat as nearby are ${near.map((x) => esc(x.name) + (x.dist ? " (" + esc(x.dist) + ")" : "")).join(", ")}, so a learner at any of them can be matched with you.` : ""} Waiting times at ${esc(c.centre)} change week to week — the live list below shows what learners have actually put up for swap right now, which is a better guide than any published average.</p>
+${factsBlock(c, near)}
+${cityName ? `<p class="note">${esc(c.centre)} is one of the ${esc(cityName)} centres. <a href="/test-centres/${slug(cityName)}/">See all test centres in ${esc(cityName)}</a>.</p>` : ""}
 <a class="cta" href="${listHref}">List my ${esc(c.centre)} test — free</a><a class="cta ghost" href="/#board">Browse all tests</a>
 <p class="note">Takes about a minute. We text or email you the moment there's a match.</p>
 
@@ -192,6 +272,15 @@ ${near.length ? `<h2>Centres near ${esc(c.centre)}</h2>
 <ul class="near">${near.map((n) => `<li>${n.href ? `<a href="${n.href}">${esc(n.name)}</a>` : esc(n.name)}${n.dist ? ` <span class="pill">${esc(n.dist)}</span>` : ""}</li>`).join("")}</ul>
 <p class="note">We match you with learners at these centres too, so you have more chances of a swap.</p>` : ""}
 
+<form class="alert-form card" id="centre-alert" novalidate>
+  <label for="ca-email">Email me when a test is listed at ${esc(c.centre)}</label>
+  <input type="email" id="ca-email" name="email" autocomplete="email" inputmode="email" required>
+  <div class="hp" aria-hidden="true"><label for="ca-website">Website</label><input type="text" id="ca-website" name="website" tabindex="-1" autocomplete="off"></div>
+  <button type="submit" class="cta">Notify me</button>
+  <p class="note" style="margin-top:8px;">We email you only about tests at this centre. Unsubscribe in one click. See our <a href="/privacy.html">privacy policy</a>.</p>
+  <p class="note" id="ca-msg" role="status" aria-live="polite"></p>
+</form>
+
 <h2>Questions</h2>
 ${faq.map(([q, a]) => `<details><summary>${esc(q)}</summary><p style="margin-top:8px;">${esc(a)}</p></details>`).join("\n")}
 
@@ -209,6 +298,28 @@ ${sameRegion.length ? `<h2>Other test centres in ${esc(c.region)}</h2>
   var HERE = ${JSON.stringify(c.centre)};
   var NEAR = ${JSON.stringify(nearNames)};
   var box = document.getElementById('live');
+  var REGION = ${JSON.stringify(c.region)};
+  (function () {
+    var form = document.getElementById('centre-alert');
+    if (!form) return;
+    var msg = document.getElementById('ca-msg');
+    var busy = false;
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (busy) return;
+      var email = String(form.elements.email.value || '').trim();
+      if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) { msg.textContent = 'Please enter a valid email address.'; return; }
+      busy = true; msg.textContent = 'Sending...';
+      fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'centreAlert', email: email, centre: HERE, region: REGION, source: 'centre-page', consent: true, website: String(form.elements.website.value || '') }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d && d.result === 'success') { msg.textContent = 'Done. We will email you when a test is listed at ' + HERE + '.'; form.elements.email.value = ''; }
+          else { msg.textContent = (d && d.message) ? String(d.message) : 'Sorry, that did not work. Please try again.'; }
+        })
+        .catch(function () { msg.textContent = 'Sorry, that did not work. Please try again.'; })
+        .then(function () { busy = false; });
+    });
+  })();
   function esc(s) { return String(s || '').replace(/[&<>"']/g, function (ch) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]; }); }
   function daysUntil(iso) {
     if (!iso || !/^\\d{4}-\\d{2}-\\d{2}$/.test(iso)) return null;
@@ -273,6 +384,10 @@ const centres = (await loadCentres()).filter((c) => c && c.centre && c.region);
 const bySlug = new Map();
 for (const c of centres) if (!bySlug.has(slug(c.centre))) bySlug.set(slug(c.centre), c);
 const REGIONS = [...new Set(centres.map((c) => c.region))].sort();
+for (const cn of CITY_NAMES) {
+  const list = [...bySlug.values()].filter((c) => cityOfName(c.centre) === cn);
+  if (list.length >= 3 && !REGIONS.some((r) => slug(r) === slug(cn))) CITIES.set(cn, { city: cn, region: list[0].region, list });
+}
 REGION_LINKS = REGIONS.map((r) => `<a href="/test-centres/${slug(r)}/">${esc(r)}</a>`).join("");
 // previous sitemap lastmod + "did the bytes change" so an unchanged page keeps its old lastmod
 const oldLastmod = new Map();
@@ -298,11 +413,17 @@ for (const r of REGIONS) {
   writeIfChanged(path.join(OUT, rp.dir, "index.html"), rp.html, `${SITE}/test-centres/${rp.dir}/`);
 }
 
+for (const x of CITIES.values()) {
+  const cp = cityPage(x.city, x.region, x.list);
+  fs.mkdirSync(path.join(OUT, cp.dir), { recursive: true });
+  writeIfChanged(path.join(OUT, cp.dir, "index.html"), cp.html, `${SITE}/test-centres/${cp.dir}/`);
+}
+
 const core = ["/", "/find-instructor.html", "/instructors.html", "/privacy.html", "/terms.html", "/cookies.html", "/report-concern.html", "/test-centres/", "/test-availability.html", "/just-passed.html", "/guides/",
   "/guides/how-to-get-an-earlier-driving-test.html", "/guides/driving-test-cancellation-scams.html", "/guides/swap-driving-test-date.html",
   "/guides/driving-test-waiting-times.html", "/guides/change-driving-test-centre.html", "/guides/what-to-do-after-passing-your-driving-test.html"];
 const today = new Date().toISOString().slice(0, 10);
-const urls = core.map((u) => SITE + u).concat(REGIONS.map((r) => `${SITE}/test-centres/${slug(r)}/`)).concat([...bySlug.keys()].map((k) => `${SITE}/test-centres/${k}.html`));
+const urls = core.map((u) => SITE + u).concat(REGIONS.map((r) => `${SITE}/test-centres/${slug(r)}/`)).concat([...CITIES.keys()].map((k) => `${SITE}/test-centres/${slug(k)}/`)).concat([...bySlug.keys()].map((k) => `${SITE}/test-centres/${k}.html`));
 const lastmodFor = (u) => (unchanged.has(u) && oldLastmod.get(u)) ? oldLastmod.get(u) : today;
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` + urls.map((u) => `  <url>\n    <loc>${u}</loc>\n    <lastmod>${lastmodFor(u)}</lastmod>\n  </url>`).join("\n") + "\n</urlset>\n");
 console.log(`built ${bySlug.size} centre pages + index; sitemap has ${urls.length} urls`);

@@ -53,6 +53,11 @@
   .grid { columns:2 220px; column-gap:24px; } .grid a { display:block; padding:4px 0; break-inside:avoid; }
   details { background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin:8px 0; }
   summary { font-weight:600; cursor:pointer; }
+  .facts p { margin:8px 0; }
+  .alert-form label { display:block; font-weight:600; margin-bottom:8px; }
+  .alert-form input[type=email] { width:100%; max-width:420px; font:inherit; padding:12px; border:1.5px solid var(--line); border-radius:10px; background:#fff; min-height:44px; }
+  .alert-form button.cta { border:0; cursor:pointer; font:inherit; font-weight:600; margin-top:10px; }
+  .alert-form .hp { position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
   footer { margin:40px 0 0; padding:24px 0 40px; border-top:1px solid var(--line); font-size:13px; color:var(--muted); }
   footer a { color:var(--muted); margin-right:12px; }
 </style>
@@ -67,6 +72,8 @@
 <h1>Islay Island driving test swaps</h1>
 <p class="lede"><b>Swap your driving test at Islay Island.</b> Got a practical test at Islay Island that's too far away, or too soon? Swap it with another learner who wants yours. Free, anonymous, and done properly through DVSA.</p>
 <p class="note">Islay Island is a DVSA practical test centre in Scotland. The centres we treat as nearby are Lochgilphead (about 59 miles away), Brodick (Isle of Arran) (about 66 miles away), Campbeltown (about 73 miles away), so a learner at any of them can be matched with you. Waiting times at Islay Island change week to week — the live list below shows what learners have actually put up for swap right now, which is a better guide than any published average.</p>
+
+
 <a class="cta" href="/?centre=Islay%20Island#swap-form">List my Islay Island test — free</a><a class="cta ghost" href="/#board">Browse all tests</a>
 <p class="note">Takes about a minute. We text or email you the moment there's a match.</p>
 
@@ -85,6 +92,15 @@
 <h2>Centres near Islay Island</h2>
 <ul class="near"><li><a href="/test-centres/lochgilphead.html">Lochgilphead</a> <span class="pill">about 59 miles away</span></li><li><a href="/test-centres/brodick-isle-of-arran.html">Brodick (Isle of Arran)</a> <span class="pill">about 66 miles away</span></li><li><a href="/test-centres/campbeltown.html">Campbeltown</a> <span class="pill">about 73 miles away</span></li></ul>
 <p class="note">We match you with learners at these centres too, so you have more chances of a swap.</p>
+
+<form class="alert-form card" id="centre-alert" novalidate>
+  <label for="ca-email">Email me when a test is listed at Islay Island</label>
+  <input type="email" id="ca-email" name="email" autocomplete="email" inputmode="email" required>
+  <div class="hp" aria-hidden="true"><label for="ca-website">Website</label><input type="text" id="ca-website" name="website" tabindex="-1" autocomplete="off"></div>
+  <button type="submit" class="cta">Notify me</button>
+  <p class="note" style="margin-top:8px;">We email you only about tests at this centre. Unsubscribe in one click. See our <a href="/privacy.html">privacy policy</a>.</p>
+  <p class="note" id="ca-msg" role="status" aria-live="polite"></p>
+</form>
 
 <h2>Questions</h2>
 <details><summary>Can I swap my driving test at Islay Island?</summary><p style="margin-top:8px;">Yes. Swaps are done by phoning DVSA on 0300 200 1122, and both learners must hold a live booking. List your Islay Island test on TestNow and we match you with someone who wants your date and has one you want, at Islay Island or a nearby centre.</p></details>
@@ -106,6 +122,28 @@
   var HERE = "Islay Island";
   var NEAR = ["Lochgilphead","Brodick (Isle of Arran)","Campbeltown"];
   var box = document.getElementById('live');
+  var REGION = "Scotland";
+  (function () {
+    var form = document.getElementById('centre-alert');
+    if (!form) return;
+    var msg = document.getElementById('ca-msg');
+    var busy = false;
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (busy) return;
+      var email = String(form.elements.email.value || '').trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.textContent = 'Please enter a valid email address.'; return; }
+      busy = true; msg.textContent = 'Sending...';
+      fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'centreAlert', email: email, centre: HERE, region: REGION, source: 'centre-page', consent: true, website: String(form.elements.website.value || '') }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d && d.result === 'success') { msg.textContent = 'Done. We will email you when a test is listed at ' + HERE + '.'; form.elements.email.value = ''; }
+          else { msg.textContent = (d && d.message) ? String(d.message) : 'Sorry, that did not work. Please try again.'; }
+        })
+        .catch(function () { msg.textContent = 'Sorry, that did not work. Please try again.'; })
+        .then(function () { busy = false; });
+    });
+  })();
   function esc(s) { return String(s || '').replace(/[&<>"']/g, function (ch) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]; }); }
   function daysUntil(iso) {
     if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;

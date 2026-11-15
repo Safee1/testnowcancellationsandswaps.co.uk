@@ -1643,6 +1643,16 @@
   </div>
 </section>
 
+<!-- CENTRE ALERT (outside #board so it stays visible when the board is empty) -->
+<section class="block" id="board-alert-section" style="padding-top: 32px; padding-bottom: 0;">
+  <div class="wrap">
+    <div id="board-alert" class="centre-alert" style="max-width:420px;margin:0 auto;text-align:left;">
+      <h3>No test at your centre yet?</h3>
+      <div id="board-alert-body"></div>
+    </div>
+  </div>
+</section>
+
 <!-- HOW IT WORKS -->
 <section class="block" id="how">
   <div class="wrap">
@@ -1830,13 +1840,12 @@
           </label>
         </div>
 
-        <div class="field full">
-          <label for="has-instructor" class="label-sentence">Do you already have an instructor available for your test?</label>
-          <select id="has-instructor" name="has-instructor" required>
-            <option value="">Choose…</option>
-            <option value="yes">Yes — I'm sorted</option>
-            <option value="no">No — I'd like help finding one</option>
-          </select>
+        <div class="field full consent-box" id="wants-instructor-box">
+          <label class="consent-label">
+            <input type="checkbox" id="wants-instructor-help">
+            <span>I would like help finding an instructor for my test</span>
+          </label>
+          <input type="hidden" id="has-instructor" name="has-instructor" value="yes">
         </div>
 
         <div class="field full consent-box" id="instructor-consent-box" style="display:none;">
@@ -2279,6 +2288,10 @@
     document.getElementById('moves-chips').innerHTML = '';
     var box = document.getElementById('instructor-consent-box');
     var tick = document.getElementById('instructor-consent');
+    var helpTick = document.getElementById('wants-instructor-help');
+    var hasInstr = document.getElementById('has-instructor');
+    if (helpTick) helpTick.checked = false;
+    if (hasInstr) hasInstr.value = 'yes';
     if (box) box.style.display = 'none';
     if (tick) { tick.checked = false; tick.required = false; }
     // v79 PATCH (Feature 2): the "listed by instructor" tick is always
@@ -2484,6 +2497,7 @@
         if (d.result !== 'success' || !Array.isArray(d.centres)) throw new Error('bad data');
         CENTRES = d.centres;
         buildRegionIndex();
+        renderBoardAlert((document.getElementById('board-filter') || {}).value || '');
         fillRegionSelect(regionSel, 'Choose your region…');
         // v101 (2026-09-19): /test-centres/<centre>.html links here as
         // /?centre=<name>#swap-form — pre-select that centre's region and the
@@ -2610,6 +2624,89 @@
   // form ("14 Jun 2026") — it is only a display fallback for the enquiry
   // sheet header when data-date-display is absent; nothing parses it.
   function fmtDateUK(v){try{var d=null;if(v instanceof Date)d=v;else{var s=String(v||'').trim();var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)d=new Date(+m[1],+m[2]-1,+m[3]);else{var m2=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m2)d=new Date(+m2[3],+m2[2]-1,+m2[1]);else if(s){var t=new Date(s);if(!isNaN(t))d=t;}}}if(!d||isNaN(d))return String(v||'');var n=d.getDate(),sfx=(n%10==1&&n!=11)?'st':(n%10==2&&n!=12)?'nd':(n%10==3&&n!=13)?'rd':'th';return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]+ ' ' + n + ' ' +['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]+' '+d.getFullYear();}catch(e){return String(v||'');}}
+  // Centre alert sign-up (shared contract). Always-visible block under the
+  // board (#board-alert). The visitor picks a centre from the full list
+  // (grouped by region, the board's region first); the email form only appears
+  // once a centre is selected. DOM methods and textContent only.
+  function renderBoardAlert(boardRegion) {
+    var host = document.getElementById('board-alert-body');
+    if (!host) return;
+    while (host.firstChild) host.removeChild(host.firstChild);
+    if (!CENTRES || !CENTRES.length) return;
+    var regionOf = {};
+    CENTRES.forEach(function (c) { (regionOf[c.region] = regionOf[c.region] || []).push(c.centre); });
+    var regions = Object.keys(regionOf).sort();
+    if (boardRegion && regionOf[boardRegion]) {
+      regions = [boardRegion].concat(regions.filter(function (r) { return r !== boardRegion; }));
+    }
+    var pf = document.createElement('div'); pf.className = 'field';
+    var pl = document.createElement('label');
+    pl.setAttribute('for', 'ca-centre-pick');
+    pl.textContent = 'Test centre';
+    var pick = document.createElement('select');
+    pick.id = 'ca-centre-pick';
+    var o0 = document.createElement('option'); o0.value = ''; o0.textContent = 'Choose a centre…'; pick.appendChild(o0);
+    var regionByCentre = {};
+    regions.forEach(function (r) {
+      var g = document.createElement('optgroup'); g.label = r;
+      regionOf[r].slice().sort().forEach(function (n) {
+        regionByCentre[n] = r;
+        var o = document.createElement('option'); o.value = n; o.textContent = n; g.appendChild(o);
+      });
+      pick.appendChild(g);
+    });
+    pick.selectedIndex = 0;
+    pf.appendChild(pl); pf.appendChild(pick);
+    var slot = document.createElement('div');
+    pick.addEventListener('change', function () {
+      while (slot.firstChild) slot.removeChild(slot.firstChild);
+      if (pick.value) slot.appendChild(buildCentreAlertForm(pick.value, regionByCentre[pick.value] || '', 'board'));
+    });
+    host.appendChild(pf); host.appendChild(slot);
+  }
+  function buildCentreAlertForm(centre, region, source) {
+    var f = document.createElement('form');
+    f.style.marginTop = '12px';
+    var ef = document.createElement('div'); ef.className = 'field';
+    var l = document.createElement('label');
+    l.setAttribute('for', 'ca-email');
+    l.textContent = 'Email me when a test is listed at ' + centre;
+    var em = document.createElement('input');
+    em.type = 'email'; em.id = 'ca-email'; em.name = 'email'; em.required = true; em.autocomplete = 'email'; em.placeholder = 'you@example.com';
+    ef.appendChild(l); ef.appendChild(em);
+    var hp = document.createElement('input');
+    hp.type = 'text'; hp.name = 'website'; hp.tabIndex = -1; hp.autocomplete = 'off'; hp.setAttribute('aria-hidden', 'true');
+    hp.style.cssText = 'position:absolute;left:-9999px;opacity:0;height:0;width:0;';
+    var b = document.createElement('button');
+    b.type = 'submit'; b.className = 'btn btn-primary'; b.textContent = 'Notify me';
+    var small = document.createElement('small');
+    small.style.display = 'block';
+    small.appendChild(document.createTextNode('We email you only about tests at this centre. Unsubscribe in one click. See our '));
+    var a = document.createElement('a'); a.href = 'privacy.html'; a.textContent = 'privacy policy'; small.appendChild(a);
+    small.appendChild(document.createTextNode('.'));
+    var msg = document.createElement('p');
+    msg.setAttribute('role', 'status');
+    f.appendChild(ef); f.appendChild(hp); f.appendChild(b); f.appendChild(small); f.appendChild(msg);
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!f.checkValidity()) { f.reportValidity(); return; }
+      b.disabled = true; msg.textContent = '';
+      fetch(SHEET_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'centreAlert', email: em.value.trim(), centre: centre, region: region, source: source, consent: true, website: hp.value || '' })
+      }).then(function (r) { return r.json(); }).then(function (j) {
+        if (j && j.result === 'success') {
+          msg.textContent = 'Done. We will email you when a test is listed at ' + centre + '.';
+          em.disabled = true; b.style.display = 'none';
+        } else {
+          b.disabled = false;
+          msg.textContent = (j && typeof j.message === 'string' && j.message) ? j.message.slice(0, 200) : 'Sorry, that did not work. Please try again.';
+        }
+      }).catch(function () { b.disabled = false; msg.textContent = 'Sorry, that did not work. Please try again.'; });
+    });
+    return f;
+  }
   function renderBoard(filterRegion) {
     const grid = document.getElementById('board-grid');
     const count = document.getElementById('board-count');
@@ -2797,7 +2894,7 @@
         sel.innerHTML = '<option value="">All regions</option>' +
           regions.map(r => '<option>' + r + '</option>').join('');
         if (!boardWired) {
-          sel.addEventListener('change', () => renderBoard(sel.value));
+          sel.addEventListener('change', () => { renderBoard(sel.value); renderBoardAlert(sel.value); });
           const soonSort = document.getElementById('board-sort-soon');
           if (soonSort) soonSort.addEventListener('change', () => renderBoard(sel.value));
           boardWired = true;
@@ -3194,12 +3291,14 @@
 
   // Instructor question: show consent tick when they want help; require it
   (function(){
-    var sel = document.getElementById('has-instructor');
+    var sel = document.getElementById('has-instructor');   // hidden input: 'no' = wants help, 'yes' otherwise
+    var help = document.getElementById('wants-instructor-help');
     var box = document.getElementById('instructor-consent-box');
     var tick = document.getElementById('instructor-consent');
-    if (!sel || !box || !tick) return;
-    sel.addEventListener('change', function(){
-      var wants = sel.value === 'no';
+    if (!sel || !help || !box || !tick) return;
+    help.addEventListener('change', function(){
+      var wants = help.checked;
+      sel.value = wants ? 'no' : 'yes';
       box.style.display = wants ? '' : 'none';
       tick.required = wants;
       if (!wants) tick.checked = false;

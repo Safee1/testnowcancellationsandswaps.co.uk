@@ -53,6 +53,11 @@
   .grid { columns:2 220px; column-gap:24px; } .grid a { display:block; padding:4px 0; break-inside:avoid; }
   details { background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin:8px 0; }
   summary { font-weight:600; cursor:pointer; }
+  .facts p { margin:8px 0; }
+  .alert-form label { display:block; font-weight:600; margin-bottom:8px; }
+  .alert-form input[type=email] { width:100%; max-width:420px; font:inherit; padding:12px; border:1.5px solid var(--line); border-radius:10px; background:#fff; min-height:44px; }
+  .alert-form button.cta { border:0; cursor:pointer; font:inherit; font-weight:600; margin-top:10px; }
+  .alert-form .hp { position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
   footer { margin:40px 0 0; padding:24px 0 40px; border-top:1px solid var(--line); font-size:13px; color:var(--muted); }
   footer a { color:var(--muted); margin-right:12px; }
 </style>
@@ -67,6 +72,13 @@
 <h1>Loughton (London) driving test swaps</h1>
 <p class="lede"><b>Swap your driving test at Loughton (London).</b> Got a practical test at Loughton (London) that's too far away, or too soon? Swap it with another learner who wants yours. Free, anonymous, and done properly through DVSA.</p>
 <p class="note">Loughton (London) is a DVSA practical test centre in London. The centres we treat as nearby are Chingford (London) (about 3 miles away), Wanstead (London) (about 5 miles away), Enfield (Brancroft Way) (about 6 miles away), so a learner at any of them can be matched with you. Waiting times at Loughton (London) change week to week — the live list below shows what learners have actually put up for swap right now, which is a better guide than any published average.</p>
+<section class="facts card" id="about-centre">
+<h2 style="margin-top:0;">About Loughton (London) test centre</h2>
+<p>Loughton (London) had a car driving test pass rate of 47.0% in April 2025 to March 2026, from 7,376 tests.</p>
+<p>That is below the overall pass rate of 50.1% across the 311 test centres we list with DVSA figures. Nearby, Chingford (London) had 39.9%, Wanstead (London) had 44.4%, Enfield (Brancroft Way) had 46.1%.</p>
+<p class="note">Source: DVSA, <a href="https://assets.publishing.service.gov.uk/media/6a3be0d430b491f55b3c48ac/drt122a-car-driving-test-by-test-centre.ods" rel="noopener">Driving test and theory test data: cars - DRT122A Practical car pass rates by gender, month and DTC (car driving test by test centre)</a>, April 2025 to March 2026. Contains public sector information licensed under the Open Government Licence v3.0.</p>
+</section>
+
 <a class="cta" href="/?centre=Loughton%20(London)#swap-form">List my Loughton (London) test — free</a><a class="cta ghost" href="/#board">Browse all tests</a>
 <p class="note">Takes about a minute. We text or email you the moment there's a match.</p>
 
@@ -85,6 +97,15 @@
 <h2>Centres near Loughton (London)</h2>
 <ul class="near"><li><a href="/test-centres/chingford-london.html">Chingford (London)</a> <span class="pill">about 3 miles away</span></li><li><a href="/test-centres/wanstead-london.html">Wanstead (London)</a> <span class="pill">about 5 miles away</span></li><li><a href="/test-centres/enfield-brancroft-way.html">Enfield (Brancroft Way)</a> <span class="pill">about 6 miles away</span></li></ul>
 <p class="note">We match you with learners at these centres too, so you have more chances of a swap.</p>
+
+<form class="alert-form card" id="centre-alert" novalidate>
+  <label for="ca-email">Email me when a test is listed at Loughton (London)</label>
+  <input type="email" id="ca-email" name="email" autocomplete="email" inputmode="email" required>
+  <div class="hp" aria-hidden="true"><label for="ca-website">Website</label><input type="text" id="ca-website" name="website" tabindex="-1" autocomplete="off"></div>
+  <button type="submit" class="cta">Notify me</button>
+  <p class="note" style="margin-top:8px;">We email you only about tests at this centre. Unsubscribe in one click. See our <a href="/privacy.html">privacy policy</a>.</p>
+  <p class="note" id="ca-msg" role="status" aria-live="polite"></p>
+</form>
 
 <h2>Questions</h2>
 <details><summary>Can I swap my driving test at Loughton (London)?</summary><p style="margin-top:8px;">Yes. Swaps are done by phoning DVSA on 0300 200 1122, and both learners must hold a live booking. List your Loughton (London) test on TestNow and we match you with someone who wants your date and has one you want, at Loughton (London) or a nearby centre.</p></details>
@@ -106,6 +127,28 @@
   var HERE = "Loughton (London)";
   var NEAR = ["Chingford (London)","Wanstead (London)","Enfield (Brancroft Way)"];
   var box = document.getElementById('live');
+  var REGION = "London";
+  (function () {
+    var form = document.getElementById('centre-alert');
+    if (!form) return;
+    var msg = document.getElementById('ca-msg');
+    var busy = false;
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (busy) return;
+      var email = String(form.elements.email.value || '').trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.textContent = 'Please enter a valid email address.'; return; }
+      busy = true; msg.textContent = 'Sending...';
+      fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'centreAlert', email: email, centre: HERE, region: REGION, source: 'centre-page', consent: true, website: String(form.elements.website.value || '') }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d && d.result === 'success') { msg.textContent = 'Done. We will email you when a test is listed at ' + HERE + '.'; form.elements.email.value = ''; }
+          else { msg.textContent = (d && d.message) ? String(d.message) : 'Sorry, that did not work. Please try again.'; }
+        })
+        .catch(function () { msg.textContent = 'Sorry, that did not work. Please try again.'; })
+        .then(function () { busy = false; });
+    });
+  })();
   function esc(s) { return String(s || '').replace(/[&<>"']/g, function (ch) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]; }); }
   function daysUntil(iso) {
     if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return null;
