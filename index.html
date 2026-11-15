@@ -2697,7 +2697,7 @@
         body: JSON.stringify({ action: 'centreAlert', email: em.value.trim(), centre: centre, region: region, source: source, consent: true, website: hp.value || '' })
       }).then(function (r) { return r.json(); }).then(function (j) {
         if (j && j.result === 'success') {
-          msg.textContent = 'Done. We will email you when a test is listed at ' + centre + '.';
+          msg.textContent = 'Almost done. Check your email and press Confirm to start alerts for ' + centre + '.';
           em.disabled = true; b.style.display = 'none';
         } else {
           b.disabled = false;

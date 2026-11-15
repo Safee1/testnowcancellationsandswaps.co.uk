@@ -364,6 +364,47 @@ const GUIDES = [
     ],
   },
   {
+    slug: "change-driving-test-date",
+    nav: "Change your date",
+    title: "How to change your driving test date | TestNow",
+    desc: "How to change your DVSA practical test date yourself on the official booking service, the notice and change limits that apply, what to do when no dates suit, and swapping with another learner as a different route.",
+    h1: "How to change your driving test date",
+    lede: "You can move your test yourself on GOV.UK, for free. Here is how, what limits apply, and what to try when no suitable dates show.",
+    body: `
+<h2>Changing it yourself on GOV.UK</h2>
+<p>You can change your own test date directly on <a href="https://www.gov.uk/change-driving-test" target="_blank" rel="noopener">gov.uk/change-driving-test</a>, free. Sign in with your driving licence number and your test booking reference, then pick from the dates shown. This is also where DVSA's own cancellation slots appear.</p>
+<p>Do this yourself. Never hand your licence number and payment details to a paid "test finder" site to do it for you.</p>
+
+<h2>What limits and notice periods apply</h2>
+<div class="card">
+  <ul>
+    <li>Give DVSA at least <b>three working days'</b> notice of a change.</li>
+    <li>Two changes are currently allowed on a booking before you have to cancel and rebook from scratch.</li>
+    <li>Since 9 June 2026, once your test is booked, DVSA only lets you move it to one of the <b>three test centres nearest</b> to your original one. See our guide on <a href="/guides/change-driving-test-centre.html">changing your test centre</a>.</li>
+  </ul>
+</div>
+<p class="note">Rules can change, so check the current rules on <a href="https://www.gov.uk/change-driving-test" target="_blank" rel="noopener">GOV.UK</a> before you rely on them.</p>
+
+<h2>What to do when no suitable dates show</h2>
+<ul>
+  <li><b>Check again regularly.</b> Cancellations appear at random as other learners change or cancel their tests, so checking a few times a week, especially early morning, tends to catch more than checking once.</li>
+  <li><b>Look at your three nearest centres.</b> A nearby centre can have a different set of dates open.</li>
+  <li><b>Ask your instructor.</b> They can't change your test for you, but they may know which local centres tend to have shorter waits.</li>
+</ul>
+<p class="note">Full rundown: <a href="/guides/how-to-get-an-earlier-driving-test.html">how to get an earlier driving test</a>.</p>
+
+<h2>A different route: swap with another learner</h2>
+<p>If a date change does not work out, you can swap with another learner instead. TestNow is a free board where learners list the test they have and what they would swap it for, and it matches you automatically. It is free for learners. TestNow does not make the change: the swap is made when learners phone DVSA on <b>0300 200 1122</b> (option 2, Mon to Fri, 8am to 5pm), and both of you must hold the same type of test. See <a href="/guides/swap-driving-test-date.html">how a swap works</a> for the full steps.</p>
+<a class="cta" href="/#swap-form">List my test, free</a>
+`,
+    faq: [
+      ["Can I change my driving test date myself?", "Yes. You can change your own test date on gov.uk/change-driving-test, free, using your licence number and booking reference."],
+      ["How much notice do I need to give to change my test?", "At least three working days' notice. Check the current rules on GOV.UK before you rely on this."],
+      ["How many times can I change my test?", "Two changes are currently allowed on a booking before you need to cancel it and rebook from scratch."],
+      ["Is a swap the same as changing my date?", "No. Changing your date means picking from the dates DVSA shows. A swap means exchanging your exact date with another learner, and it is made when learners phone DVSA on 0300 200 1122. TestNow is free for learners and does not make the change itself."],
+    ],
+  },
+  {
     slug: "what-to-do-after-passing-your-driving-test",
     nav: "Just passed?",
     title: "What to do after passing your driving test | TestNow",

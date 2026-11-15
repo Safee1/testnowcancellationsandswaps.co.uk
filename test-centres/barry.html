@@ -142,7 +142,7 @@
       fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'centreAlert', email: email, centre: HERE, region: REGION, source: 'centre-page', consent: true, website: String(form.elements.website.value || '') }) })
         .then(function (r) { return r.json(); })
         .then(function (d) {
-          if (d && d.result === 'success') { msg.textContent = 'Done. We will email you when a test is listed at ' + HERE + '.'; form.elements.email.value = ''; }
+          if (d && d.result === 'success') { msg.textContent = 'Almost done. Check your email and press Confirm to start alerts for ' + HERE + '.'; form.elements.email.value = ''; }
           else { msg.textContent = (d && d.message) ? String(d.message) : 'Sorry, that did not work. Please try again.'; }
         })
         .catch(function () { msg.textContent = 'Sorry, that did not work. Please try again.'; })
