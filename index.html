@@ -1343,20 +1343,18 @@
   .board-tools .sort-toggle input { accent-color: var(--accent); width: 18px; height: 18px; }
   .bcard.soon { border-color: var(--accent); box-shadow: 4px 4px 0 var(--accent); }
   .bcard.soon:hover { box-shadow: 6px 6px 0 var(--accent); }
+  /* badges sit in their own row above the region line (never over the text) */
   .bcard .bsoon, .bcard .bnew {
-    position: absolute; top: 14px; right: 14px;
+    display: inline-block; position: static; margin: 0 6px 10px 0; vertical-align: top;
     font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700;
     padding: 4px 10px; border-radius: 999px;
   }
   .bcard .bsoon { background: var(--accent); color: #fff; }
   .bcard .bnew { background: var(--ink); color: var(--paper); }
-  .bcard .bsoon + .bnew { right: 92px; }
+  .bcard.has-badge .bregion { clear: both; }
   @media (max-width: 720px) {
-    /* .btag owns the top-right slot on mobile — badges go top-left and the
-       region line drops below them. */
-    .bcard.has-badge .bregion { padding-top: 24px; }
-    .bcard .bsoon, .bcard .bnew { top: 12px; left: 14px; right: auto; }
-    .bcard .bsoon + .bnew { left: 90px; }
+    /* .btag owns the top-right slot on mobile; badges stay top-left in their own row. */
+    .bcard .bsoon, .bcard .bnew { margin-bottom: 8px; }
   }
   .bcard .bage { font-size: 12px; color: var(--muted); margin-top: 10px; }
   .bcard .bage strong { color: var(--ink); }
