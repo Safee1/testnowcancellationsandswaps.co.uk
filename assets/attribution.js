@@ -76,3 +76,35 @@
     try { localStorage.setItem('tn_source_ls', JSON.stringify({ v: computed, t: Date.now() })); } catch (e) {}
   }
 })();
+
+// Meta pixel (18 Nov 2026). Loads ONLY after the visitor accepts on the cookie
+// banner (tn_consent_v2=yes), and never on private pages whose address carries
+// a personal link (chat, enquiry replies, remove, add-email, review, pass follow-up).
+(function () {
+  var PIXEL_ID = '1642464853933807';
+  var PRIVATE = /^\/(chat|enquiry-respond|add-email|remove|review|pass-followup|report-concern)(\.html)?\/?$/i;
+  var loaded = false;
+  function consented() {
+    try { return /(^|;)\s*tn_consent_v2\s*=\s*yes(;|$)/.test(document.cookie); } catch (e) { return false; }
+  }
+  function load() {
+    if (loaded || PRIVATE.test(location.pathname) || !consented()) return;
+    loaded = true;
+    try {
+      !function (f, b, e, v, n, t, s) {
+        if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+        if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0'; n.queue = [];
+        t = b.createElement(e); t.async = !0; t.src = v;
+        s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+      }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', PIXEL_ID);
+      fbq('track', 'PageView');
+    } catch (e) {}
+  }
+  window.tnMetaPixel = load;
+  load();
+  // The banner sets the cookie on a click; pick that up without editing every page.
+  try {
+    document.addEventListener('click', function () { if (!loaded) setTimeout(load, 80); }, true);
+  } catch (e) {}
+})();

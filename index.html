@@ -2393,6 +2393,8 @@
         var conv = {'send_to': 'AW-18364427323/1EBdCKOIjdocELvY67RE'};
         if (json.leadId) conv.transaction_id = String(json.leadId);
         if (typeof gtag === 'function') gtag('event', 'conversion', conv);
+        // Meta pixel: only exists when the visitor accepted cookies (see assets/attribution.js)
+        try { if (typeof fbq === 'function') fbq('track', 'Lead', {}, json.leadId ? { eventID: String(json.leadId) } : undefined); } catch (eFb) {}
       };
       var emailForEc = String((form.email && form.email.value) || '').trim().toLowerCase();
       if (emailForEc && window.crypto && crypto.subtle && window.TextEncoder) {
