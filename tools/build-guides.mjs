@@ -23,6 +23,7 @@ const HEAD_TRACKING = `<script>
     if (m && m.pop() === 'yes') gtag('consent', 'update', { 'ad_storage': 'granted', 'ad_user_data': 'granted', 'ad_personalization': 'granted', 'analytics_storage': 'granted' });
   })();
   gtag('js', new Date());
+  gtag('set', 'url_passthrough', true);
   gtag('config', 'AW-18364427323');
   gtag('config', 'G-THEHZYLS0C');
 </script>
@@ -147,7 +148,7 @@ const GUIDES = [
 <p>Since 9 June 2026, DVSA only lets you move a booked test to one of the <b>three nearest test centres</b> to your original one — so check what your three nearest actually are, and whether any of them tend to run shorter. Our <a href="/test-centres/">test centre pages</a> list neighbouring centres and typical wait signals for each. See our guide on <a href="/guides/change-driving-test-centre.html">changing your test centre</a> for the trade-offs.</p>
 
 <h2>3. Change your date through gov.uk, not a middleman</h2>
-<p>You can change your own test date directly on gov.uk, free, as long as you give DVSA at least <b>three working days'</b> notice and you're within your remaining change limit (two changes are currently allowed on a booking before you have to cancel and rebook from scratch). Do this yourself — never hand your licence number and payment details to a paid "test finder" site to do it for you.</p>
+<p>You can change your own test date directly on gov.uk, free, as long as you give DVSA at least <b>10 full working days'</b> notice (Monday to Saturday count as working days) and you're within your remaining change limit (two changes are currently allowed on a booking before you have to cancel and rebook from scratch). Do this yourself — never hand your licence number and payment details to a paid "test finder" site to do it for you.</p>
 
 <h2>4. Swap with another learner going the other way</h2>
 <p>If someone else has an earlier test they don't want and would happily take your later date, DVSA can swap you over the phone on <b>0300 200 1122</b> (option 2, Mon–Fri, 8am–5pm) — as long as you're both booked for exactly the same type of test and your centres meet DVSA's location rule. The hard part is finding that other learner. That's what TestNow is for: it's a free board where learners post the test they have and what they'd swap it for, and matches you automatically.</p>
@@ -165,7 +166,7 @@ const GUIDES = [
 <ol class="steps">
   <li>Check gov.uk's own cancellation list regularly (free).</li>
   <li>Check your three nearest centres for shorter waits.</li>
-  <li>Change your date yourself on gov.uk, at least 3 working days ahead.</li>
+  <li>Change your date yourself on gov.uk, at least 10 full working days ahead (Monday to Saturday count).</li>
   <li>List your test on TestNow and see if another learner wants to swap.</li>
   <li>Never pay anyone for a test date — DVSA is the only place a booking is made.</li>
 </ol>
@@ -208,7 +209,7 @@ const GUIDES = [
 </div>
 
 <h2>What's actually legal</h2>
-<p>Two learners can swap their own already-booked tests, for free, by phoning DVSA together on the line — see our <a href="/guides/swap-driving-test-date.html">step-by-step swap guide</a>. TestNow exists to help you find that other learner; we never touch your DVSA account, never charge you, and the swap itself only ever happens when one of you calls DVSA directly on 0300 200 1122.</p>
+<p>Two learners can swap their own already-booked tests, for free, by each phoning DVSA on the same day — see our <a href="/guides/swap-driving-test-date.html">step-by-step swap guide</a>. TestNow exists to help you find that other learner; we never touch your DVSA account, never charge you, and the swap itself only ever happens when both of you call DVSA directly, separately, on the same day, on 0300 200 1122.</p>
 <a class="cta" href="/#swap-form">Find a free, legitimate swap</a>
 
 <h2>How to report a scam</h2>
@@ -233,7 +234,7 @@ const GUIDES = [
     title: "How to swap your driving test date with another learner | TestNow",
     desc: "Step-by-step: how a DVSA learner-to-learner test swap actually works, what you need before you call, and what TestNow does (and doesn't do) to help you find a match.",
     h1: "How to swap your driving test date",
-    lede: "Two learners, two dates, one phone call to DVSA. Here's exactly how a test swap works, what you need ready, and where TestNow fits in.",
+    lede: "Two learners, two dates, and both of you phone DVSA. Here's exactly how a test swap works, what you need ready, and where TestNow fits in.",
     body: `
 <h2>What a swap actually is</h2>
 <p>A driving test swap is DVSA exchanging two already-booked practical test appointments between two learners — you take their date and centre, they take yours. DVSA carries out the exchange itself over the phone; nothing changes hands online, by email or by text.</p>
@@ -339,7 +340,7 @@ const GUIDES = [
   <li>Go to <a href="https://www.gov.uk/change-driving-test" target="_blank" rel="noopener">gov.uk/change-driving-test</a> and sign in with your licence number and booking reference.</li>
   <li>Choose one of your three nearest eligible centres.</li>
   <li>Pick from the available dates shown — this is also where DVSA's own cancellation slots appear.</li>
-  <li>Confirm at least three working days before your current test, and within your remaining change limit (currently two changes before you'd need to cancel and rebook).</li>
+  <li>Confirm at least 10 full working days before your current test (Monday to Saturday count), and within your remaining change limit (currently two changes before you'd need to cancel and rebook).</li>
 </ol>
 
 <h2>Pros and cons of moving centre</h2>
@@ -358,7 +359,7 @@ const GUIDES = [
 `,
     faq: [
       ["Can I move my test to any centre I like?", "Only when you first book. Once booked, DVSA limits changes to your three nearest test centres, a rule introduced on 9 June 2026."],
-      ["How many times can I change my test centre or date?", "Two changes are currently allowed on a booking before you need to cancel it and rebook from scratch, and each change needs at least three working days' notice."],
+      ["How many times can I change my test centre or date?", "Two changes are currently allowed on a booking before you need to cancel it and rebook from scratch, and each change needs at least 10 full working days' notice (Monday to Saturday count)."],
       ["Will driving lessons at my old centre still help at the new one?", "The basics carry over, but book a lesson or two around your new test centre if you can — local junctions, roundabouts and typical routes vary and examiners test on real local roads."],
       ["Is changing centre the same as swapping?", "No. Changing centre means picking from whatever dates DVSA currently shows as available at an eligible nearby centre. Swapping means exchanging your exact date with another learner who wants it, arranged directly with DVSA by phone."],
     ],
@@ -378,7 +379,7 @@ const GUIDES = [
 <h2>What limits and notice periods apply</h2>
 <div class="card">
   <ul>
-    <li>Give DVSA at least <b>three working days'</b> notice of a change.</li>
+    <li>Give DVSA at least <b>10 full working days'</b> notice of a change (Monday to Saturday count as working days).</li>
     <li>Two changes are currently allowed on a booking before you have to cancel and rebook from scratch.</li>
     <li>Since 9 June 2026, once your test is booked, DVSA only lets you move it to one of the <b>three test centres nearest</b> to your original one. See our guide on <a href="/guides/change-driving-test-centre.html">changing your test centre</a>.</li>
   </ul>
@@ -399,7 +400,7 @@ const GUIDES = [
 `,
     faq: [
       ["Can I change my driving test date myself?", "Yes. You can change your own test date on gov.uk/change-driving-test, free, using your licence number and booking reference."],
-      ["How much notice do I need to give to change my test?", "At least three working days' notice. Check the current rules on GOV.UK before you rely on this."],
+      ["How much notice do I need to give to change my test?", "At least 10 full working days' notice for a car test (Monday to Saturday count as working days). Check the current rules on GOV.UK before you rely on this."],
       ["How many times can I change my test?", "Two changes are currently allowed on a booking before you need to cancel it and rebook from scratch."],
       ["Is a swap the same as changing my date?", "No. Changing your date means picking from the dates DVSA shows. A swap means exchanging your exact date with another learner, and it is made when learners phone DVSA on 0300 200 1122. TestNow is free for learners and does not make the change itself."],
     ],

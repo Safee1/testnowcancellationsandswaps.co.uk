@@ -41,6 +41,7 @@ const HEAD_TRACKING = `<script>
     if (m && m.pop() === 'yes') gtag('consent', 'update', { 'ad_storage': 'granted', 'ad_user_data': 'granted', 'ad_personalization': 'granted', 'analytics_storage': 'granted' });
   })();
   gtag('js', new Date());
+  gtag('set', 'url_passthrough', true);
   gtag('config', 'AW-18364427323');
   gtag('config', 'G-THEHZYLS0C');
 </script>
@@ -166,7 +167,7 @@ function cityPage(city, region, list) {
   } else if (withData.length === 1 && period) {
     rates = ` In ${period}, ${withData[0].centre} had a car driving test pass rate of ${fmtRate(FACTS[withData[0].centre].passRate)}.`;
   }
-  const intro = `There are ${sorted.length} DVSA practical test centres for ${city} on our list: ${nameList}.${rates} A swap does not have to stay at one centre. Two learners can swap between different centres if both agree and DVSA allows it. TestNow is a free board where you list your booked test and see who might swap with you. We do not find cancellations. The swap itself is made by phoning DVSA on 0300 200 1122. Choose your centre below to see live tests and list yours.`;
+  const intro = `There are ${sorted.length} DVSA practical test centres for ${city} on our list: ${nameList}.${rates} You can only swap with a learner booked at the same test centre, at one of its 3 nearest test centres, or at the centre you first booked at, and that rule must be met for both learners. TestNow is a free board where you list your booked test and see who might swap with you. We do not find cancellations. The swap itself is made by phoning DVSA on 0300 200 1122. Choose your centre below to see live tests and list yours.`;
   const wc = intro.trim().split(/\s+/).length;
   if (wc < 120 || wc > 180) throw new Error(`${city} intro is ${wc} words, needs 120 to 180`);
   const body = `
@@ -207,7 +208,7 @@ function regionAbout(region, list) {
     const joined = names.length > 1 ? names.slice(0, -1).join(", ") + " and " + names[names.length - 1] : names[0];
     s2 = ` The busiest ${top.length === 1 ? "centre" : top.length === 2 ? "two centres" : "three centres"} by tests conducted ${top.length === 1 ? "was" : "were"} ${joined}.`;
   }
-  const s3 = " A swap can be between two different centres in this region or beyond, as long as both learners agree and DVSA allows it. The swap itself is made by phoning DVSA on 0300 200 1122.";
+  const s3 = " You can only swap with a learner booked at the same test centre, at one of its 3 nearest test centres, or at the centre you first booked at, and that rule must be met for both learners. The swap itself is made by phoning DVSA on 0300 200 1122.";
   const url = FACTS_META.url || FACTS_META.landingPage || "";
   return `<section class="facts card" id="about-region">
 <h2 style="margin-top:0;">About driving tests in ${esc(region)}</h2>
@@ -297,7 +298,7 @@ ${cityName ? `<p class="note">${esc(c.centre)} is one of the ${esc(cityName)} ce
   <li>List your current ${esc(c.centre)} test and the dates or centres you'd accept instead.</li>
   <li>We match you automatically with a learner whose test you want and who wants yours.</li>
   <li>You both get a private chat link. Nobody sees your name or number.</li>
-  <li>One of you phones DVSA on 0300 200 1122 to make the swap. DVSA confirms with both of you.</li>
+  <li>Both of you phone DVSA on 0300 200 1122, separately, on the same day. DVSA then completes the swap.</li>
 </ol>
 
 ${near.length ? `<h2>Centres near ${esc(c.centre)}</h2>

@@ -31,6 +31,7 @@
   })();
 
   gtag('js', new Date());
+  gtag('set','url_passthrough',true);
   gtag('config', 'AW-18364427323');
   gtag('config', 'G-THEHZYLS0C'); // GA4 — same consent gate as the Ads tag above, nothing extra needed
 </script>
@@ -232,6 +233,9 @@
     border: 1px solid var(--ink);
   }
   .btn-ghost:hover { background: var(--ink); color: var(--paper); }
+  .board-more-wrap { text-align: center; margin: 20px 0 8px; }
+  .board-more-wrap[hidden] { display: none; }
+  .board-more { min-height: 48px; padding: 14px 28px; font-size: 15px; }
 
   @media (max-width: 720px) {
     nav.links a:not(.btn) { display: none; }
@@ -1599,6 +1603,7 @@
     <div class="board-grid" id="board-grid">
       <div class="board-loading">Loading the latest listings…</div>
     </div>
+    <div class="board-more-wrap" id="board-more-wrap" hidden><button type="button" class="btn btn-ghost board-more" id="board-more">Show more tests</button></div>
     <div class="board-share reveal"><p>Share the board with a mate who's waiting too.</p><div class="share-row" data-share="board"><small>Know someone else waiting for a test? Every extra learner means more swaps for you.</small><a class="wa" data-share-wa href="#" target="_blank" rel="noopener">WhatsApp</a><button type="button" data-share-copy>Copy link</button><a data-share-fb href="#" target="_blank" rel="noopener">Facebook</a></div></div>
     <p class="board-foot reveal">See one that suits you? Tap <strong>Request this swap</strong> on it — or <a href="#swap-form">list your own test</a> and we'll match you up automatically too.</p>
 
@@ -2383,7 +2388,11 @@
       // user_data before the conversion fires. Consent Mode is not bypassed —
       // gtag drops user_data when ad_user_data is denied.
       var fireConversion = function () {
-        if (typeof gtag === 'function') gtag('event', 'conversion', {'send_to': 'AW-18364427323/1EBdCKOIjdocELvY67RE'});
+        // Only a brand new listing counts as a conversion, not an update to an existing one.
+        if (json.result !== 'success') return;
+        var conv = {'send_to': 'AW-18364427323/1EBdCKOIjdocELvY67RE'};
+        if (json.leadId) conv.transaction_id = String(json.leadId);
+        if (typeof gtag === 'function') gtag('event', 'conversion', conv);
       };
       var emailForEc = String((form.email && form.email.value) || '').trim().toLowerCase();
       if (emailForEc && window.crypto && crypto.subtle && window.TextEncoder) {
@@ -2705,14 +2714,24 @@
     });
     return f;
   }
+  // Show-more: first 16 cards, then 16 more per press. Reset to 16 on filter/sort change.
+  const BOARD_PAGE = 16;
+  let boardShown = BOARD_PAGE;
+  function boardCurrentRegion() { return (document.getElementById('board-filter') || {}).value || ''; }
+  (function () {
+    var more = document.getElementById('board-more');
+    if (more) more.addEventListener('click', function () { boardShown += BOARD_PAGE; renderBoard(boardCurrentRegion()); });
+  })();
   function renderBoard(filterRegion) {
     const grid = document.getElementById('board-grid');
     const count = document.getElementById('board-count');
+    const moreWrap = document.getElementById('board-more-wrap');
     let rows = BOARD.slice();
     if (filterRegion) rows = rows.filter(r => r.region === filterRegion);
     if (!rows.length) {
       grid.innerHTML = '<div class="board-empty">No tests listed for this region yet — be the first to list one.</div>';
       count.textContent = '';
+      if (moreWrap) moreWrap.hidden = true;
       return;
     }
     // v92: "Soonest first" sort (default on) — within the detected-region
@@ -2735,7 +2754,15 @@
     // stated honestly rather than hidden.
     const inChat = rows.filter(r => r.status === 'matching').length;
     count.textContent = rows.length + (rows.length === 1 ? ' test available' : ' tests available') + (inChat ? ' · ' + inChat + ' already in a chat' : '');
-    grid.innerHTML = rows.map(r =>
+    const totalRows = rows.length;
+    const visibleRows = rows.slice(0, boardShown);
+    if (moreWrap) {
+      const left = totalRows - visibleRows.length;
+      moreWrap.hidden = left <= 0;
+      const moreBtn = document.getElementById('board-more');
+      if (moreBtn && left > 0) moreBtn.textContent = 'Show more tests (' + left + ' more)';
+    }
+    grid.innerHTML = visibleRows.map(r =>
       '<div class="bcard' + (soonIds.indexOf(r.id) > -1 ? ' soon' : '') + ((soonIds.indexOf(r.id) > -1 || (listingAgeDays(r.id) !== null && listingAgeDays(r.id) <= 7)) ? ' has-badge' : '') + '">' +
         (soonIds.indexOf(r.id) > -1 ? '<span class="bsoon">Soonest</span>' : '') +
         (listingAgeDays(r.id) !== null && listingAgeDays(r.id) <= 7 ? '<span class="bnew">New</span>' : '') +
@@ -2892,9 +2919,9 @@
         sel.innerHTML = '<option value="">All regions</option>' +
           regions.map(r => '<option>' + r + '</option>').join('');
         if (!boardWired) {
-          sel.addEventListener('change', () => { renderBoard(sel.value); renderBoardAlert(sel.value); });
+          sel.addEventListener('change', () => { boardShown = BOARD_PAGE; renderBoard(sel.value); renderBoardAlert(sel.value); });
           const soonSort = document.getElementById('board-sort-soon');
-          if (soonSort) soonSort.addEventListener('change', () => renderBoard(sel.value));
+          if (soonSort) soonSort.addEventListener('change', () => { boardShown = BOARD_PAGE; renderBoard(sel.value); });
           boardWired = true;
         }
         sortBoardByRegion();
