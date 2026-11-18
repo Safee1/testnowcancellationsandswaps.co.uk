@@ -637,7 +637,7 @@
     // m.ts is backend-supplied and was the one field going into innerHTML raw
     // while everything around it was escaped — escaped now for consistency.
     const ts = escapeHtml(m.ts);
-    if (m.sender === 'MOD') { div.className = 'msg mod'; div.innerHTML = '<div class="who">TestNow Moderator</div>' + escapeHtml(m.text) + '<div class="when">' + ts + '</div>'; }
+    if (m.sender === 'MOD') { div.className = 'msg mod'; div.innerHTML = '<div class="who">TestNow Support</div>' + escapeHtml(m.text) + '<div class="when">' + ts + '</div>'; }
     else if (m.sender === 'SYSTEM') { div.className = 'sys'; div.textContent = m.text; }
     // v78 PATCH (Feature 3): a moderator viewer has no single OTHER_HANDLE —
     // label each side by name so both sides are distinguishable.
