@@ -242,7 +242,13 @@
          own neutral treatment of the equivalent decline-reason line. -->
     <button class="outcome-btn bad" data-msg="📵 The other person didn't answer the phone, so it couldn't complete." data-outcome="no_answer">📵 No answer on the phone</button>
     <button class="outcome-btn bad" data-msg="🔐 A security check failed at DVSA, so it couldn't complete." data-outcome="security_failed">🔐 Security check failed</button>
-    <button class="outcome-btn bad" data-msg="📅 Our tests weren't eligible (date/time/centre or type), so DVSA couldn't swap." data-outcome="not_eligible">📅 Not eligible (date/time/centre)</button>
+    <!-- v170: "not eligible" now asks WHY (all record outcome not_eligible; the reason travels in the message text, so we can learn DVSA's real rules and screen pairs before matching) -->
+    <button class="outcome-btn bad" data-msg="📍 Not eligible: DVSA said the two test centres can't be swapped." data-outcome="not_eligible">📍 Not eligible: the centres</button>
+    <button class="outcome-btn bad" data-msg="📅 Not eligible: DVSA said the test date or time can't be swapped." data-outcome="not_eligible">📅 Not eligible: the date or time</button>
+    <button class="outcome-btn bad" data-msg="🚗 Not eligible: DVSA said the test types don't match." data-outcome="not_eligible">🚗 Not eligible: the test type</button>
+    <button class="outcome-btn bad" data-msg="📝 Not eligible: DVSA needed details we didn't have." data-outcome="not_eligible">📝 DVSA wanted other details</button>
+    <button class="outcome-btn bad" data-msg="🔁 Not eligible: one of us has used up our test changes." data-outcome="not_eligible">🔁 Test changes already used</button>
+    <button class="outcome-btn bad" data-msg="📅 Our tests weren't eligible (date/time/centre or type), so DVSA couldn't swap." data-outcome="not_eligible">❓ Not eligible: DVSA didn't say why</button>
     <button class="modal-cancel" id="modalCancel">← Keep chatting</button>
   </div>
 </div>
@@ -1083,6 +1089,13 @@
   completeBtn.addEventListener('click', () => {
     if (SESSION_STATUS !== 'open') return;
     if (YOU_ARE === 'MOD') { modClose(); return; } // v78 PATCH (Feature 3)
+    // v170: an outcome only means something once BOTH learners have shared their booking
+    // reference and test details and tapped ready. Before that, a "not eligible" tap was
+    // recorded against a pair where one side had never entered a test (data we can't learn from).
+    if (!(myDone && otherDone)) {
+      showLocalError('You can pick an outcome once you have both finished the set-up steps. If this swap is not right for you, use "Not interested" instead.');
+      return;
+    }
     document.getElementById('outcomeModal').classList.add('show');
   });
 
