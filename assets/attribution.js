@@ -82,13 +82,13 @@
 // a personal link (chat, enquiry replies, remove, add-email, review, pass follow-up).
 (function () {
   var PIXEL_ID = '1642464853933807';
-  var PRIVATE = /^\/(chat|enquiry-respond|add-email|remove|review|pass-followup|report-concern)(\.html)?\/?$/i;
+  var PRIVATE = /^\/(chat|enquiry-respond|add-email|remove|review|pass-followup|report-concern|instructor)(\.html)?\/?$/i;
   var loaded = false;
   function consented() {
     try { return /(^|;)\s*tn_consent_v2\s*=\s*yes(;|$)/.test(document.cookie); } catch (e) { return false; }
   }
   function load() {
-    if (loaded || PRIVATE.test(location.pathname) || !consented()) return;
+    if (loaded || PRIVATE.test(location.pathname) || /[?&](tk|token)=/i.test(location.search) || !consented()) return; // v172: instructor dashboard + any URL carrying a personal token never reaches Meta
     loaded = true;
     try {
       !function (f, b, e, v, n, t, s) {

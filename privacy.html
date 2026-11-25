@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18364427323"></script>
+<!-- Google Consent Mode v2 — must run BEFORE gtag.js. Everything denied
+     until the visitor accepts, same as the homepage. -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', { 'ad_storage': 'denied', 'ad_user_data': 'denied', 'ad_personalization': 'denied', 'analytics_storage': 'denied', 'wait_for_update': 500 });
+  (function () {
+    var m = document.cookie.match('(^|;)\\s*tn_consent_v2\\s*=\\s*([^;]+)');
+    if (m && m.pop() === 'yes') gtag('consent', 'update', { 'ad_storage': 'granted', 'ad_user_data': 'granted', 'ad_personalization': 'granted', 'analytics_storage': 'granted' });
+  })();
   gtag('js', new Date());
   gtag('set','url_passthrough',true);
   gtag('config', 'AW-18364427323');
+  gtag('config', 'G-THEHZYLS0C');
 </script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18364427323"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Privacy Notice — TestNow Cancellations &amp; Swaps</title>
@@ -137,7 +145,7 @@
     <p>We keep your listing while it's active and for up to 6 months afterwards, then delete it. Previous versions of a listing (for example, if you update your details) are archived for up to 3 months, then deleted.</p>
 
     <h2>Text messages</h2>
-    <p>If you give us a mobile number, we may text you about your own listing: a match alert, a reminder to add your email, and a short message after your test date. Texts come from "TestNowUK" or 07462 169428. You can stop them at any time using the "Stop texts" link in any text we send, or by emailing us with the subject "Stop texts". We never text you marketing from other companies.</p>
+    <p>If you give us a mobile number, we may text you about your own listing: a match alert, a reminder to add your email, and a short message after your test date. Texts come from the sender name "TestNowUK". You can stop them at any time by emailing info@testnowcancellationsandswaps.co.uk with the subject "Stop texts", or with the "Stop texts" button on the add-your-email page that some of our texts link to. We will also stop our emails if you ask: just email the same address. We never text you marketing from other companies.</p>
 
     <h2>Offers from other companies</h2>
     <p>Some pages show offers from third parties (for example learner or new-driver insurance). If you click one and buy, we may earn a commission. These links carry no personal data from us; anything you enter on the other company's site is governed by their privacy notice.</p>

@@ -313,7 +313,7 @@
   const SIG_SLOT = "📅 TEST_SLOT:";
   const SIG_DONE = "✅ READY_TO_CALL";
   const SIG_CALLING = "📞 CALLING_NOW";
-  const ONLINE_WINDOW = 22000;
+  const ONLINE_WINDOW = 75000; // v172: must be longer than the 30 s idle ping (PING_SLOW) plus latency, or the other learner looks offline most of the time
   const PING_EVERY = 8000;
 
   // Every backend call gets a 20s ceiling: a hung request (flaky mobile data,
@@ -338,6 +338,7 @@
   const CID = (function () { try { let c = localStorage.getItem('tn_cid'); if (!c) { c = Math.random().toString(36).slice(2, 10) + Date.now().toString(36); localStorage.setItem('tn_cid', c); } return c; } catch (e) { return ''; } })();
   let GATE = ''; try { GATE = localStorage.getItem('tn_gate_' + SID) || ''; } catch (e) {}
   let gateTries = 0;
+  let abScrolled = false; // v172: re-scroll once when the action bar first renders, so Step 1 is not hidden under it
   let gateLockedMsg = ''; // 2 Nov (backend v154): the door locks a session side for an hour after 5 wrong references
   function gateQs() { return GATE ? '&g=' + encodeURIComponent(GATE) : ''; }
   function saveGate(v) { GATE = v; try { localStorage.setItem('tn_gate_' + SID, v); } catch (e) {} }
@@ -390,6 +391,7 @@
     // 26 Sep: the pill was still the green "Open" next to this message
     statusPill.textContent = 'Link not valid'; statusPill.style.background = 'rgba(160,40,40,.12)'; statusPill.style.color = '#7a1f1f';
     composer.style.display = 'none'; completeBtn.style.display = 'none'; abInner.innerHTML = '';
+    try { showInvalidLink(); } catch (eBad172) {} // v172: say what to do instead of a blank dead end
   } else { loadCentres(); initSession(); }
 
   // ---------- session ----------
@@ -468,7 +470,7 @@
   function showGate(mode, d) {
     metaText.textContent = mode === 'set' ? 'One quick check' : 'Your booking reference';
     composer.style.display = 'none'; completeBtn.style.display = 'none'; abInner.innerHTML = '';
-    const c = gcard('<div class="g-text">🔐 <b>' + (mode === 'set' ? 'First, your booking reference.' : 'Welcome back — your booking reference?') + '</b> Enter the <b>8-digit DVSA booking reference</b> for the test you listed. Only you know it, so a shared or screenshotted link can\'t open your chat as you.' + (mode === 'set' ? ' DVSA needs this reference to move any booking, so you\'ll need it for the swap anyway. It is free to use.' : '') + '<span class="g-warn">Share ONLY this. Never your licence number, payment card, address, phone or email.</span></div>');
+    const c = gcard('<div class="g-text">🔐 <b>' + (mode === 'set' ? 'First, your booking reference.' : 'Welcome back — your booking reference?') + '</b> Enter the <b>8-digit DVSA booking reference</b> for the test you listed. You\'ll find it in your DVSA booking confirmation email or text, labelled "Booking reference" (8 digits, not the 16-character licence number). Only you know it, so a shared or screenshotted link can\'t open your chat as you.' + (mode === 'set' ? ' DVSA needs this reference to move any booking, so you\'ll need it for the swap anyway. It is free to use.' : '') + '<span class="g-warn">Share ONLY this. Never your licence number, payment card, address, phone or email.</span></div>');
     const wrap = document.createElement('div'); wrap.className = 'g-controls';
     const inp = document.createElement('input'); inp.type = 'text'; inp.setAttribute('inputmode', 'numeric'); inp.maxLength = 8; inp.placeholder = 'e.g. 68194673'; inp.setAttribute('autocomplete', 'off');
     const btn = document.createElement('button'); btn.className = 'g-btn'; btn.textContent = 'Open my chat';
@@ -634,7 +636,7 @@
     // v80 PATCH (Feature 1): "The other learner" -> OTHER_HANDLE, matching
     // the identical-shaped cheer card just above (SIG_DONE branch, already
     // handle-personalized).
-    if (t.indexOf(SIG_CALLING) === 0) { callingAnnounced = true; if (!mine && !bCallCardShown) { bCallCardShown = true; gcard('<div class="g-text">📞 <b>' + escapeHtml(OTHER_HANDLE) + ' is calling DVSA now — stay right by your phone!</b> DVSA will ring you on your booking number within a few minutes. If you miss it, the swap can\'t go through. Pick up and confirm you agree.</div>', false, 'cheer'); } renderActionBar(); return; }
+    if (t.indexOf(SIG_CALLING) === 0) { callingAnnounced = true; if (!mine && !bCallCardShown) { bCallCardShown = true; gcard('<div class="g-text">📞 <b>' + escapeHtml(OTHER_HANDLE) + ' is calling DVSA now.</b> Once they have called, it\'s your turn: phone DVSA yourself on 0300 200 1122 (option 2) the same day, ideally by 4pm. If you don\'t call, the swap request expires at the end of the day.</div>', false, 'cheer'); } renderActionBar(); return; }
     renderMessage(m);
   }
 
@@ -999,6 +1001,17 @@
     return s;
   }
 
+  // v172: DVSA's phone line is Monday to Friday, 8am to 5pm UK time (bank holidays not modelled).
+  function dvsaLineOpen() {
+    try {
+      const parts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: 'short', hour: 'numeric', hour12: false }).formatToParts(new Date());
+      const wd = (parts.find(p => p.type === 'weekday') || {}).value;
+      const hr = Number((parts.find(p => p.type === 'hour') || {}).value);
+      if (wd === 'Sat' || wd === 'Sun') return false;
+      return hr >= 8 && hr < 17;
+    } catch (e) { return true; }
+  }
+
   // ================= ACTION BAR =================
   function renderActionBar() {
     if (SESSION_STATUS !== 'open') { abInner.innerHTML = '<div class="ab-grey">Chat closed.</div>'; return; }
@@ -1016,11 +1029,14 @@
     if (isA) {
       if (bothReady && otherOnline && refsShared) {
         if (!callStepsShown) { callStepsShown = true; showCallStepsForA(); }
-        html += '<div class="ab-go">📞 It\'s your job to call DVSA — do it now</div>';
-        html += '<div class="ab-sub">You\'re both online and ready. Call below; then ' + escapeHtml(OTHER_HANDLE) + ' must call DVSA the same day (by 4pm ideally). ' + (warnFlag ? '⚠️ See the heads-up in the chat first.' : '') + '</div>';
+        const lineOpen = dvsaLineOpen();
+        html += lineOpen ? '<div class="ab-go">📞 It\'s your job to call DVSA — do it now</div>' : '<div class="ab-go">🔒 DVSA\'s phone line is closed right now</div>';
+        html += lineOpen
+          ? '<div class="ab-sub">You\'re both online and ready. Call below; then ' + escapeHtml(OTHER_HANDLE) + ' must call DVSA the same day (by 4pm ideally). ' + (warnFlag ? '⚠️ See the heads-up in the chat first.' : '') + '</div>'
+          : '<div class="ab-sub">You\'re both ready. DVSA takes calls Monday to Friday, 8am to 5pm. Agree a time in the chat: you call first, then ' + escapeHtml(OTHER_HANDLE) + ' calls the same day (ideally by 4pm). ' + (warnFlag ? '⚠️ See the heads-up in the chat first.' : '') + '</div>';
         html += '<div class="ab-ref"><div class="l">Read this booking reference to DVSA</div><div class="n">' + escapeHtml(otherRef) + '</div></div>';
         html += '<button class="ab-btn small" id="copyRefBtn">📋 Copy reference</button>';
-        html += '<button class="ab-btn" id="callBtn">📞 Call DVSA — 0300 200 1122</button>';
+        html += lineOpen ? '<button class="ab-btn" id="callBtn">📞 Call DVSA — 0300 200 1122</button>' : '<button class="ab-btn grey" disabled>📞 DVSA opens Mon–Fri, 8am</button>';
       } else {
         // v80 PATCH (Feature 1): both "the other learner" -> OTHER_HANDLE
         // (escaped — this array is joined straight into innerHTML below,
@@ -1045,7 +1061,7 @@
         if (!callStepsShown) { callStepsShown = true; showCallStepsForB(); }
         // v80 PATCH (Feature 1): "the other learner" -> OTHER_HANDLE.
         html += '<div class="ab-go">⏳ Ready — wait for ' + escapeHtml(OTHER_HANDLE) + ' to call</div>';
-        html += '<div class="ab-sub">They\'ll phone DVSA first, then you call DVSA yourself the same day (ideally by 4pm). Stay on this page. ' + (warnFlag ? '⚠️ See the heads-up in the chat first.' : '') + '</div>';
+        html += '<div class="ab-sub">They\'ll phone DVSA first, then you call DVSA yourself the same day (ideally by 4pm). ' + (dvsaLineOpen() ? 'Stay on this page. ' : 'DVSA\'s line is closed right now (Mon–Fri, 8am–5pm), so this will happen when it opens. ') + (warnFlag ? '⚠️ See the heads-up in the chat first.' : '') + '</div>';
         html += '<button class="ab-btn small" id="hereBtn">👋 Nudge them to call</button>';
       } else {
         // v80 PATCH (Feature 1): "the other learner" -> OTHER_HANDLE (escaped).
@@ -1061,8 +1077,9 @@
     }
 
     abInner.innerHTML = html;
+    if (awaiting && !abScrolled) { abScrolled = true; setTimeout(scrollDown, 0); } // v172
     // v80 PATCH (Feature 1): "the other learner" -> OTHER_HANDLE.
-    const cb = document.getElementById('callBtn'); if (cb) cb.onclick = function () { if (!callingAnnounced) postRaw(SIG_CALLING); if (!aCallCardShown) { aCallCardShown = true; gcard('<div class="g-text">📞 <b>Calling DVSA now — keep this chat open.</b> Once you give them the booking reference, DVSA will ring ' + escapeHtml(OTHER_HANDLE) + ' (they\'re being told to stay by their phone). Stay on the line until it\'s all sorted.</div>', false, 'cheer'); } window.location.href = 'tel:03002001122'; };
+    const cb = document.getElementById('callBtn'); if (cb) cb.onclick = function () { if (!callingAnnounced) postRaw(SIG_CALLING); if (!aCallCardShown) { aCallCardShown = true; gcard('<div class="g-text">📞 <b>Calling DVSA now — keep this chat open.</b> Give them the booking reference. Once you have called, ' + escapeHtml(OTHER_HANDLE) + ' must phone DVSA themselves the same day (ideally by 4pm) to finish the swap. Stay on the line until DVSA has finished with you.</div>', false, 'cheer'); } window.location.href = 'tel:03002001122'; };
     const copyBtn = document.getElementById('copyRefBtn'); if (copyBtn) copyBtn.onclick = function () { copyText(otherRef, copyBtn); };
     const cont = document.getElementById('continueBtn'); if (cont) cont.onclick = function () { if (awaiting) scrollDown(); else nextStep(); };
     const here = document.getElementById('hereBtn');
@@ -1203,8 +1220,8 @@
       ['🙏 Thank you', 'Thank you! 🙏']
     ];
     const role = (YOU_ARE === 'A')
-      ? [['📞 Calling now', '📞 I\'m calling DVSA now — stay close to your phone, they\'ll ring you!']]
-      : [['📱 By my phone', '📱 I\'m right by my phone, ready for DVSA to call.']];
+      ? [['📞 Calling now', '📞 I\'m calling DVSA now — once I\'ve called, it\'s your turn to call them too.']]
+      : [['📱 Ready to call', '📱 I\'m ready — I\'ll call DVSA as soon as you\'ve called.']];
     const all = common.concat(role);
     chips.innerHTML = '';
 

@@ -18,13 +18,13 @@ jobs:
         id: site
         continue-on-error: true
         run: |
-          out=$(curl -sS --max-time 30 -w '\n%{http_code}' https://testnowcancellationsandswaps.co.uk/) || { echo "curl failed"; exit 1; }
+          out=$(curl -sS --max-time 30 --retry 2 --retry-delay 10 --retry-all-errors -w '\n%{http_code}' https://testnowcancellationsandswaps.co.uk/) || { echo "curl failed"; exit 1; }
           code=$(printf '%s' "$out" | tail -n1)
           if [ "$code" != "200" ]; then
             echo "Homepage returned HTTP $code"
             exit 1
           fi
-          if ! printf '%s' "$out" | grep -q "Free UK Driving Test Swaps"; then
+          if ! printf '%s' "$out" | grep -q 'id="swap-form"'; then
             echo "Marker string missing from homepage response"
             exit 1
           fi
@@ -34,8 +34,8 @@ jobs:
         id: backend
         continue-on-error: true
         run: |
-          resp=$(curl -sS -L --max-time 60 "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec?action=board") || { echo "curl failed"; exit 1; }
-          if printf '%s' "$resp" | grep -q 'success' || printf '%s' "$resp" | grep -q '\['; then
+          resp=$(curl -sS -L --max-time 60 --retry 2 --retry-delay 15 --retry-all-errors "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec?action=stats") || { echo "curl failed"; exit 1; }
+          if printf '%s' "$resp" | grep -q '"result":"success"'; then
             echo "Backend OK"
           else
             echo "Backend response did not look like JSON. First 200 chars:"
