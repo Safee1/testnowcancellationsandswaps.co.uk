@@ -143,7 +143,10 @@
     <p>We don't sell your data. We don't store your IP address or precise location. We don't use cookies to build a profile of you beyond measuring whether our own ads led to a listing. If you decline, the site still works in full — we simply don't pre-sort tests by your area, and we can't tell whether our advertising reached you.</p>
 
     <h2>Managing cookies</h2>
-    <p>You can clear or block cookies in your browser settings at any time. If you clear our consent cookie, you'll be asked for your choice again next time you visit — which is also how you change your mind after accepting. Declining on our banner stops both the region cookie and the advertising cookies being set.</p>
+    <p id="change">You can change your mind at any time. Tap the button below to withdraw your choice. That switches advertising and analytics cookies off straight away, and we will ask you again on the home page.</p>
+    <p><button type="button" id="cookie-change" style="font:inherit;font-weight:600;padding:12px 18px;border-radius:10px;border:2px solid currentColor;background:transparent;color:inherit;cursor:pointer;">Change cookie choice</button></p>
+    <p id="cookie-change-done" role="status" style="display:none;"><strong>Done.</strong> Your cookie choice has been cleared and advertising and analytics cookies are switched off. <a href="index.html">Go to the home page</a> to choose again.</p>
+    <p>You can also clear or block cookies in your browser settings. Declining on our banner stops the region cookie, the advertising cookies and the analytics cookies being set.</p>
 
     <h2>Changes</h2>
     <p>We may update this policy. The "last updated" date shows when it last changed.</p>
@@ -158,5 +161,30 @@
 </footer>
 
 <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+<script>
+  // Withdraw the cookie choice: forget it, tell Google everything is denied, and remove
+  // the region, advertising and analytics cookies already set. The home page then asks again.
+  (function () {
+    var btn = document.getElementById('cookie-change');
+    if (!btn) return;
+    function expire(name) {
+      var gone = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+      document.cookie = gone + ';SameSite=Lax';
+      var parts = location.hostname.split('.');
+      while (parts.length > 1) { document.cookie = gone + ';domain=.' + parts.join('.'); parts.shift(); }
+    }
+    btn.addEventListener('click', function () {
+      expire('tn_consent_v2');
+      expire('tn_region');
+      document.cookie.split(';').forEach(function (c) {
+        var n = c.split('=')[0].trim();
+        if (/^(_ga|_gcl|_fbp|_fbc)/.test(n)) expire(n);
+      });
+      if (typeof gtag === 'function') gtag('consent', 'update', { 'ad_storage': 'denied', 'ad_user_data': 'denied', 'ad_personalization': 'denied', 'analytics_storage': 'denied' });
+      btn.disabled = true;
+      document.getElementById('cookie-change-done').style.display = 'block';
+    });
+  })();
+</script>
 </body>
 </html>

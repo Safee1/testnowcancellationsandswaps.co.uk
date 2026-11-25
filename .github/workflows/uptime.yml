@@ -34,14 +34,22 @@ jobs:
         id: backend
         continue-on-error: true
         run: |
-          resp=$(curl -sS -L --max-time 60 --retry 2 --retry-delay 15 --retry-all-errors "https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec?action=stats") || { echo "curl failed"; exit 1; }
-          if printf '%s' "$resp" | grep -q '"result":"success"'; then
-            echo "Backend OK"
-          else
-            echo "Backend response did not look like JSON. First 200 chars:"
-            printf '%.200s\n' "$resp"
+          base="https://script.google.com/macros/s/AKfycbxpAa2f8VaJvKwQspRz0QEsp9KZIB_7ZIkMwskYPl2zjLgtsqoi8l_PqpvrtpQ7c2JO/exec"
+          # The matcher must have run recently (stats adds matcherOk fresh on every call).
+          stats=$(curl -sS -L --max-time 60 --retry 2 --retry-delay 15 --retry-all-errors "$base?action=stats") || { echo "curl failed (stats)"; exit 1; }
+          if ! printf '%s' "$stats" | grep -q '"matcherOk":true'; then
+            echo "Stats response has no matcherOk true. First 300 chars:"
+            printf '%.300s\n' "$stats"
             exit 1
           fi
+          # The board must answer with a listings array.
+          board=$(curl -sS -L --max-time 60 --retry 2 --retry-delay 15 --retry-all-errors "$base?action=board") || { echo "curl failed (board)"; exit 1; }
+          if ! printf '%s' "$board" | grep -q '"listings":\['; then
+            echo "Board response has no listings array. First 300 chars:"
+            printf '%.300s\n' "$board"
+            exit 1
+          fi
+          echo "Backend OK"
 
       - name: Open issue on failure
         if: steps.site.outcome == 'failure' || steps.backend.outcome == 'failure'
